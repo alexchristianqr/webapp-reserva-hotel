@@ -1,93 +1,96 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    <body>
-        <div id="app">
-            <form @submit.prevent="login">
-                <label for="username">Usuario:</label><br>
-                <input type="text" id="username" v-model="username" required><br>
-                <label for="password">ContraseÃ±a:</label><br>
-                <input type="password" id="password" v-model="password" required><br><br>
-                <button type="submit">Iniciar SesiÃ³n</button>
-            </form>
-
-            <p v-if="message">{{ message }}</p>
-
-            <table v-if="users.length > 0" border="1">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="user in users" :key="user.username">
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.password }}</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <p v-else>No hay usuarios para mostrar.</p>
+<%@include file="../includes/header.jsp" %>
+<header>
+    <div class="row">
+        <div class="col-6 offset-3">
+            <h1>Login</h1>
         </div>
+    </div>
+</header>
 
-        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-        <script>
-const {createApp, ref} = Vue;
+<main>
+    <div class="py-3">
+        <div class="row">
+            <div class="col-6 offset-3">
+                <form @submit.prevent="login">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Usuario</label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            v-model="username" 
+                            required 
+                            class="form-control"
+                            >
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            v-model="password" 
+                            required 
+                            class="form-control"
+                            >
+                    </div>
+                    <div class="d-grid gap-3">
+                        <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
 
-createApp({
-    setup() {
-        const username = ref('');
-        const password = ref('');
-        const message = ref('');
-        const users = ref([]);
+<script>
+    const {createApp, ref} = Vue;
 
-        const login = async () => {
-            // Crea un objeto FormData para enviar los datos del formulario
-            const formData = new FormData();
-            formData.append('username', username.value);
-            formData.append('password', password.value);
+    createApp({
+        setup() {
+            const username = ref('');
+            const password = ref('');
+            const message = ref('');
+            const users = ref([]);
 
-            // PeticiÃ³n al servlet usando Fetch
-            try {
-                const response = await fetch('LoginServlet', {
-                    method: 'POST',
-                    body: formData
-                });
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+            const login = async () => {
+                // Crea un objeto FormData para enviar los datos del formulario
+                const formData = new FormData();
+                formData.append('username', username.value);
+                formData.append('password', password.value);
+
+                // Petición al servlet usando Fetch
+                try {
+                    const response = await fetch('LoginServlet', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    // Espera a que la respuesta se convierta a JSON
+                    const data = await response.json();
+
+                    if (data.length > 0) {
+                        users.value = data;
+                        message.value = '¡Bienvenido!';
+                    } else {
+                        users.value = [];
+                        message.value = 'Credenciales incorrectas.';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    message.value = 'Error de conexión.';
                 }
+            };
 
-                // Espera a que la respuesta se convierta a JSON
-                const data = await response.json();
-
-                if (data.length > 0) {
-                    users.value = data;
-                    message.value = 'Â¡Bienvenido!';
-                } else {
-                    users.value = [];
-                    message.value = 'Credenciales incorrectas.';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                message.value = 'Error de conexiÃ³n.';
-            }
-        };
-
-        return {
-            username,
-            password,
-            message,
-            users,
-            login
-        };
-    }
-}).mount('#app');
-        </script>
-    </body>
-</html>
+            return {
+                username,
+                password,
+                message,
+                users,
+                login
+            };
+        }
+    }).mount('#app');
+</script>
+<%@include file="../includes/footer.jsp" %>
