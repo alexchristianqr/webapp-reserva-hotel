@@ -7,10 +7,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 import com.google.gson.Gson;
-import models.Prueba;
+import controllers.UsuarioController;
+import core.services.ResponseService;
 
 @WebServlet(name = "LoginServlet", urlPatterns = {"/auth/LoginServlet"})
 @MultipartConfig // Añadir esta línea para usar FormData
@@ -27,18 +26,13 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         // Simular una lista de usuarios (o la obtienes de una DB)
-        List<Prueba> usuarios = new ArrayList<>();
-        Prueba usuario = new Prueba(username, password);
-        if ("admin".equals(username) && "123".equals(password)) {
-            usuarios.add(usuario);
-//            usuarios.add(new Prueba("Ana", "ana@ejemplo.com"));
-        }
+        UsuarioController usuarioController = new UsuarioController();
+        ResponseService responseService = usuarioController.login(username, password);
 
         // Convertir la lista a JSON
-        String json = new Gson().toJson(usuarios);
+        String json = new Gson().toJson(responseService);
 
         // Enviar el JSON como respuesta
         response.getWriter().write(json);
     }
-
 }

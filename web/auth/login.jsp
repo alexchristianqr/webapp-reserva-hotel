@@ -68,14 +68,16 @@
                     }
 
                     // Espera a que la respuesta se convierta a JSON
-                    const data = await response.json();
+                    const {success, result, message} = await response.json();
 
-                    if (data.length > 0) {
-                        users.value = data;
+                    if (success) {
+                        users.value = result;
                         message.value = '¡Bienvenido!';
+                        alert(message);
                     } else {
-                        users.value = [];
-                        message.value = 'Credenciales incorrectas.';
+                        alert("Error de usuario o contraseña");
+//                        users.value = [];
+//                        message.value = 'Credenciales incorrectas';
                     }
                 } catch (error) {
                     console.error('Error:', error);
