@@ -11,4 +11,4 @@
         <link rel="stylesheet" type="text/css" href="../css/styles.css">
         <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     </head>
-    <body id="app" class="container">
+    <body id="app" class="container py-5">
