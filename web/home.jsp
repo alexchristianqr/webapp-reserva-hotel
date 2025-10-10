@@ -2,14 +2,14 @@
 
 <header>
     <div class="row">
-        <div class="col-6 offset-3">
+        <div class="col-6">
             <h1>Home</h1>
         </div>
     </div>
 </header>
 
 <main>
-    <div id="app" class="container py-5">
+    <div>
         <!-- Encabezado -->
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Bienvenido, {{ state.user?.nombres || 'Usuario' }}</h2>
