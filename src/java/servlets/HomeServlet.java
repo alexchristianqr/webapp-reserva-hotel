@@ -1,4 +1,4 @@
-package servlets.autenticacion;
+package servlets;
 
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -7,28 +7,27 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
-import controllers.UsuarioController;
 import core.services.ResponseService;
+//import controllers.UsuarioController;
+//import core.services.ResponseService;
 import core.servlets.BaseServlet;
 import models.Usuario;
 
-@WebServlet(name = "LoginServlet", urlPatterns = {"/autenticacion/LoginServlet"})
+@WebServlet(name = "HomeServlet", urlPatterns = {"/HomeServlet"})
 @MultipartConfig // Añadir esta línea para usar FormData
-public class LoginServlet extends BaseServlet {
+public class HomeServlet extends BaseServlet {
 
     @Override
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        // Obtener sesión de usuario
+        Usuario usuarioAutenticado = getUsuarioAutenticado(request);
 
-        // Simular una lista de usuarios (o la obtienes de una DB)
-        UsuarioController usuarioController = new UsuarioController();
-        ResponseService responseService = usuarioController.login(username, password);
-
-        // Guardar sesión de usuario
-        request.getSession().setAttribute("usuario", (Usuario) responseService.getResult());
+        ResponseService responseService = new ResponseService();
+        responseService.setSuccess(true);
+        responseService.setMessage("Usuario en sesion");
+        responseService.setResult(usuarioAutenticado);
 
         // Convertir la lista a JSON
         String json = new Gson().toJson(responseService);

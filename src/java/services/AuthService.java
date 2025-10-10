@@ -14,9 +14,9 @@ public class AuthService extends BaseService {
         db = new MysqlDBService();
     }
 
-    public boolean login(String username, String pwd) {
+    public Usuario login(String username, String pwd) {
 
-        boolean success = false;
+//        boolean success = false;
 
         try {
             ResultSet rs_1, rs_2, rs_3, rs_4;
@@ -39,7 +39,7 @@ public class AuthService extends BaseService {
 //                    querySQL_2 = "SELECT u.*, c.id AS 'id_cliente', c.id_persona FROM usuarios u JOIN clientes c ON c.id_usuario = u.id AND c.estado = 'activo' WHERE u.username = ? AND u.pwd = ? AND u.estado = 'activo' LIMIT 1;";
 //                    break;
                 default:
-                    return false;
+                    return null;
             }
 
             Object[] parametrosSQL_2 = {username, pwd};
@@ -47,7 +47,7 @@ public class AuthService extends BaseService {
 
             Usuario usuario = new Usuario();
             Empleado empleado;
-            Cliente cliente;
+//            Cliente cliente;
 
             while (rs_2.next()) {
 
@@ -100,7 +100,7 @@ public class AuthService extends BaseService {
                         }
 
                         usuario.setEmpleado(empleado);
-                        success = true;
+//                        success = true;
                     }
                     break;
 //                    case "cliente":
@@ -151,7 +151,9 @@ public class AuthService extends BaseService {
             }
 
             // Actualizar nuevo usuario en sesión local
-            UsuarioThreadLocal.set(usuario);
+            // UsuarioThreadLocal.set(usuario);
+            
+            return usuario;
 
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
@@ -159,13 +161,13 @@ public class AuthService extends BaseService {
             db.cerrarConsulta();
         }
 
-        return success;
+//        return null;
     }
 
     public boolean logout() {
-        boolean success = false;
+        boolean success = true;
 
-        try {
+        /*try {
             var usuario = UsuarioThreadLocal.get();
 
             // Eliminar usuario en sesión local
@@ -175,7 +177,7 @@ public class AuthService extends BaseService {
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
+        }*/
 
         return success;
     }

@@ -6,11 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import services.BaseService;
 
-public class MysqlDBService {
+public class MysqlDBService extends BaseService {
 
     private static final String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
-    private static final String URL = "jdbc:mysql://127.0.0.1:3306/db_hotel";
+    private static final String URL = "jdbc:mysql://127.0.0.1:3306/db_hotel?useSSL=false&serverTimezone=UTC";
     private static final String USER = "root";
     private static final String PASSWORD = "";
     public Connection conn = null;
@@ -24,9 +25,13 @@ public class MysqlDBService {
     private Connection conectar() {
         try {
             Class.forName(DRIVER_NAME);
-            return DriverManager.getConnection(URL, USER, PASSWORD);
-        } catch (ClassNotFoundException | SQLException e) {
-            throw new RuntimeException(e);
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            System.out.println("Conexion exitosa a la base de datos");
+            return connection;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("No se encontro el driver JDBC: " + DRIVER_NAME, e);
+        } catch (SQLException e) {
+            throw new RuntimeException("Error de conexion a la base de datos", e);
         }
     }
 

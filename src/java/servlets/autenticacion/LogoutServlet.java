@@ -11,7 +11,7 @@ import controllers.UsuarioController;
 import core.services.ResponseService;
 import core.servlets.BaseServlet;
 
-@WebServlet(name = "LoginServlet", urlPatterns = {"/auth/LoginServlet"})
+@WebServlet(name = "LogoutServlet", urlPatterns = {"/autenticacion/LogoutServlet"})
 @MultipartConfig // Añadir esta línea para usar FormData
 public class LogoutServlet extends BaseServlet {
 

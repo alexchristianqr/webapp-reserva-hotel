@@ -18,13 +18,19 @@ public class UsuarioController extends BaseController<Usuario, UsuarioService> {
 
     public ResponseService<Usuario> login(String username, String pwd) {
         ResponseService<Usuario> response = new ResponseService<>();
-        boolean success = authService.login(username, pwd);
+        Usuario usuario = authService.login(username, pwd);
 
-        response.setSuccess(success);
-        if (!success) return response;
+        if (usuario == null) {
+            response.setSuccess(false);
+            response.setMessage("Credenciales inválidas");
+            return response;
+        }
 
-        response.setMessage("usuario logueado como: " + UsuarioThreadLocal.get().getRol());
-        response.setResult(UsuarioThreadLocal.get());
+        response.setSuccess(true);
+        response.setMessage("usuario logueado como: " + usuario.getRol());
+        response.setResult(usuario);
+//        response.setMessage("usuario logueado como: " + UsuarioThreadLocal.get().getRol());
+//        response.setResult(UsuarioThreadLocal.get());
 
         return response;
     }
@@ -34,8 +40,10 @@ public class UsuarioController extends BaseController<Usuario, UsuarioService> {
         boolean success = usuarioService.registrarUsuario(usuario);
 
         response.setSuccess(success);
-        if (!success) return response;
-        
+        if (!success) {
+            return response;
+        }
+
         response.setMessage("usuario registrado existosamente");
 
         return response;
@@ -46,6 +54,11 @@ public class UsuarioController extends BaseController<Usuario, UsuarioService> {
         boolean success = authService.logout();
 
         response.setSuccess(success);
+        if (!success) {
+            response.setMessage("Error al cerrar sesión");
+            return response;
+        }
+
         response.setMessage("usuario deslogueado");
 
         return response;
