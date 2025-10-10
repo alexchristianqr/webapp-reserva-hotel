@@ -89,16 +89,16 @@
                 <tbody>
                     <tr v-for="(r, index) in state.reservations" :key="r.id">
                         <td>{{ index + 1 }}</td>
-                        <td>{{ r.client }}</td>
-                        <td>{{ r.room }}</td>
-                        <td>{{ r.checkIn }}</td>
-                        <td>{{ r.checkOut }}</td>
+                        <td>{{ r.cliente.nombre }}</td>
+                        <td>{{ r.habitacion.descripcion }}</td>
+                        <td>{{ r.fechaEntrada }}</td>
+                        <td>{{ r.fechaSalida }}</td>
                         <td>
                             <span 
                                 class="badge" 
-                                :class="r.status === 'confirmada' ? 'bg-success' : 'bg-secondary'"
+                                :class="r.estado === 'activo' ? 'bg-success' : 'bg-secondary'"
                                 >
-                                {{ r.status }}
+                                {{ r.estado }}
                             </span>
                         </td>
                     </tr>
@@ -144,9 +144,6 @@
                     console.log({success, result, message});
 
                     if (success) {
-//                        state.user = result;
-//                        state.message = '¡Bienvenido!';
-//                        localStorage.removeItem('user');
                         window.location.href = '/webapp-reserva-hotel/login.jsp';
                     } else {
                         state.messageError = message || 'Usuario o contraseña incorrectos';
@@ -159,12 +156,9 @@
             const me = async () => {
                 state.messageError = null;
 
-//                const formData = new FormData();
-
                 try {
                     const response = await fetch('HomeServlet', {
                         method: 'GET',
-//                        body: formData
                     });
 
                     if (!response.ok) {
@@ -175,11 +169,32 @@
                     console.log({success, result, message});
 
                     if (success) {
-//                        console.log()
                         state.user = result;
-//                        state.message = '¡Bienvenido!';
-//                        localStorage.removeItem('user');
-//                        window.location.href = '/webapp-reserva-hotel/login.jsp';
+                    } else {
+                        state.messageError = message || 'Usuario o contraseña incorrectos';
+                    }
+                } catch (error) {
+                    console.error(error);
+                    state.messageError = error.message;
+                }
+            };
+            const getReservations = async () => {
+                state.messageError = null;
+
+                try {
+                    const response = await fetch('ReservaServlet?action=', {
+                        method: 'GET'
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Error de red');
+                    }
+
+                    const {success, result, message} = await response.json();
+                    console.log({success, result, message});
+
+                    if (success) {
+                        state.reservations = result;
                     } else {
                         state.messageError = message || 'Usuario o contraseña incorrectos';
                     }
@@ -199,15 +214,15 @@
             };
             onMounted(async () => {
                 // Simulación de datos: podrías reemplazar por fetch('ReservationServlet')
-                state.reservations = [
-                    {id: 1, client: 'Carlos Pérez', room: 'Suite 301', checkIn: '2025-10-08', checkOut: '2025-10-12', status: 'confirmada'},
-                    {id: 2, client: 'Lucía Gómez', room: 'Habitación Deluxe', checkIn: '2025-10-10', checkOut: '2025-10-15', status: 'pendiente'}
-                ];
+//                state.reservations = [
+//                    {id: 1, client: 'Carlos Pérez', room: 'Suite 301', checkIn: '2025-10-08', checkOut: '2025-10-12', status: 'confirmada'},
+//                    {id: 2, client: 'Lucía Gómez', room: 'Habitación Deluxe', checkIn: '2025-10-10', checkOut: '2025-10-15', status: 'pendiente'}
+//                ];
                 me();
+                getReservations();
             });
             return {
                 state,
-                me,
                 logout,
                 goToNewReservation,
                 goToReservations,

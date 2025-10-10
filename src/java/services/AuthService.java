@@ -1,10 +1,8 @@
 package services;
 
 import core.services.MysqlDBService;
-import core.utils.UsuarioThreadLocal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import models.Cliente;
 import models.Empleado;
 import models.Usuario;
 
@@ -100,7 +98,6 @@ public class AuthService extends BaseService {
                         }
 
                         usuario.setEmpleado(empleado);
-//                        success = true;
                     }
                     break;
 //                    case "cliente":
@@ -150,9 +147,6 @@ public class AuthService extends BaseService {
                 }
             }
 
-            // Actualizar nuevo usuario en sesión local
-            // UsuarioThreadLocal.set(usuario);
-            
             return usuario;
 
         } catch (SQLException ex) {
@@ -160,8 +154,6 @@ public class AuthService extends BaseService {
         } finally {
             db.cerrarConsulta();
         }
-
-//        return null;
     }
 
     public boolean logout() {

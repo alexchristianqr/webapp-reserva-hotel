@@ -1,7 +1,6 @@
 package controllers;
 
 import core.services.ResponseService;
-import core.utils.UsuarioThreadLocal;
 import models.Usuario;
 import services.AuthService;
 import services.UsuarioService;
@@ -29,8 +28,6 @@ public class UsuarioController extends BaseController<Usuario, UsuarioService> {
         response.setSuccess(true);
         response.setMessage("usuario logueado como: " + usuario.getRol());
         response.setResult(usuario);
-//        response.setMessage("usuario logueado como: " + UsuarioThreadLocal.get().getRol());
-//        response.setResult(UsuarioThreadLocal.get());
 
         return response;
     }

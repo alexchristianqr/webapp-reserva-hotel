@@ -8,8 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import core.services.ResponseService;
-//import controllers.UsuarioController;
-//import core.services.ResponseService;
 import core.servlets.BaseServlet;
 import models.Usuario;
 

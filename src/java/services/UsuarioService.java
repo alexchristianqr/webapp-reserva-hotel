@@ -15,7 +15,6 @@ public class UsuarioService extends BaseService {
         boolean success = false;
 
         try {
-
             // Validaciones de entrada
             if (usuario == null || usuario.getNombres() == null || usuario.getApellidos() == null || usuario.getRol() == null || usuario.getUsername() == null || usuario.getPassword() == null) {
                 throw new IllegalArgumentException("Datos del usuario incompletos o nulos.");

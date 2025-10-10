@@ -3,11 +3,12 @@ package models;
 public class Reserva {
 
     private int idReserva;
-    private String cliente;
+//    private String cliente;
+    private Cliente cliente;
     private int idCliente;
-    private String habitacion;
+    private Habitacion habitacion;
     private int idHabitacion;
-    private String empleado;
+    private Empleado empleado;
     private int idEmpleado;
     private String tipo;// horas|noche
     private String tiempoReservado;// 3(horas)|2(noches)
@@ -38,6 +39,16 @@ public class Reserva {
         this.fechaActualizado = reserva.getFechaActualizado();
     }
 
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+    
+    
+
     public double getCostoTotal() {
         return costoTotal;
     }
@@ -46,29 +57,49 @@ public class Reserva {
         this.costoTotal = costoTotal;
     }
 
-    public String getCliente() {
-        return cliente;
-    }
+//    public String getCliente() {
+//        return cliente;
+//    }
+//
+//    public void setCliente(String cliente) {
+//        this.cliente = cliente;
+//    }
 
-    public void setCliente(String cliente) {
-        this.cliente = cliente;
-    }
+//    public String getHabitacion() {
+//        return habitacion;
+//    }
+//
+//    public void setHabitacion(String habitacion) {
+//        this.habitacion = habitacion;
+//    }
 
-    public String getHabitacion() {
+    public Habitacion getHabitacion() {
         return habitacion;
     }
 
-    public void setHabitacion(String habitacion) {
+    public void setHabitacion(Habitacion habitacion) {
         this.habitacion = habitacion;
     }
 
-    public String getEmpleado() {
+    
+    
+    public Empleado getEmpleado() {
         return empleado;
     }
 
-    public void setEmpleado(String empleado) {
+    public void setEmpleado(Empleado empleado) {
         this.empleado = empleado;
     }
+    
+    
+
+//    public String getEmpleado() {
+//        return empleado;
+//    }
+//
+//    public void setEmpleado(String empleado) {
+//        this.empleado = empleado;
+//    }
 
     public int getIdReserva() {
         return idReserva;
