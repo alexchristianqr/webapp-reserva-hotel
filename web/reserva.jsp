@@ -1,20 +1,19 @@
 <%@include file="../includes/header.jsp" %>
 
 <header class="py-3 border-bottom mb-4">
-    <div class="d-flex align-items-center justify-content-between">
-        <a href="/webapp-reserva-hotel/home.jsp" class="btn btn-link btn-lg text-decoration-none">
-            <i class="bi bi-caret-left"></i> Regresar
-        </a>
-        <h2 class="mb-0 text-center flex-grow-1">Gestión de Reservas</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Gestión de Reservas</h2>
+
+        <div class="d-flex gap-2">
+            <a href="/webapp-reserva-hotel/home.jsp" class="btn btn-outline-secondary">
+                <i class="bi bi-caret-left"></i> Volver
+            </a>
+            <button class="btn btn-primary mr-5" @click="openModal()">Nueva Reserva</button>
+        </div>
     </div>
 </header>
 
 <main>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>Mis Reservas</h3>
-        <button class="btn btn-primary" @click="openModal()">Nueva Reserva</button>
-    </div>
-
     <!-- Tabla de reservas -->
     <table class="table table-striped align-middle">
         <thead>

@@ -2,20 +2,18 @@
 
 
 <header class="py-3 border-bottom mb-4">
-    <div class="d-flex align-items-center justify-content-between">
-        <h2 class="mb-0 text-center flex-grow-1">Home</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Bienvenido, {{ state.user?.nombres || 'Usuario' }}</h2>
+
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-danger" @click="logout">
+            <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+        </button>
+        </div>
     </div>
 </header>
 
 <main>
-    <!-- Encabezado -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3>Bienvenido, {{ state.user?.nombres || 'Usuario' }}</h3>
-        <button class="btn btn-outline-danger" @click="logout">
-            <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-        </button>
-    </div>
-
     <!-- Alerta de bienvenida -->
     <div 
         v-if="state.welcomeMessage"
@@ -207,7 +205,7 @@
                 window.location.href = 'reserva.jsp';
             };
             const goToSettings = () => {
-                window.location.href = 'settings.jsp';
+                window.location.href = 'configuracion.jsp';
             };
             onMounted(async () => {
                 // Simulación de datos: podrías reemplazar por fetch('ReservationServlet')
