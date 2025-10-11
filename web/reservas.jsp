@@ -46,7 +46,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-light">
-                    <h5 class="modal-title">{{ state.modalMode === 'create' ? 'Nueva Reserva' : 'Editar Reserva' }}</h5>
+                    <h5 class="modal-title">{{ state.modalMode === 'crear' ? 'Nueva Reserva' : 'Editar Reserva' }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -73,7 +73,7 @@
                         </div>
                         <div class="text-end">
                             <button type="submit" class="btn btn-success">
-                                {{ state.modalMode === 'create' ? 'Guardar' : 'Actualizar' }}
+                                {{ state.modalMode === 'crear' ? 'Guardar' : 'Actualizar' }}
                             </button>
                         </div>
                     </form>
@@ -97,7 +97,7 @@
                     fechaEntrada: '',
                     fechaSalida: ''
                 },
-                modalMode: 'create',
+                modalMode: 'crear',
                 messageError: null,
                 modalInstance: null
             });
@@ -109,7 +109,7 @@
                     state.modalMode = 'edit';
                     Object.assign(state.form, reserva);
                 } else {
-                    state.modalMode = 'create';
+                    state.modalMode = 'crear';
                     Object.keys(state.form).forEach(k => state.form[k] = '');
                 }
 
@@ -127,7 +127,7 @@
                     for (const key in state.form) {
                         formData.append(key, state.form[key]);
                     }
-                    formData.append('action', state.modalMode === 'create' ? 'create' : 'update');
+                    formData.append('action', state.modalMode === 'crear' ? 'crear' : 'actualizar');
 
                     const response = await fetch('ReservaServlet', {
                         method: 'POST',
@@ -139,7 +139,7 @@
                         throw new Error(message || 'Error al guardar la reserva.');
 
                     // Actualiza lista local
-                    if (state.modalMode === 'create') {
+                    if (state.modalMode === 'crear') {
                         state.reservas.push(result);
                     } else {
                         const index = state.reservas.findIndex(r => r.idReserva === state.form.idReserva);
@@ -160,10 +160,14 @@
 
                 try {
                     const formData = new FormData();
-                    formData.append('action', 'delete');
+                    formData.append('action', 'eliminar');
                     formData.append('id', idReserva);
 
-                    const response = await fetch('ReservaServlet', {method: 'POST', body: formData});
+                    const response = await fetch('ReservaServlet', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
                     const {success, message} = await response.json();
 
                     if (!success)
@@ -180,7 +184,7 @@
                 state.messageError = null;
 
                 try {
-                    const response = await fetch('ReservaServlet?action=', {
+                    const response = await fetch('ReservaServlet?action=listar', {
                         method: 'GET'
                     });
 

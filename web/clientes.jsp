@@ -137,7 +137,7 @@
             const fetchClients = async () => {
                 try {
                     console.log("1. Intentando buscar clientes...");
-                    const response = await fetch('/webapp-reserva-hotel/clientes?action=listar');
+                    const response = await fetch('/webapp-reserva-hotel/ClienteServlet?action=listar');
                     console.log("2. Respuesta del servidor recibida:", response);
                     if (!response.ok)
                         throw new Error('Error de red, estado: ' + response.status);
@@ -200,7 +200,7 @@
                 try {
                     // ### INICIO DEL CAMBIO ###
                     // 2. La URL ahora está limpia, sin parámetros.
-                    const response = await fetch('/webapp-reserva-hotel/clientes', {
+                    const response = await fetch('/webapp-reserva-hotel/ClienteServlet', {
                         method: 'POST',
                         body: formData
                     });

@@ -177,7 +177,7 @@
                 state.messageError = null;
 
                 try {
-                    const response = await fetch('ReservaServlet?action=', {
+                    const response = await fetch('ReservaServlet?action=listar', {
                         method: 'GET'
                     });
 

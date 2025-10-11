@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import models.Habitacion;
 
-@WebServlet(name = "HabitacionServlet", urlPatterns = {"/habitaciones"})
+@WebServlet(name = "HabitacionServlet", urlPatterns = {"/HabitacionServlet"})
 @MultipartConfig
 public class HabitacionServlet extends BaseServlet {
 

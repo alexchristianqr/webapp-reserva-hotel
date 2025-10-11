@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import models.Cliente;
 
 // La URL base para todas las operaciones de clientes.
-@WebServlet(name = "ClienteServlet", urlPatterns = {"/clientes"})
+@WebServlet(name = "ClienteServlet", urlPatterns = {"/ClienteServlet"})
 @MultipartConfig
 public class ClienteServlet extends BaseServlet {
 
@@ -32,13 +32,13 @@ public class ClienteServlet extends BaseServlet {
 
         // Usamos un switch para manejar las diferentes acciones.
         switch (action) {
-            case "listar":
+            case "listar" -> {
                 String buscar = "";
                 // Llama al método del controlador que ya refactorizamos.
                 responseService = clienteController.listarClientes(buscar);
-                break;
+            }
 
-            case "crear":
+            case "crear" -> {
                 // Creamos un objeto Cliente con los datos que vienen del formulario.
                 Cliente nuevoCliente = new Cliente();
                 nuevoCliente.setNombre(request.getParameter("nombre"));
@@ -51,9 +51,9 @@ public class ClienteServlet extends BaseServlet {
                 nuevoCliente.setEstado("activo"); // Estado por defecto al crear
                 
                 responseService = clienteController.crearCliente(nuevoCliente);
-                break;
+            }
 
-            case "actualizar":
+            case "actualizar" -> {
                 Cliente clienteActualizado = new Cliente();
                 // OJO: Necesitamos el ID para saber a quién actualizar.
                 clienteActualizado.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
@@ -67,14 +67,14 @@ public class ClienteServlet extends BaseServlet {
                 clienteActualizado.setEstado(request.getParameter("estado"));
 
                 responseService = clienteController.actualizarCliente(clienteActualizado);
-                break;
+            }
 
-            default:
+            default -> {
                 // Si la acción no es reconocida, devolvemos un error.
                 responseService = new ResponseService<>();
                 responseService.setSuccess(false);
                 responseService.setMessage("Acción desconocida: " + action);
-                break;
+            }
         }
 
         // Convertimos la respuesta a JSON y la enviamos al frontend.

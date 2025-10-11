@@ -10,7 +10,6 @@ import com.google.gson.Gson;
 import controllers.ReservaController;
 import core.services.ResponseService;
 import core.servlets.BaseServlet;
-import models.Usuario;
 
 @WebServlet(name = "ReservaServlet", urlPatterns = {"/ReservaServlet"})
 @MultipartConfig // Añadir esta línea para usar FormData
@@ -23,38 +22,45 @@ public class ReservaServlet extends BaseServlet {
         String action = request.getParameter("action");
 
         switch (action) {
-            case "create" -> crearReserva(request, response);
-            case "update" -> actualizarReserva(request, response);
-            case "delete" -> eliminarReserva(request, response);
-            default -> listarReservas(request, response);
+            case "crear" ->
+                crearReserva(request, response);
+            case "actualizar" ->
+                actualizarReserva(request, response);
+            case "eliminar" ->
+                eliminarReserva(request, response);
+            case "listar" ->
+                listarReservas(request, response);
+            default ->
+                defaultError(request, response);
         }
+    }
+
+    private void defaultError(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String action = request.getParameter("action");
+
+        // Si la acción no es reconocida, devolvemos un error.
+        ResponseService responseService = new ResponseService<>();
+        responseService.setSuccess(false);
+        responseService.setMessage("Acción desconocida: " + action);
+
+        // Convertimos la respuesta a JSON y la enviamos al frontend.
+        String json = new Gson().toJson(responseService);
+        response.getWriter().write(json);
     }
 
     private void listarReservas(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-//         reserva.setCliente(request.getParameter("cliente"));
-//        reserva.setHabitacion(request.getParameter("habitacion"));
-//        reserva.setFechaEntrada(request.getParameter("fechaEntrada"));
-//        reserva.setFechaSalida(request.getParameter("fechaSalida"));
-//        String buscar = request.getParameter("buscar");
-
         // Simular una lista de usuarios (o la obtienes de una DB)
         ReservaController reservaController = new ReservaController();
         ResponseService responseService = reservaController.listarReservas("");
-
-        // Guardar sesión de usuario
-//        request.getSession().setAttribute("usuario", (Usuario) responseService.getResult());
 
         // Convertir la lista a JSON
         String json = new Gson().toJson(responseService);
 
         // Enviar el JSON como respuesta
         response.getWriter().write(json);
-
-//        List<Reserva> reservas = reservaService.listar();
-//        request.setAttribute("reservas", reservas);
-//        request.getRequestDispatcher("views/reservas.jsp").forward(request, response);
     }
 
     private void crearReserva(HttpServletRequest request, HttpServletResponse response)

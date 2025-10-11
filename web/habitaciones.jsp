@@ -128,7 +128,7 @@
 
             const fetchRooms = async () => {
                 try {
-                    const response = await fetch('/webapp-reserva-hotel/habitaciones?action=listar');
+                    const response = await fetch('/webapp-reserva-hotel/HabitacionServlet?action=listar');
                     if (!response.ok)
                         throw new Error('Error al obtener habitaciones');
                     const data = await response.json();
@@ -167,7 +167,7 @@
                 }
 
                 try {
-                    const response = await fetch('/webapp-reserva-hotel/habitaciones', {
+                    const response = await fetch('/webapp-reserva-hotel/HabitacionServlet', {
                         method: 'POST',
                         body: formData
                     });
