@@ -13,7 +13,7 @@
     </div>
 </header>
 
-<main>
+<main class="flex-fill">
     <!-- Alerta de bienvenida -->
     <div 
         v-if="state.welcomeMessage"
@@ -32,7 +32,7 @@
     <!-- Acciones principales -->
     <div class="row g-4 mb-5">
         <div class="col-md-4">
-            <div class="card shadow-sm h-100 text-center p-3">
+            <div class="card h-100 text-center p-3">
                 <div class="card-body">
                     <i class="bi bi-calendar-plus display-4 text-primary"></i>
                     <h5 class="card-title mt-3">Nueva reserva</h5>
@@ -43,7 +43,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card shadow-sm h-100 text-center p-3">
+            <div class="card h-100 text-center p-3">
                 <div class="card-body">
                     <i class="bi bi-journal-check display-4 text-success"></i>
                     <h5 class="card-title mt-3">Mis reservas</h5>
@@ -54,7 +54,7 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card shadow-sm h-100 text-center p-3">
+            <div class="card h-100 text-center p-3">
                 <div class="card-body">
                     <i class="bi bi-gear display-4 text-secondary"></i>
                     <h5 class="card-title mt-3">Configuración</h5>
@@ -66,12 +66,12 @@
     </div>
 
     <!-- Últimas reservas -->
-    <div>
+    <div class="py-3">
         <h4 class="mb-3">Últimas reservas</h4>
         <div v-if="state.reservations.length === 0" class="text-muted">
             No hay reservas registradas.
         </div>
-        <table v-else class="table table-striped align-middle shadow-sm">
+        <table v-else class="table table-hover table-bordered align-middle">
             <thead class="table-light">
                 <tr>
                     <th>#</th>
@@ -199,13 +199,13 @@
                 }
             };
             const goToNewReservation = () => {
-                window.location.href = 'reserva.jsp';
+                window.location.href = 'reservas.jsp';
             };
             const goToReservations = () => {
-                window.location.href = 'reserva.jsp';
+                window.location.href = 'reservas.jsp';
             };
             const goToSettings = () => {
-                window.location.href = 'configuracion.jsp';
+                window.location.href = 'configuraciones.jsp';
             };
             onMounted(async () => {
                 // Simulación de datos: podrías reemplazar por fetch('ReservationServlet')

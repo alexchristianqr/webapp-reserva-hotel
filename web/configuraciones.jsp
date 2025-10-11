@@ -12,13 +12,13 @@
     </div>
 </header>
 
-<main>
+<main class="flex-fill">
     <p class="text-muted mb-5">
         Administra la información del sistema: habitaciones, empleados, productos, usuarios y clientes.
     </p>
 
     <!-- Tarjetas de configuración -->
-    <div class="row g-4">
+    <div class="row g-4 pb-5">
         <!-- Habitaciones -->
         <div class="col-md-4">
             <div class="card shadow-sm h-100 text-center p-3 border-0">
@@ -26,7 +26,7 @@
                     <i class="bi bi-door-closed display-4 text-primary"></i>
                     <h5 class="card-title mt-3">Habitaciones</h5>
                     <p class="text-muted">Gestiona las habitaciones disponibles en el hotel.</p>
-                    <a href="habitacion.jsp" class="btn btn-primary">Administrar</a>
+                    <a href="habitaciones.jsp" class="btn btn-primary">Administrar</a>
                 </div>
             </div>
         </div>

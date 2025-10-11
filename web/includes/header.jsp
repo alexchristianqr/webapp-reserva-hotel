@@ -18,5 +18,5 @@
             }
         </style>
     </head>
-    <body id="app" class="container py-5">
+    <body id="app" class="container pt-4 d-flex flex-column min-vh-100">
 

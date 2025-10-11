@@ -1,52 +1,49 @@
 <%@include file="../includes/header.jsp" %>
 
-<header class="d-flex justify-content-between align-items-center mb-4">
-    <div class="d-flex align-items-center">
-        <a href="home.jsp" class="btn btn-outline-secondary me-3">
-            <i class="bi bi-arrow-left"></i> Volver
-        </a>
-        <h1><i class="bi bi-people-fill"></i> Gestión de Clientes</h1>
-    </div>
-    <button class="btn btn-primary" @click="openCreateModal">
-        <i class="bi bi-plus-circle"></i> Agregar Nuevo Cliente
-    </button>
-</header>
-<main>
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>Nombres</th>
-                        <th>Apellidos</th>
-                        <th>Nro. Documento</th>
-                        <th>Teléfono</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-if="state.clients.length === 0">
-                        <td colspan="7" class="text-center text-muted">No hay clientes registrados.</td>
-                    </tr>
-                    <tr v-for="(client, index) in state.clients" :key="client.idCliente">
-                        <td>{{ index + 1 }}</td>
-                        <td>{{ client.nombre }}</td>
-                        <td>{{ client.apellidos }}</td>
-                        <td>{{ client.nroDocumento }}</td>
-                        <td>{{ client.telefono }}</td>
-                        <td><span class="badge" :class="client.estado === 'activo' ? 'bg-success' : 'bg-secondary'">{{ client.estado }}</span></td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-primary me-2" @click="openEditModal(client)">
-                                <i class="bi bi-pencil-square"></i> Editar
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+<header class="py-3 border-bottom mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Gestión de Clientes</h2>
+        <div class="d-flex gap-2">
+            <a href="/webapp-reserva-hotel/configuraciones.jsp" class="btn btn-outline-secondary">
+                <i class="bi bi-caret-left"></i> Volver
+            </a>
+            <button class="btn btn-primary mr-5" @click="openCreateModal()">Nuevo Cliente</button>
         </div>
     </div>
+</header>
+
+<main class="flex-fill">
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th>Nro. Documento</th>
+                <th>Teléfono</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-if="state.clients.length === 0">
+                <td colspan="7" class="text-center text-muted">No hay clientes registrados.</td>
+            </tr>
+            <tr v-for="(client, index) in state.clients" :key="client.idCliente">
+                <td>{{ index + 1 }}</td>
+                <td>{{ client.nombre }}</td>
+                <td>{{ client.apellidos }}</td>
+                <td>{{ client.nroDocumento }}</td>
+                <td>{{ client.telefono }}</td>
+                <td><span class="badge" :class="client.estado === 'activo' ? 'bg-success' : 'bg-secondary'">{{ client.estado }}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-primary me-2" title="Editar" @click="openEditModal(client)">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
     <div class="modal fade" id="clientModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -56,7 +53,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                
+
                     <div v-if="state.messageSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
                         {{ state.messageSuccess }}
                         <button type="button" class="btn-close" @click="state.messageSuccess = null" aria-label="Close"></button>
@@ -118,13 +115,13 @@
 </main>
 
 <script>
-    const { createApp, reactive, onMounted, ref } = Vue;
+    const {createApp, reactive, onMounted, ref} = Vue;
 
     createApp({
         setup() {
             const state = reactive({
                 clients: [],
-                clientInForm: { tipoDocumento: 1, sexo: 'Masculino' },
+                clientInForm: {tipoDocumento: 1, sexo: 'Masculino'},
                 isEditing: false,
                 messageError: null,
                 messageSuccess: null,
@@ -142,12 +139,13 @@
                     console.log("1. Intentando buscar clientes...");
                     const response = await fetch('/webapp-reserva-hotel/clientes?action=listar');
                     console.log("2. Respuesta del servidor recibida:", response);
-                    if (!response.ok) throw new Error('Error de red, estado: ' + response.status);
-                    
+                    if (!response.ok)
+                        throw new Error('Error de red, estado: ' + response.status);
+
                     const data = await response.json();
                     console.log("3. Datos convertidos a JSON:", data);
 
-                    if(data.success) {
+                    if (data.success) {
                         console.log("4. Asignando resultado a la lista:", data.result);
                         state.clients = data.result;
                     } else {
@@ -158,10 +156,10 @@
                     state.messageError = 'Error de conexión: ' + error.message;
                 }
             };
-            
+
             const openCreateModal = () => {
                 state.isEditing = false;
-                state.clientInForm = { tipoDocumento: 1, sexo: 'M' };
+                state.clientInForm = {tipoDocumento: 1, sexo: 'M'};
 
                 // ### LÍNEAS AÑADIDAS ###
                 // Limpia los mensajes de error o éxito antes de mostrar el modal.
@@ -174,7 +172,7 @@
 
             const openEditModal = (client) => {
                 state.isEditing = true;
-                state.clientInForm = { ...client };
+                state.clientInForm = {...client};
 
                 // ### LÍNEAS AÑADIDAS ###
                 // Limpia los mensajes de error o éxito antes de mostrar el modal.
@@ -195,7 +193,7 @@
                 // ### FIN DEL CAMBIO ###
 
                 // Añadimos el resto de los datos del formulario al FormData.
-                for(const key in state.clientInForm) {
+                for (const key in state.clientInForm) {
                     formData.append(key, state.clientInForm[key]);
                 }
 
@@ -208,18 +206,19 @@
                     });
                     // ### FIN DEL CAMBIO ###
 
-                    if (!response.ok) throw new Error('Error de red al guardar');
+                    if (!response.ok)
+                        throw new Error('Error de red al guardar');
 
                     const data = await response.json();
-                    if(data.success) {
+                    if (data.success) {
                         state.messageSuccess = data.message;
                         //clientModal.value.hide();
                         fetchClients();
-                        
+
                         if (!state.isEditing) {
                             clientModal.value.hide();
                         }
-                        
+
                     } else {
                         // Ahora veremos el error específico del backend si algo falla
                         throw new Error(data.message || "Error desconocido en el servidor");

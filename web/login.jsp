@@ -1,14 +1,13 @@
 <%@include file="../includes/header.jsp" %>
 
-<header class="py-3 mb-4">
-    <div class="row">
-        <div class="col-6 offset-3">
-            <h2>Login</h2>
-        </div>
+<header class="py-4 mb-4 text-center">
+    <i class="bi bi-building text-primary" style="font-size: 5rem;"></i>
+    <div class="d-flex justify-content-center align-items-center gap-2">
+        <h2 class="mb-0">Hotel Reservas</h2>
     </div>
 </header>
 
-<main>
+<main class="flex-fill">
     <div class="py-3">
         <div class="row">
             <div class="col-6 offset-3">

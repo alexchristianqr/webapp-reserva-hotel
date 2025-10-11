@@ -13,7 +13,7 @@
     </div>
 </header>
 
-<main>
+<main class="flex-fill">
     <!-- Tabla de reservas -->
     <table class="table table-striped align-middle">
         <thead>
