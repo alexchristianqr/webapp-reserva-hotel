@@ -12,73 +12,67 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import models.Cliente;
 
-// La URL base para todas las operaciones de clientes.
 @WebServlet(name = "ClienteServlet", urlPatterns = {"/ClienteServlet"})
 @MultipartConfig
 public class ClienteServlet extends BaseServlet {
+
+    private final ClienteController clienteController = new ClienteController();
 
     @Override
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Leemos el parámetro "action" para saber qué hacer.
         String action = request.getParameter("action");
         if (action == null) {
-            action = "listar"; // Si no se especifica, la acción por defecto es listar.
+            action = "listar";
         }
 
-        ClienteController clienteController = new ClienteController();
-        ResponseService responseService; // Usamos tu clase de respuesta estándar.
+        ResponseService<?> responseService;
 
-        // Usamos un switch para manejar las diferentes acciones.
         switch (action) {
-            case "listar" -> {
-                String buscar = "";
-                // Llama al método del controlador que ya refactorizamos.
-                responseService = clienteController.listarClientes(buscar);
-            }
-
-            case "crear" -> {
-                // Creamos un objeto Cliente con los datos que vienen del formulario.
-                Cliente nuevoCliente = new Cliente();
-                nuevoCliente.setNombre(request.getParameter("nombre"));
-                nuevoCliente.setApellidos(request.getParameter("apellidos"));
-                nuevoCliente.setNroDocumento(request.getParameter("nroDocumento"));
-                nuevoCliente.setTipoDocumento(Integer.parseInt(request.getParameter("tipoDocumento")));
-                nuevoCliente.setEdad(request.getParameter("edad"));
-                nuevoCliente.setSexo(request.getParameter("sexo"));
-                nuevoCliente.setTelefono(request.getParameter("telefono"));
-                nuevoCliente.setEstado("activo"); // Estado por defecto al crear
-                
-                responseService = clienteController.crearCliente(nuevoCliente);
-            }
-
-            case "actualizar" -> {
-                Cliente clienteActualizado = new Cliente();
-                // OJO: Necesitamos el ID para saber a quién actualizar.
-                clienteActualizado.setIdCliente(Integer.parseInt(request.getParameter("idCliente")));
-                clienteActualizado.setNombre(request.getParameter("nombre"));
-                clienteActualizado.setApellidos(request.getParameter("apellidos"));
-                clienteActualizado.setNroDocumento(request.getParameter("nroDocumento"));
-                clienteActualizado.setTipoDocumento(Integer.parseInt(request.getParameter("tipoDocumento")));
-                clienteActualizado.setEdad(request.getParameter("edad"));
-                clienteActualizado.setSexo(request.getParameter("sexo"));
-                clienteActualizado.setTelefono(request.getParameter("telefono"));
-                clienteActualizado.setEstado(request.getParameter("estado"));
-
-                responseService = clienteController.actualizarCliente(clienteActualizado);
-            }
-
-            default -> {
-                // Si la acción no es reconocida, devolvemos un error.
-                responseService = new ResponseService<>();
-                responseService.setSuccess(false);
-                responseService.setMessage("Acción desconocida: " + action);
-            }
+            case "listar" ->
+                responseService = listarClientes(request);
+            case "crear" ->
+                responseService = crearCliente(request);
+            case "actualizar" ->
+                responseService = actualizarCliente(request);
+            default ->
+                responseService = defaultError(action);
         }
 
-        // Convertimos la respuesta a JSON y la enviamos al frontend.
         String json = new Gson().toJson(responseService);
         response.getWriter().write(json);
+    }
+
+    private ResponseService<?> listarClientes(HttpServletRequest request) {
+        String buscar = request.getParameter("buscar") != null ? request.getParameter("buscar") : "";
+        return clienteController.listarClientes(buscar);
+    }
+
+    private ResponseService<?> crearCliente(HttpServletRequest request) {
+        Cliente cliente = new Cliente();
+        cliente.setNombre(request.getParameter("nombre"));
+        cliente.setApellidos(request.getParameter("apellidos"));
+        cliente.setNroDocumento(request.getParameter("nroDocumento"));
+        cliente.setTipoDocumento(parseIntSafe(request.getParameter("tipoDocumento")));
+        cliente.setEdad(request.getParameter("edad"));
+        cliente.setSexo(request.getParameter("sexo"));
+        cliente.setTelefono(request.getParameter("telefono"));
+        cliente.setEstado("activo"); // Valor por defecto
+        return clienteController.crearCliente(cliente);
+    }
+
+    private ResponseService<?> actualizarCliente(HttpServletRequest request) {
+        Cliente cliente = new Cliente();
+        cliente.setIdCliente(parseIntSafe(request.getParameter("idCliente")));
+        cliente.setNombre(request.getParameter("nombre"));
+        cliente.setApellidos(request.getParameter("apellidos"));
+        cliente.setNroDocumento(request.getParameter("nroDocumento"));
+        cliente.setTipoDocumento(parseIntSafe(request.getParameter("tipoDocumento")));
+        cliente.setEdad(request.getParameter("edad"));
+        cliente.setSexo(request.getParameter("sexo"));
+        cliente.setTelefono(request.getParameter("telefono"));
+        cliente.setEstado(request.getParameter("estado"));
+        return clienteController.actualizarCliente(cliente);
     }
 }

@@ -6,7 +6,6 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.google.gson.Gson;
 import core.services.ResponseService;
 import core.servlets.BaseServlet;
 
@@ -21,11 +20,10 @@ public class HomeServlet extends BaseServlet {
         ResponseService responseService = new ResponseService();
         responseService.setSuccess(true);
         responseService.setMessage("Usuario en sesion");
-        
+
         // Obtener sesión de usuario
         responseService.setResult(getUsuarioAutenticado(request));
 
-        String json = new Gson().toJson(responseService);
-        response.getWriter().write(json);
+        sendJsonResponse(response, responseService);
     }
 }

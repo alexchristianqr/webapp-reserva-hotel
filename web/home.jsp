@@ -7,8 +7,8 @@
 
         <div class="d-flex gap-2">
             <button class="btn btn-outline-danger" @click="logout">
-            <i class="bi bi-box-arrow-right"></i> Cerrar sesión
-        </button>
+                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+            </button>
         </div>
     </div>
 </header>
@@ -105,11 +105,10 @@
 
 <script>
     const {createApp, ref, onMounted, reactive} = Vue;
+    const redirectLogin = '/webapp-reserva-hotel/login.jsp';
+
     createApp({
         setup() {
-//            const user = ref(JSON.parse(localStorage.getItem('user')) || {name: 'Invitado'});
-
-            // Un solo objeto reactivo para todo el estado
             const state = reactive({
                 username: '',
                 password: '',
@@ -133,6 +132,10 @@
                     });
 
                     if (!response.ok) {
+                        if (response.status === 401) {
+                            window.location.href = redirectLogin;
+                            return;
+                        }
                         throw new Error('Error de red');
                     }
 
@@ -140,7 +143,7 @@
                     console.log({success, result, message});
 
                     if (success) {
-                        window.location.href = '/webapp-reserva-hotel/login.jsp';
+                        window.location.href = redirectLogin;
                     } else {
                         state.messageError = message || 'Usuario o contraseña incorrectos';
                     }
@@ -158,6 +161,10 @@
                     });
 
                     if (!response.ok) {
+                         if (response.status === 401) {
+                            window.location.href = redirectLogin;
+                            return;
+                        }
                         throw new Error('Error de red');
                     }
 
@@ -183,6 +190,10 @@
                     });
 
                     if (!response.ok) {
+                         if (response.status === 401) {
+                            window.location.href = redirectLogin;
+                            return;
+                        }
                         throw new Error('Error de red');
                     }
 
@@ -208,15 +219,12 @@
             const goToSettings = () => {
                 window.location.href = 'configuraciones.jsp';
             };
+
             onMounted(async () => {
-                // Simulación de datos: podrías reemplazar por fetch('ReservationServlet')
-//                state.reservations = [
-//                    {id: 1, client: 'Carlos Pérez', room: 'Suite 301', checkIn: '2025-10-08', checkOut: '2025-10-12', status: 'confirmada'},
-//                    {id: 2, client: 'Lucía Gómez', room: 'Habitación Deluxe', checkIn: '2025-10-10', checkOut: '2025-10-15', status: 'pendiente'}
-//                ];
                 me();
                 getReservations();
             });
+
             return {
                 state,
                 logout,

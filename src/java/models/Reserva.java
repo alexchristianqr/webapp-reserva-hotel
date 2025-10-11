@@ -3,7 +3,6 @@ package models;
 public class Reserva {
 
     private int idReserva;
-//    private String cliente;
     private Cliente cliente;
     private int idCliente;
     private Habitacion habitacion;

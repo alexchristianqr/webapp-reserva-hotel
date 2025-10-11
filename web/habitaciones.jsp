@@ -108,6 +108,7 @@
 
 <script>
     const {createApp, reactive, onMounted, ref} = Vue;
+    const redirectLogin = '/webapp-reserva-hotel/login.jsp';
 
     createApp({
         setup() {
@@ -129,8 +130,15 @@
             const fetchRooms = async () => {
                 try {
                     const response = await fetch('/webapp-reserva-hotel/HabitacionServlet?action=listar');
-                    if (!response.ok)
+
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            window.location.href = redirectLogin;
+                            return;
+                        }
                         throw new Error('Error al obtener habitaciones');
+                    }
+
                     const data = await response.json();
                     if (data.success) {
                         state.rooms = data.result;
@@ -172,8 +180,14 @@
                         body: formData
                     });
 
-                    if (!response.ok)
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            window.location.href = redirectLogin;
+                            return;
+                        }
                         throw new Error('Error al guardar la habitación');
+                    }
+
                     const data = await response.json();
 
                     if (data.success) {

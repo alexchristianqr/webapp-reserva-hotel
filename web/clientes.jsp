@@ -116,6 +116,7 @@
 
 <script>
     const {createApp, reactive, onMounted, ref} = Vue;
+    const redirectLogin = '/webapp-reserva-hotel/login.jsp';
 
     createApp({
         setup() {
@@ -136,17 +137,19 @@
 
             const fetchClients = async () => {
                 try {
-                    console.log("1. Intentando buscar clientes...");
                     const response = await fetch('/webapp-reserva-hotel/ClienteServlet?action=listar');
-                    console.log("2. Respuesta del servidor recibida:", response);
-                    if (!response.ok)
+                    
+                    if (!response.ok){
+                         if (response.status === 401) {
+                            window.location.href = redirectLogin;
+                            return;
+                        }
                         throw new Error('Error de red, estado: ' + response.status);
+                    }
 
                     const data = await response.json();
-                    console.log("3. Datos convertidos a JSON:", data);
 
                     if (data.success) {
-                        console.log("4. Asignando resultado a la lista:", data.result);
                         state.clients = data.result;
                     } else {
                         throw new Error(data.message);
@@ -206,8 +209,13 @@
                     });
                     // ### FIN DEL CAMBIO ###
 
-                    if (!response.ok)
+                    if (!response.ok){
+                         if (response.status === 401) {
+                            window.location.href = redirectLogin;
+                            return;
+                        }
                         throw new Error('Error de red al guardar');
+                    }
 
                     const data = await response.json();
                     if (data.success) {

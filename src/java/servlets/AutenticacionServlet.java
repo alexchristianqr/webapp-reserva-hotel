@@ -6,67 +6,63 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.google.gson.Gson;
 import controllers.UsuarioController;
 import core.services.ResponseService;
 import core.servlets.BaseServlet;
+import jakarta.servlet.http.HttpSession;
 import models.Usuario;
 
 @WebServlet(name = "AutenticacionServlet", urlPatterns = {"/AutenticacionServlet"})
-@MultipartConfig // Añadir esta línea para usar FormData
+@MultipartConfig
 public class AutenticacionServlet extends BaseServlet {
+
+    private final UsuarioController usuarioController = new UsuarioController();
 
     @Override
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
+        if (action == null) {
+            action = "login";
+        }
+        
+        ResponseService<?> responseService;
 
         switch (action) {
             case "login" ->
-                login(request, response);
+                responseService = handleLogin(request);
             case "logout" ->
-                logout(request, response);
+                responseService = handleLogout(request);
             default ->
-                defaultError(request, response);
+                responseService = defaultError(action);
         }
+
+        sendJsonResponse(response, responseService);
     }
 
-    private void defaultError(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        String action = request.getParameter("action");
-
-        ResponseService responseService = new ResponseService<>();
-        responseService.setSuccess(false);
-        responseService.setMessage("Acción desconocida: " + action);
-
-        String json = new Gson().toJson(responseService);
-        response.getWriter().write(json);
-    }
-
-    private void login(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
+    private ResponseService<?> handleLogin(HttpServletRequest request) {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        UsuarioController usuarioController = new UsuarioController();
-        ResponseService responseService = usuarioController.login(username, password);
+        ResponseService<?> responseService = usuarioController.login(username, password);
 
-        // Guardar sesión de usuario
-        request.getSession().setAttribute("usuario", (Usuario) responseService.getResult());
+        // Si el login es exitoso, guardar usuario en sesión
+        if (responseService.isSuccess() && responseService.getResult() instanceof Usuario usuario) {
+            request.getSession().setAttribute("usuario", responseService.getResult());
+//            usuarioAutenticado = usuario;
+        }
 
-        String json = new Gson().toJson(responseService);
-        response.getWriter().write(json);
+        return responseService;
     }
 
-    private void logout(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private ResponseService<?> handleLogout(HttpServletRequest request) {
+        // Invalidar sesión activa
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
 
-        UsuarioController usuarioController = new UsuarioController();
-        ResponseService responseService = usuarioController.logout();
-
-        String json = new Gson().toJson(responseService);
-        response.getWriter().write(json);
+        return usuarioController.logout();
     }
 }

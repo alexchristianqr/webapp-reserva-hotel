@@ -16,60 +16,54 @@ import models.Habitacion;
 @MultipartConfig
 public class HabitacionServlet extends BaseServlet {
 
+    private final HabitacionController habitacionController = new HabitacionController();
+
     @Override
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Acción solicitada desde el JSP
         String action = request.getParameter("action");
         if (action == null) {
             action = "listar";
         }
 
-        HabitacionController habitacionController = new HabitacionController();
-        ResponseService responseService;
+        ResponseService<?> responseService;
 
         switch (action) {
-            case "listar":
-                // Retorna la lista de habitaciones
-                String buscar = "";
-                responseService = habitacionController.listarHabitaciones(buscar);
-                break;
-
-            case "crear":
-                // Crear una nueva habitación
-                Habitacion nuevaHabitacion = new Habitacion();
-                nuevaHabitacion.setIdTipoHabitacion(1);
-                nuevaHabitacion.setNumeroPiso(request.getParameter("numero"));
-                nuevaHabitacion.setPrecio(Double.parseDouble(request.getParameter("precio")));
-                nuevaHabitacion.setEstado(request.getParameter("estado"));
-
-                responseService = habitacionController.crearHabitacion(nuevaHabitacion);
-                break;
-
-            case "actualizar":
-                // Actualizar una habitación existente
-                Habitacion habitacionActualizada = new Habitacion();
-                habitacionActualizada.setIdHabitacion(Integer.parseInt(request.getParameter("idHabitacion")));
-                habitacionActualizada.setIdHabitacion(1);
-                habitacionActualizada.setNumeroPiso(request.getParameter("numero"));
-                habitacionActualizada.setPrecio(Double.parseDouble(request.getParameter("precio")));
-                habitacionActualizada.setEstado(request.getParameter("estado"));
-
-                responseService = habitacionController.actualizarHabitacion(habitacionActualizada);
-                break;
-
-            default:
-                // Acción no reconocida
-                responseService = new ResponseService<>();
-                responseService.setSuccess(false);
-                responseService.setMessage("Acción desconocida: " + action);
-                break;
+            case "listar" ->
+                responseService = listarHabitaciones(request);
+            case "crear" ->
+                responseService = crearHabitacion(request);
+            case "actualizar" ->
+                responseService = actualizarHabitacion(request);
+            default ->
+                responseService = defaultError(action);
         }
 
-        // Convertir la respuesta a JSON
-        String json = new Gson().toJson(responseService);
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write(json);
+        sendJsonResponse(response, responseService);
+    }
+
+    private ResponseService<?> listarHabitaciones(HttpServletRequest request) {
+        String buscar = request.getParameter("buscar") != null ? request.getParameter("buscar") : "";
+        return habitacionController.listarHabitaciones(buscar);
+    }
+
+    private ResponseService<?> crearHabitacion(HttpServletRequest request) {
+        Habitacion habitacion = new Habitacion();
+        habitacion.setIdTipoHabitacion(parseIntSafe(request.getParameter("idTipoHabitacion"))); // valor por defecto 1
+        habitacion.setNumeroPiso(request.getParameter("numero"));
+        habitacion.setPrecio(parseDoubleSafe(request.getParameter("precio")));
+        habitacion.setEstado(request.getParameter("estado"));
+        return habitacionController.crearHabitacion(habitacion);
+    }
+
+    private ResponseService<?> actualizarHabitacion(HttpServletRequest request) {
+        Habitacion habitacion = new Habitacion();
+        habitacion.setIdHabitacion(parseIntSafe(request.getParameter("idHabitacion")));
+        habitacion.setIdTipoHabitacion(parseIntSafe(request.getParameter("idTipoHabitacion")));
+        habitacion.setNumeroPiso(request.getParameter("numero"));
+        habitacion.setPrecio(parseDoubleSafe(request.getParameter("precio")));
+        habitacion.setEstado(request.getParameter("estado"));
+        return habitacionController.actualizarHabitacion(habitacion);
     }
 }

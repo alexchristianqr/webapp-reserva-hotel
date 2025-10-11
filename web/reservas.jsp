@@ -85,6 +85,7 @@
 
 <script>
     const {createApp, reactive, onMounted} = Vue;
+    const redirectLogin = '/webapp-reserva-hotel/login.jsp';
 
     createApp({
         setup() {
@@ -133,6 +134,14 @@
                         method: 'POST',
                         body: formData
                     });
+                    
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            window.location.href = redirectLogin;
+                            return;
+                        }
+                        throw new Error('Error de red');
+                    }
 
                     const {success, message, result} = await response.json();
                     if (!success)
@@ -168,6 +177,14 @@
                         body: formData
                     });
                     
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            window.location.href = redirectLogin;
+                            return;
+                        }
+                        throw new Error('Error de red');
+                    }
+
                     const {success, message} = await response.json();
 
                     if (!success)
@@ -189,6 +206,10 @@
                     });
 
                     if (!response.ok) {
+                        if (response.status === 401) {
+                            window.location.href = redirectLogin;
+                            return;
+                        }
                         throw new Error('Error de red');
                     }
 

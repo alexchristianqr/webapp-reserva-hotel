@@ -73,7 +73,7 @@
                 password: '',
                 user: {},
                 message: '',
-                messageError: null,
+                messageError: null
             });
 
             const login = async () => {
@@ -90,10 +90,11 @@
                         body: formData
                     });
 
-                    if (!response.ok)
+                    if (!response.ok) {
                         throw new Error('Error de red');
+                    }
 
-                    const {success, result, message} = await response.json();
+                    const {success, result, message, code, redirectUrl} = await response.json();
                     console.log({success, result, message});
 
                     if (success) {
