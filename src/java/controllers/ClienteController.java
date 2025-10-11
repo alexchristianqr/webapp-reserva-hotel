@@ -1,7 +1,8 @@
 package controllers;
 
+import core.services.ResponseService;
+import java.util.List;
 import services.ClienteService;
-import javax.swing.table.DefaultTableModel;
 import models.Cliente;
 
 public class ClienteController extends BaseController<Cliente, ClienteService> {
@@ -11,20 +12,52 @@ public class ClienteController extends BaseController<Cliente, ClienteService> {
         service = new ClienteService();
     }
 
-    public DefaultTableModel listarClientes(String buscar) {
-        DefaultTableModel modelo;
-        String[] columnNames = {"Código", "Nombres", "Apellidos", "Tipo Doc.", "Nro Doc.", "Edad", "Sexo", "Telefono", "Estado", "Fecha creado", "Fecha actualizado"};
-        Object[] data = new Object[columnNames.length];
-        modelo = new DefaultTableModel(null, columnNames);
-        modelo = service.listarClientes(modelo, data);
-        return modelo;
+    public ResponseService<List<Cliente>> listarClientes(String buscar) {
+        ResponseService<List<Cliente>> response = new ResponseService<>();
+        List<Cliente> clientes = service.listarClientes();
+
+        if (clientes.isEmpty()) {
+            response.setSuccess(false);
+            response.setMessage("No hay nada que listar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Listado con éxito");
+            response.setResult(clientes);
+        }
+
+        return response;
     }
 
-    public void crearCliente(Cliente cliente) {
-        service.crearCliente(cliente);
+    public ResponseService<Boolean> crearCliente(Cliente cliente) {
+        ResponseService<Boolean> response = new ResponseService<>();
+        Boolean result = service.crearCliente(cliente);
+
+        if (!result) {
+            response.setSuccess(false);
+            response.setMessage("No hay nada que listar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Listado con éxito");
+            response.setResult(result);
+        }
+
+        return response;
     }
 
-    public void actualizarCliente(Cliente cliente) {
+    public ResponseService<Boolean> actualizarCliente(Cliente cliente) {
         service.actualizarCliente(cliente);
+        ResponseService<Boolean> response = new ResponseService<>();
+        Boolean result = service.actualizarCliente(cliente);
+
+        if (!result) {
+            response.setSuccess(false);
+            response.setMessage("No hay nada que listar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Listado con éxito");
+            response.setResult(result);
+        }
+
+        return response;
     }
 }

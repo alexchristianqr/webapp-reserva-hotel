@@ -33,8 +33,9 @@ public class ClienteServlet extends BaseServlet {
         // Usamos un switch para manejar las diferentes acciones.
         switch (action) {
             case "listar":
+                String buscar = "";
                 // Llama al método del controlador que ya refactorizamos.
-                responseService = clienteController.listarClientes();
+                responseService = clienteController.listarClientes(buscar);
                 break;
 
             case "crear":
