@@ -3,9 +3,9 @@ package services;
 import core.services.MysqlDBService;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
+import java.util.List;
 import models.Habitacion;
-import services.BaseService;
 
 public class HabitacionService extends BaseService {
 
@@ -13,30 +13,36 @@ public class HabitacionService extends BaseService {
         db = new MysqlDBService();
     }
 
-    public DefaultTableModel listarHabitaciones(DefaultTableModel modelo, Object[] data) {
+    public List<Habitacion> listarHabitaciones() {
+        List<Habitacion> habitaciones = new ArrayList<>();
+
         querySQL_1 = "SELECT id,descripcion,id_tipohabitacion,nivel,numero_piso,precio,cantidad_camas,fecha_creado,fecha_actualizado FROM habitaciones";
         Object[] parametrosSQL_1 = {};
         ResultSet rs = db.queryConsultar(querySQL_1, parametrosSQL_1);
 
         try {
             while (rs.next()) {
-                data[0] = rs.getInt("id");
-                data[1] = rs.getString("descripcion");
-                data[2] = rs.getString("id_tipohabitacion");
-                data[3] = rs.getInt("nivel");
-                data[4] = rs.getString("numero_piso");
-                data[5] = rs.getInt("precio");
-                data[6] = rs.getInt("cantidad_camas");
-                data[7] = rs.getString("fecha_creado");
-                data[8] = rs.getString("fecha_actualizado");
-                modelo.addRow(data);
+                Habitacion habitacion = new Habitacion();
+
+                habitacion.setIdHabitacion(rs.getInt("id"));
+                habitacion.setDescripcion(rs.getString("descripcion"));
+                habitacion.setIdTipoHabitacion(rs.getInt("id_tipohabitacion"));
+                habitacion.setNivel(rs.getString("nivel"));
+                habitacion.setNumeroPiso(rs.getString("numero_piso"));
+                habitacion.setPrecio(rs.getFloat("precio")); // BigDecimal para valores monetarios
+                habitacion.setCantidadCamas(rs.getInt("cantidad_camas"));
+                habitacion.setFechaCreado(rs.getString("fecha_creado"));
+                habitacion.setFechaActualizado(rs.getString("fecha_actualizado"));
+
+                habitaciones.add(habitacion);
             }
+
+            return habitaciones;
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
+        } finally {
+            db.cerrarConsulta();
         }
-
-        db.cerrarConsulta();
-        return modelo;
     }
 
     public void crearHabitacion(Habitacion habitacion) {

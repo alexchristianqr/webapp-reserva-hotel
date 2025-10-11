@@ -9,7 +9,5 @@ public class Main {
 
     public static void main(String[] args) throws PropertyVetoException {
         System.out.println("Desarrollado por: Alex Quispe");
-        UsuarioController usuarioController = new UsuarioController();
-        System.out.println(usuarioController.logout());
     }
 }

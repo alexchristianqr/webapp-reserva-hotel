@@ -14,13 +14,16 @@ public class ReservaController extends BaseController<Reserva, ReservaService> {
 
     public ResponseService<List<Reserva>> listarReservas(String buscar) {
         ResponseService<List<Reserva>> response = new ResponseService<>();
-        String[] columnNames = {"Código", "Cliente", "Empleado", "Tipo Habitación", "Habitación", "Tipo Reserva", "Tiempo Reservado", "Total", "Estado", "Fecha reserva", "Fecha entrada", "Fecha salida", "Fecha creado", "Fecha actualizado"};
-        Object[] data = new Object[columnNames.length];
-        List<Reserva> reservas = service.listarReservas(data);
+        List<Reserva> reservas = service.listarReservas();
 
-        response.setSuccess(true);
-        response.setMessage("Listar reservas");
-        response.setResult(reservas);
+        if (reservas.isEmpty()) {
+            response.setSuccess(false);
+            response.setMessage("No hay nada que listar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Listado con éxito");
+            response.setResult(reservas);
+        }
 
         return response;
     }

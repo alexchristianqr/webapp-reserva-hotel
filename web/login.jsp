@@ -1,9 +1,9 @@
 <%@include file="../includes/header.jsp" %>
 
-<header>
+<header class="py-3 mb-4">
     <div class="row">
         <div class="col-6 offset-3">
-            <h1>Login</h1>
+            <h2>Login</h2>
         </div>
     </div>
 </header>

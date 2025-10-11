@@ -16,7 +16,7 @@ public class ReservaService extends BaseService {
         db = new MysqlDBService();
     }
 
-    public List<Reserva> listarReservas(Object[] data) {
+    public List<Reserva> listarReservas() {
 
         List<Reserva> reservas = new ArrayList<>();
 

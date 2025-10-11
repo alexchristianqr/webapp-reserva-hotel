@@ -1,6 +1,7 @@
 package controllers;
 
-import javax.swing.table.DefaultTableModel;
+import core.services.ResponseService;
+import java.util.List;
 import models.Habitacion;
 import services.HabitacionService;
 
@@ -11,13 +12,20 @@ public class HabitacionController extends BaseController<Habitacion, HabitacionS
         service = new HabitacionService();
     }
 
-    public DefaultTableModel listarHabitaciones(String buscar) {
-        DefaultTableModel modelo;
-        String[] columnNames = {"Código", "Descripción", "Tipo", "Nivel", "Numero", "Precio", "Cantidad camas", "Estado", "Fecha creado", "Fecha actualizado"};
-        Object[] data = new Object[columnNames.length];
-        modelo = new DefaultTableModel(null, columnNames);
-        modelo = service.listarHabitaciones(modelo, data);
-        return modelo;
+    public ResponseService<List<Habitacion>> listarHabitaciones(String buscar) {
+        ResponseService<List<Habitacion>> response = new ResponseService<>();
+        List<Habitacion> habitaciones = service.listarHabitaciones();
+
+        if (habitaciones.isEmpty()) {
+            response.setSuccess(false);
+            response.setMessage("No hay nada que listar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Listado con éxito");
+            response.setResult(habitaciones);
+        }
+
+        return response;
     }
 
     public void crearHabitacion(Habitacion habitacion) {

@@ -1,6 +1,7 @@
 package controllers;
 
-import javax.swing.table.DefaultTableModel;
+import core.services.ResponseService;
+import java.util.List;
 import models.Empleado;
 import services.EmpleadoService;
 
@@ -11,13 +12,20 @@ public class EmpleadoController extends BaseController<Empleado, EmpleadoService
         service = new EmpleadoService();
     }
 
-    public DefaultTableModel listarEmpleados(String buscar) {
-        DefaultTableModel modelo;
-        String[] columnNames = {"Código", "Nombres", "Apellidos", "Tipo Doc.", "Nro Doc.", "Sueldo", "Perfil", "Edad", "Sexo", "Telefono", "Estado", "Fecha creado", "Fecha actualizado"};
-        Object[] data = new Object[columnNames.length];
-        modelo = new DefaultTableModel(null, columnNames);
-        modelo = service.listarEmpleados(modelo, data);
-        return modelo;
+    public ResponseService<List<Empleado>> listarEmpleados(String buscar) {
+        ResponseService<List<Empleado>> response = new ResponseService<>();
+        List<Empleado> empleados = service.listarEmpleados();
+
+        if (empleados.isEmpty()) {
+            response.setSuccess(false);
+            response.setMessage("No hay nada que listar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Listado con éxito");
+            response.setResult(empleados);
+        }
+
+        return response;
     }
 
     public void crearEmpleado(Empleado empleado) {

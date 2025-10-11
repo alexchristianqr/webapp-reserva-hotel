@@ -3,42 +3,51 @@ package services;
 import core.services.MysqlDBService;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
+import java.util.List;
 import models.Empleado;
 
 public class EmpleadoService extends BaseService {
+
     public EmpleadoService() {
         db = new MysqlDBService();
     }
 
-    public DefaultTableModel listarEmpleados(DefaultTableModel modelo, Object[] data) {
+    public List<Empleado> listarEmpleados() {
+        List<Empleado> empleados = new ArrayList<>();
+
         querySQL_1 = "SELECT e.id, p.nombre, p.apellido, p.tipo_documento, p.nrodocumento, e.sueldo, e.id_empleado_perfil, p.edad, p.sexo, p.telefono, p.estado, p.fecha_creado, p.fecha_actualizado FROM empleados e JOIN personas p ON p.id = e.id_persona;";
         Object[] parametrosSQL_1 = {};
         ResultSet rs = db.queryConsultar(querySQL_1, parametrosSQL_1);
 
         try {
             while (rs.next()) {
-                data[0] = rs.getInt("id");
-                data[1] = rs.getString("nombre");
-                data[2] = rs.getString("apellido");
-                data[3] = rs.getInt("tipo_documento");
-                data[4] = rs.getString("nrodocumento");
-                data[5] = rs.getInt("sueldo");
-                data[6] = rs.getInt("id_empleado_perfil");
-                data[7] = rs.getString("edad");
-                data[8] = rs.getString("sexo");
-                data[9] = rs.getString("telefono");
-                data[10] = rs.getString("estado");
-                data[11] = rs.getString("fecha_creado");
-                data[12] = rs.getString("fecha_actualizado");
-                modelo.addRow(data);
+                Empleado empleado = new Empleado();
+
+                empleado.setIdEmpleado(rs.getInt("id"));
+                empleado.setNombre(rs.getString("nombre"));
+                empleado.setApellidos(rs.getString("apellido"));
+                empleado.setTipoDocumento(rs.getInt("tipo_documento"));
+                empleado.setNroDocumento(rs.getString("nrodocumento"));
+                empleado.setSueldo(rs.getFloat("sueldo")); // mejor para valores monetarios
+                empleado.setIdEmpleado(rs.getInt("id_empleado_perfil"));
+                empleado.setEdad(rs.getString("edad"));
+                empleado.setSexo(rs.getString("sexo"));
+                empleado.setTelefono(rs.getString("telefono"));
+                empleado.setEstado(rs.getString("estado"));
+                empleado.setFechaCreado(rs.getString("fecha_creado"));
+                empleado.setFechaActualizado(rs.getString("fecha_actualizado"));
+
+                empleados.add(empleado);
             }
+
+            return empleados;
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
+        } finally {
+            db.cerrarConsulta();
         }
 
-        db.cerrarConsulta();
-        return modelo;
     }
 
     public void crearEmpleado(Empleado empleado) {
