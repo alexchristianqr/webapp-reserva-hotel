@@ -26,7 +26,7 @@
                     <i class="bi bi-door-closed display-4 text-primary"></i>
                     <h5 class="card-title mt-3">Habitaciones</h5>
                     <p class="text-muted">Gestiona las habitaciones disponibles en el hotel.</p>
-                    <a href="habitaciones.jsp" class="btn btn-primary">Administrar</a>
+                    <a href="habitacion.jsp" class="btn btn-primary">Administrar</a>
                 </div>
             </div>
         </div>

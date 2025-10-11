@@ -28,8 +28,20 @@ public class HabitacionController extends BaseController<Habitacion, HabitacionS
         return response;
     }
 
-    public void crearHabitacion(Habitacion habitacion) {
-        service.crearHabitacion(habitacion);
+    public ResponseService<Boolean> crearHabitacion(Habitacion habitacion) {
+        ResponseService<Boolean> response = new ResponseService<>();
+        Boolean result = service.crearHabitacion(habitacion);
+
+        if (!result) {
+            response.setSuccess(false);
+            response.setMessage("No hay nada que listar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Creado con éxito");
+            response.setResult(result);
+        }
+
+        return response;
     }
 
     public Habitacion encontrarHabitacion(int idHabitacion) {
@@ -41,8 +53,20 @@ public class HabitacionController extends BaseController<Habitacion, HabitacionS
         return null;
     }
 
-    public void actualizarHabitacion(Habitacion habitacion) {
-        service.actualizarHabitacion(habitacion);
+    public ResponseService<Boolean> actualizarHabitacion(Habitacion habitacion) {
+        ResponseService<Boolean> response = new ResponseService<>();
+        Boolean result = service.actualizarHabitacion(habitacion);
+
+        if (!result) {
+            response.setSuccess(false);
+            response.setMessage("No hay nada que listar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Actualizado con éxito");
+            response.setResult(result);
+        }
+
+        return response;
     }
 
     public void eliminarHabitacion(int idHabitacion) {

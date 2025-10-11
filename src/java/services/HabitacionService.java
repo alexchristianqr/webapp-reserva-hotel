@@ -1,6 +1,7 @@
 package services;
 
 import core.services.MysqlDBService;
+import core.services.ResponseService;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -45,20 +46,22 @@ public class HabitacionService extends BaseService {
         }
     }
 
-    public void crearHabitacion(Habitacion habitacion) {
+    public Boolean crearHabitacion(Habitacion habitacion) {
         querySQL_1 = "INSERT INTO habitaciones (id_tipohabitacion, descripcion, nivel, numero_piso, precio, cantidad_camas, fecha_creado) VALUES (?,?,?,?,?,?,?)";
         //Object[] parametrosSQL_2 = {habitacion.getIdHabitacion(), habitacion.getDescripcion(), habitacion.getNivel(), habitacion.getNumeroPiso(), habitacion.getPrecio(), habitacion.getCantidadCamas(), habitacion.getFechaCreado()};
         Object[] parametrosSQL_2 = {1, habitacion.getDescripcion(), habitacion.getNivel(), habitacion.getNumeroPiso(), habitacion.getPrecio(), habitacion.getCantidadCamas(), habitacion.getFechaCreado()};
         db.queryInsertar(querySQL_1, parametrosSQL_2);
 
         db.cerrarConsulta();
+        return true;
     }
 
-    public void actualizarHabitacion(Habitacion habitacion) {
+    public Boolean actualizarHabitacion(Habitacion habitacion) {
         querySQL_1 = "UPDATE habitaciones SET estado = ? WHERE id = ?";
         Object[] parametrosSQL_1 = {habitacion.getEstado(), habitacion.getIdHabitacion()};
         db.queryActualizar(querySQL_1, parametrosSQL_1);
 
         db.cerrarConsulta();
+        return true;
     }
 }
