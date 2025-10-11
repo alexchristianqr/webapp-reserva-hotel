@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import controllers.ReservaController;
 import core.services.ResponseService;
 import core.servlets.BaseServlet;
+import models.Reserva;
 
 @WebServlet(name = "ReservaServlet", urlPatterns = {"/ReservaServlet"})
 @MultipartConfig // Añadir esta línea para usar FormData
@@ -39,12 +40,10 @@ public class ReservaServlet extends BaseServlet {
             throws IOException {
         String action = request.getParameter("action");
 
-        // Si la acción no es reconocida, devolvemos un error.
         ResponseService responseService = new ResponseService<>();
         responseService.setSuccess(false);
         responseService.setMessage("Acción desconocida: " + action);
 
-        // Convertimos la respuesta a JSON y la enviamos al frontend.
         String json = new Gson().toJson(responseService);
         response.getWriter().write(json);
     }
@@ -52,23 +51,26 @@ public class ReservaServlet extends BaseServlet {
     private void listarReservas(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Simular una lista de usuarios (o la obtienes de una DB)
         ReservaController reservaController = new ReservaController();
         ResponseService responseService = reservaController.listarReservas("");
 
-        // Convertir la lista a JSON
         String json = new Gson().toJson(responseService);
-
-        // Enviar el JSON como respuesta
         response.getWriter().write(json);
     }
 
     private void crearReserva(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-//        Reserva reserva = new Reserva();
-//
-//        reservaService.guardar(reserva);
-//        response.sendRedirect("ReservaServlet");
+
+        String id_habitacion = request.getParameter("id_habitacion");
+
+        Reserva reserva = new Reserva();
+        reserva.setIdHabitacion(Integer.parseInt(id_habitacion));
+
+        ReservaController reservaController = new ReservaController();
+        ResponseService responseService = reservaController.crearReserva(reserva);
+
+        String json = new Gson().toJson(responseService);
+        response.getWriter().write(json);
     }
 
     private void actualizarReserva(HttpServletRequest request, HttpServletResponse response)

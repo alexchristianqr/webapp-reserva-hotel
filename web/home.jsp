@@ -124,9 +124,10 @@
                 state.messageError = null;
 
                 const formData = new FormData();
+                formData.append('action', 'logout');
 
                 try {
-                    const response = await fetch('autenticacion/LogoutServlet', {
+                    const response = await fetch('AutenticacionServlet', {
                         method: 'POST',
                         body: formData
                     });

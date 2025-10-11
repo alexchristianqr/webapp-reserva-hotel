@@ -35,7 +35,7 @@
                 <td>{{ reserva.fechaSalida }}</td>
                 <td>
                     <button class="btn btn-sm btn-warning me-2" @click="openModal(reserva)">Editar</button>
-                    <button class="btn btn-sm btn-danger" @click="deleteReserva(reserva.idReserva)">Eliminar</button>
+                    <button class="btn btn-sm btn-danger" @click="eliminarReserva(reserva.idReserva)">Eliminar</button>
                 </td>
             </tr>
         </tbody>
@@ -54,7 +54,7 @@
                     <div v-if="state.messageError" class="alert alert-danger">
                         {{ state.messageError }}
                     </div>
-                    <form @submit.prevent="saveReserva">
+                    <form @submit.prevent="guardarReserva">
                         <div class="mb-3">
                             <label class="form-label">Cliente</label>
                             <input type="text" class="form-control" v-model="state.form.cliente.nombre" required>
@@ -121,7 +121,7 @@
             };
 
             // Guardar o actualizar la reserva
-            const saveReserva = async () => {
+            const guardarReserva = async () => {
                 try {
                     const formData = new FormData();
                     for (const key in state.form) {
@@ -154,7 +154,7 @@
             };
 
             // Eliminar reserva
-            const deleteReserva = async (idReserva) => {
+            const eliminarReserva = async (idReserva) => {
                 if (!confirm('¿Deseas eliminar esta reserva?'))
                     return;
 
@@ -180,7 +180,7 @@
             };
 
             // Obtener reservas
-            const getReservations = async () => {
+            const obtenerReservas = async () => {
                 state.messageError = null;
 
                 try {
@@ -207,14 +207,14 @@
             };
 
             onMounted(async () => {
-                getReservations();
+                obtenerReservas();
             });
 
             return {
                 state,
                 openModal,
-                saveReserva,
-                deleteReserva
+                guardarReserva,
+                eliminarReserva
             };
         }
     }).mount('#app');

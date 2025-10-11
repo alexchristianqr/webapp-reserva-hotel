@@ -80,11 +80,12 @@
                 state.messageError = null;
 
                 const formData = new FormData();
+                formData.append('action', 'login');
                 formData.append('username', state.username);
                 formData.append('password', state.password);
 
                 try {
-                    const response = await fetch('autenticacion/LoginServlet', {
+                    const response = await fetch('AutenticacionServlet', {
                         method: 'POST',
                         body: formData
                     });

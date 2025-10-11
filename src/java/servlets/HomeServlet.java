@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import core.services.ResponseService;
 import core.servlets.BaseServlet;
-import models.Usuario;
 
 @WebServlet(name = "HomeServlet", urlPatterns = {"/HomeServlet"})
 @MultipartConfig // Añadir esta línea para usar FormData
@@ -19,18 +18,14 @@ public class HomeServlet extends BaseServlet {
     public void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Obtener sesión de usuario
-        Usuario usuarioAutenticado = getUsuarioAutenticado(request);
-
         ResponseService responseService = new ResponseService();
         responseService.setSuccess(true);
         responseService.setMessage("Usuario en sesion");
-        responseService.setResult(usuarioAutenticado);
+        
+        // Obtener sesión de usuario
+        responseService.setResult(getUsuarioAutenticado(request));
 
-        // Convertir la lista a JSON
         String json = new Gson().toJson(responseService);
-
-        // Enviar el JSON como respuesta
         response.getWriter().write(json);
     }
 }

@@ -33,11 +33,6 @@ public abstract class BaseServlet extends HttpServlet {
         processRequest(request, response);
     }
 
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }
-
     public Usuario getUsuarioAutenticado(HttpServletRequest request) {
         // Obtener sesión de usuario autenticado
         Usuario usuarioAutenticado = (Usuario) request.getSession().getAttribute("usuario");
