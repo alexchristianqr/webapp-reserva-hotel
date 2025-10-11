@@ -21,7 +21,7 @@ public class HabitacionController extends BaseController<Habitacion, HabitacionS
             response.setMessage("No hay nada que listar");
         } else {
             response.setSuccess(true);
-            response.setMessage("Listado con éxito");
+            response.setMessage("Procesado correctamente");
             response.setResult(habitaciones);
         }
 
@@ -34,10 +34,10 @@ public class HabitacionController extends BaseController<Habitacion, HabitacionS
 
         if (!result) {
             response.setSuccess(false);
-            response.setMessage("No hay nada que listar");
+            response.setMessage("Error al guardar");
         } else {
             response.setSuccess(true);
-            response.setMessage("Creado con éxito");
+            response.setMessage("Guardado correctamente");
             response.setResult(result);
         }
 
@@ -59,10 +59,10 @@ public class HabitacionController extends BaseController<Habitacion, HabitacionS
 
         if (!result) {
             response.setSuccess(false);
-            response.setMessage("No hay nada que listar");
+            response.setMessage("Error al actualizar");
         } else {
             response.setSuccess(true);
-            response.setMessage("Actualizado con éxito");
+            response.setMessage("Actualizado correctamente");
             response.setResult(result);
         }
 

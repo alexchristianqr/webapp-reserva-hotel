@@ -21,19 +21,41 @@ public class ReservaController extends BaseController<Reserva, ReservaService> {
             response.setMessage("No hay nada que listar");
         } else {
             response.setSuccess(true);
-            response.setMessage("Listado con éxito");
+            response.setMessage("Procesado correctamente");
             response.setResult(reservas);
         }
 
         return response;
     }
 
-    public void crearReserva(Reserva reserva) {
-        service.crearReserva(reserva);
+    public ResponseService<Boolean> crearReserva(Reserva reserva) {
+        ResponseService<Boolean> response = new ResponseService<>();
+        Boolean success = service.crearReserva(reserva);
+
+        if (!success) {
+            response.setSuccess(false);
+            response.setMessage("Error al guardar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Guardado correctamente");
+        }
+
+        return response;
     }
 
-    public void actualizarReserva(Reserva reserva) {
-        service.actualizarReserva(reserva);
+    public ResponseService<Boolean> actualizarReserva(Reserva reserva) {
+        ResponseService<Boolean> response = new ResponseService<>();
+        Boolean success = service.actualizarReserva(reserva);
+
+        if (!success) {
+            response.setSuccess(false);
+            response.setMessage("Error al actualizar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Actualizado correctamente");
+        }
+
+        return response;
     }
 
 }

@@ -28,22 +28,22 @@ public class ReservaService extends BaseService {
             while (rs.next()) {
                 Reserva reserva = new Reserva();
                 reserva.setIdReserva(rs.getInt("id"));
-                
+
                 Cliente cliente = new Cliente();
                 cliente.setIdCliente(rs.getInt("id_cliente"));
                 cliente.setNombre(rs.getString("nombre_cliente"));
                 reserva.setCliente(cliente);
-                
+
                 Empleado empleado = new Empleado();
                 empleado.setIdEmpleado(rs.getInt("id_empleado"));
                 empleado.setNombre(rs.getString("nombre_empleado"));
                 reserva.setEmpleado(empleado);
-                
+
                 Habitacion habitacion = new Habitacion();
                 habitacion.setIdHabitacion(rs.getInt("id_habitacion"));
                 habitacion.setDescripcion(rs.getString("habitacion_descripcion"));
                 reserva.setHabitacion(habitacion);
-                
+
                 reserva.setTipo(rs.getString("tipo_habitacion"));
                 reserva.setCostoTotal(rs.getDouble("monto_total"));
                 reserva.setEstado(rs.getString("estado"));
@@ -63,19 +63,21 @@ public class ReservaService extends BaseService {
         }
     }
 
-    public void crearReserva(Reserva reserva) {
+    public Boolean crearReserva(Reserva reserva) {
         querySQL_1 = "INSERT INTO reservas ( id_cliente, id_habitacion, id_empleado, tipo, tiempo_reservado, monto_total, estado, fecha_reserva, fecha_entrada, fecha_salida, fecha_creado ) VALUES ( ?,?,?,?,?,?,?,?,?,?,NOW() );";
         Object[] parametrosSQL_1 = {reserva.getIdCliente(), reserva.getIdHabitacion(), reserva.getIdEmpleado(), reserva.getTipo(), reserva.getTiempoReservado(), reserva.getCostoTotal(), reserva.getEstado(), reserva.getFechaReservado(), reserva.getFechaEntrada(), reserva.getFechaSalida()};
         db.queryInsertar(querySQL_1, parametrosSQL_1);
 
         db.cerrarConsulta();
+        return true;
     }
 
-    public void actualizarReserva(Reserva reserva) {
+    public Boolean actualizarReserva(Reserva reserva) {
         querySQL_1 = "UPDATE reservas SET tipo = ?, tiempo_reservado = ?, monto_total = ?, estado = ?, fecha_reserva = ?, fecha_entrada = ?, fecha_salida = ?, fecha_actualizado = NOW() WHERE id = ?";
         Object[] parametrosSQL_1 = {reserva.getIdCliente(), reserva.getIdHabitacion(), reserva.getIdEmpleado(), reserva.getTipo(), reserva.getTiempoReservado(), reserva.getCostoTotal(), reserva.getEstado(), reserva.getFechaReservado(), reserva.getFechaEntrada(), reserva.getFechaSalida(), reserva.getIdReserva()};
         db.queryActualizar(querySQL_1, parametrosSQL_1);
 
         db.cerrarConsulta();
+        return true;
     }
 }

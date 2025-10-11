@@ -50,7 +50,7 @@ public class EmpleadoService extends BaseService {
 
     }
 
-    public void crearEmpleado(Empleado empleado) {
+    public Boolean crearEmpleado(Empleado empleado) {
         querySQL_1 = "INSERT INTO personas (nombre, apellido, tipo_documento, nrodocumento, sexo, estado, edad, telefono, fecha_creado) VALUES (?,?,?,?,?,?,?,?,?)";
         Object[] parametrosSQL_1 = {empleado.getNombre(), empleado.getApellidos(), empleado.getTipoDocumento(), empleado.getNroDocumento(), empleado.getSexo(), empleado.getEstado(), empleado.getEdad(), empleado.getTelefono(), empleado.getFechaCreado()};
         int id_persona = db.queryInsertar(querySQL_1, parametrosSQL_1);
@@ -60,9 +60,10 @@ public class EmpleadoService extends BaseService {
         db.queryInsertar(querySQL_2, parametrosSQL_2);
 
         db.cerrarConsulta();
+        return true;
     }
 
-    public void actualizarEmpleado(Empleado empleado) {
+    public Boolean actualizarEmpleado(Empleado empleado) {
         querySQL_1 = "UPDATE personas SET  nombre = ?, apellido = ?, tipo_documento = ?, nrodocumento = ?, edad = ?, sexo = ?, telefono = ?, estado = ?, fecha_actualizado = NOW() WHERE id = (SELECT id_persona FROM empleados e WHERE e.id = ?)";
         Object[] parametrosSQL_1 = {empleado.getNombre(), empleado.getApellidos(), empleado.getTipoDocumento(), empleado.getNroDocumento(), empleado.getEdad(), empleado.getSexo(), empleado.getTelefono(), empleado.getEstado(), empleado.getIdEmpleado()};
         db.queryActualizar(querySQL_1, parametrosSQL_1);
@@ -72,5 +73,6 @@ public class EmpleadoService extends BaseService {
         db.queryActualizar(querySQL_2, parametrosSQL_2);
 
         db.cerrarConsulta();
+        return true;
     }
 }

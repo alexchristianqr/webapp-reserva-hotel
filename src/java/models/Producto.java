@@ -7,6 +7,8 @@ public class Producto {
     private double precio;
     private int cantidadStock;
     private String estado;
+    private String fechaCreado;
+    private String fechaActualizado;
 
     public Producto() {
     }
@@ -17,6 +19,24 @@ public class Producto {
         this.precio = producto.getPrecio();
         this.cantidadStock = producto.getCantidadStock();
         this.estado = producto.getEstado();
+        this.fechaCreado = producto.getFechaCreado();
+        this.fechaActualizado = producto.getFechaActualizado();
+    }
+
+    public String getFechaCreado() {
+        return fechaCreado;
+    }
+
+    public void setFechaCreado(String fechaCreado) {
+        this.fechaCreado = fechaCreado;
+    }
+
+    public String getFechaActualizado() {
+        return fechaActualizado;
+    }
+
+    public void setFechaActualizado(String fechaActualizado) {
+        this.fechaActualizado = fechaActualizado;
     }
 
     public int getIdProducto() {

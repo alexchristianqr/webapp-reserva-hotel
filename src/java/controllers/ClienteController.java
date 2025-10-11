@@ -21,7 +21,7 @@ public class ClienteController extends BaseController<Cliente, ClienteService> {
             response.setMessage("No hay nada que listar");
         } else {
             response.setSuccess(true);
-            response.setMessage("Listado con éxito");
+            response.setMessage("Procesado correctamente");
             response.setResult(clientes);
         }
 
@@ -30,32 +30,29 @@ public class ClienteController extends BaseController<Cliente, ClienteService> {
 
     public ResponseService<Boolean> crearCliente(Cliente cliente) {
         ResponseService<Boolean> response = new ResponseService<>();
-        Boolean result = service.crearCliente(cliente);
+        Boolean success = service.crearCliente(cliente);
 
-        if (!result) {
+        if (!success) {
             response.setSuccess(false);
-            response.setMessage("No hay nada que listar");
+            response.setMessage("Error al guardar");
         } else {
             response.setSuccess(true);
-            response.setMessage("Listado con éxito");
-            response.setResult(result);
+            response.setMessage("Guardado correctamente");
         }
 
         return response;
     }
 
     public ResponseService<Boolean> actualizarCliente(Cliente cliente) {
-        service.actualizarCliente(cliente);
         ResponseService<Boolean> response = new ResponseService<>();
-        Boolean result = service.actualizarCliente(cliente);
+        Boolean success = service.actualizarCliente(cliente);
 
-        if (!result) {
+        if (!success) {
             response.setSuccess(false);
-            response.setMessage("No hay nada que listar");
+            response.setMessage("Error al actualizar");
         } else {
             response.setSuccess(true);
-            response.setMessage("Listado con éxito");
-            response.setResult(result);
+            response.setMessage("Actualizado correctamente");
         }
 
         return response;

@@ -21,18 +21,40 @@ public class EmpleadoController extends BaseController<Empleado, EmpleadoService
             response.setMessage("No hay nada que listar");
         } else {
             response.setSuccess(true);
-            response.setMessage("Listado con éxito");
+            response.setMessage("Procesado correctamente");
             response.setResult(empleados);
         }
 
         return response;
     }
 
-    public void crearEmpleado(Empleado empleado) {
-        service.crearEmpleado(empleado);
+    public ResponseService<Boolean> crearEmpleado(Empleado empleado) {
+        ResponseService<Boolean> response = new ResponseService<>();
+        Boolean success = service.crearEmpleado(empleado);
+
+        if (!success) {
+            response.setSuccess(false);
+            response.setMessage("Error al guardar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Guardado correctamente");
+        }
+
+        return response;
     }
 
-    public void actualizarEmpleado(Empleado empleado) {
-        service.actualizarEmpleado(empleado);
+    public ResponseService<Boolean> actualizarEmpleado(Empleado empleado) {
+        ResponseService<Boolean> response = new ResponseService<>();
+        Boolean success = service.actualizarEmpleado(empleado);
+
+        if (!success) {
+            response.setSuccess(false);
+            response.setMessage("Error al actualizar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Actualizado correctamente");
+        }
+
+        return response;
     }
 }
