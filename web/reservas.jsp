@@ -34,8 +34,12 @@
                 <td>{{ reserva.fechaEntrada }}</td>
                 <td>{{ reserva.fechaSalida }}</td>
                 <td>
-                    <button class="btn btn-sm btn-warning me-2" @click="openModal(reserva)">Editar</button>
-                    <button class="btn btn-sm btn-danger" @click="eliminarReserva(reserva.idReserva)">Eliminar</button>
+                    <button class="btn btn-sm btn-primary me-2" title="Editar" @click="openModal(reserva)">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger me-2" title="Eliminar" @click="eliminarReserva(reserva.idReserva)">
+                        <i class="bi bi-trash"></i>
+                    </button>
                 </td>
             </tr>
         </tbody>
