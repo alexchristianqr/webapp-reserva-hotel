@@ -48,21 +48,23 @@
     <div class="modal fade" id="clientModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">{{ state.isEditing ? 'Editar Cliente' : 'Agregar Nuevo Cliente' }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
+                <form @submit.prevent="saveClient">
 
-                    <div v-if="state.messageSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ state.messageSuccess }}
-                        <button type="button" class="btn-close" @click="state.messageSuccess = null" aria-label="Close"></button>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">{{ state.isEditing ? 'Editar Cliente' : 'Nuevo Cliente' }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div v-if="state.messageError" class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ state.messageError }}
-                        <button type="button" class="btn-close" @click="state.messageError = null" aria-label="Close"></button>
-                    </div>
-                    <form @submit.prevent="saveClient">
+                    
+                    <div class="modal-body">
+                        <div v-if="state.messageSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ state.messageSuccess }}
+                            <button type="button" class="btn-close" @click="state.messageSuccess = null" aria-label="Close"></button>
+                        </div>
+                        <div v-if="state.messageError" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ state.messageError }}
+                            <button type="button" class="btn-close" @click="state.messageError = null" aria-label="Close"></button>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="nombre" class="form-label">Nombres</label>
@@ -103,12 +105,16 @@
                                 <input v-model="state.clientInForm.telefono" type="text" class="form-control" id="telefono">
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">{{ state.isEditing ? 'Guardar Cambios' : 'Crear Cliente' }}</button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">
+                            {{ !state.isEditing ? 'Guardar' : 'Actualizar' }}
+                        </button>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
@@ -138,9 +144,9 @@
             const fetchClients = async () => {
                 try {
                     const response = await fetch('/webapp-reserva-hotel/ClienteServlet?action=listar');
-                    
-                    if (!response.ok){
-                         if (response.status === 401) {
+
+                    if (!response.ok) {
+                        if (response.status === 401) {
                             window.location.href = redirectLogin;
                             return;
                         }
@@ -209,8 +215,8 @@
                     });
                     // ### FIN DEL CAMBIO ###
 
-                    if (!response.ok){
-                         if (response.status === 401) {
+                    if (!response.ok) {
+                        if (response.status === 401) {
                             window.location.href = redirectLogin;
                             return;
                         }

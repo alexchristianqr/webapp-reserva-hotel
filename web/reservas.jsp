@@ -45,16 +45,17 @@
     <div class="modal fade" id="reservaModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-light">
-                    <h5 class="modal-title">{{ state.modalMode === 'crear' ? 'Nueva Reserva' : 'Editar Reserva' }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+                <form @submit.prevent="guardarReserva">
 
-                <div class="modal-body">
-                    <div v-if="state.messageError" class="alert alert-danger">
-                        {{ state.messageError }}
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ state.modalMode === 'crear' ? 'Nueva Reserva' : 'Editar Reserva' }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form @submit.prevent="guardarReserva">
+
+                    <div class="modal-body">
+                        <div v-if="state.messageError" class="alert alert-danger">
+                            {{ state.messageError }}
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">Cliente</label>
                             <input type="text" class="form-control" v-model="state.form.cliente.nombre" required>
@@ -71,13 +72,16 @@
                             <label class="form-label">Fecha Salida</label>
                             <input type="date" class="form-control" v-model="state.form.fechaSalida" required>
                         </div>
-                        <div class="text-end">
-                            <button type="submit" class="btn btn-success">
-                                {{ state.modalMode === 'crear' ? 'Guardar' : 'Actualizar' }}
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">
+                            {{ state.modalMode === 'crear' ? 'Guardar' : 'Actualizar' }}
+                        </button>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
@@ -134,7 +138,7 @@
                         method: 'POST',
                         body: formData
                     });
-                    
+
                     if (!response.ok) {
                         if (response.status === 401) {
                             window.location.href = redirectLogin;
@@ -176,7 +180,7 @@
                         method: 'POST',
                         body: formData
                     });
-                    
+
                     if (!response.ok) {
                         if (response.status === 401) {
                             window.location.href = redirectLogin;

@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <!-- Productos -->
+<!--         Productos 
         <div class="col-md-4">
             <div class="card shadow-sm h-100 text-center p-3 border-0">
                 <div class="card-body">
@@ -55,7 +55,7 @@
             </div>
         </div>
 
-        <!-- Usuarios -->
+         Usuarios 
         <div class="col-md-4">
             <div class="card shadow-sm h-100 text-center p-3 border-0">
                 <div class="card-body">
@@ -65,7 +65,7 @@
                     <a href="usuarios.jsp" class="btn btn-secondary">Administrar</a>
                 </div>
             </div>
-        </div>
+        </div>-->
 
         <!-- Clientes -->
         <div class="col-md-4">

@@ -51,21 +51,23 @@
     <div class="modal fade" id="roomModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">{{ state.isEditing ? 'Editar Habitación' : 'Agregar Nueva Habitación' }}</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div v-if="state.messageSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ state.messageSuccess }}
-                        <button type="button" class="btn-close" @click="state.messageSuccess = null" aria-label="Close"></button>
-                    </div>
-                    <div v-if="state.messageError" class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ state.messageError }}
-                        <button type="button" class="btn-close" @click="state.messageError = null" aria-label="Close"></button>
+                <form @submit.prevent="saveRoom">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">{{ state.isEditing ? 'Editar Habitación' : 'Agregar Nueva Habitación' }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    <form @submit.prevent="saveRoom">
+                    <div class="modal-body">
+                        <div v-if="state.messageSuccess" class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ state.messageSuccess }}
+                            <button type="button" class="btn-close" @click="state.messageSuccess = null" aria-label="Close"></button>
+                        </div>
+                        <div v-if="state.messageError" class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ state.messageError }}
+                            <button type="button" class="btn-close" @click="state.messageError = null" aria-label="Close"></button>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="tipo" class="form-label">Tipo de Habitación</label>
@@ -94,13 +96,16 @@
                                 </select>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">{{ state.isEditing ? 'Guardar Cambios' : 'Crear Habitación' }}</button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">
+                            {{ !state.isEditing ? 'Guardar' : 'Actualizar' }}                   
+                        </button>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
