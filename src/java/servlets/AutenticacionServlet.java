@@ -26,7 +26,7 @@ public class AutenticacionServlet extends BaseServlet {
         if (action == null) {
             action = "login";
         }
-        
+
         ResponseService<?> responseService;
 
         switch (action) {

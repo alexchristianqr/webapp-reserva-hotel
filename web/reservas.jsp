@@ -101,6 +101,10 @@
                 reservas: [],
                 form: {
                     idReserva: null,
+                    id_habitacion: null,
+                    id_cliente: null,
+                    id_empleado: null,
+                    tipo: null,
                     cliente: '',
                     habitacion: '',
                     fechaEntrada: '',

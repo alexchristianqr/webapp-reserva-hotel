@@ -1,6 +1,5 @@
 package servlets;
 
-import com.google.gson.Gson;
 import controllers.HabitacionController;
 import core.services.ResponseService;
 import core.servlets.BaseServlet;
