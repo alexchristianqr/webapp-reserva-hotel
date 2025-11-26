@@ -65,7 +65,7 @@ public class ReservaService extends BaseService {
     }
 
     public Boolean crearReserva(Reserva reserva) {
-        querySQL_1 = "INSERT INTO reservas ( id_cliente, id_habitacion, id_empleado, monto_total, estado, fecha_reserva, fecha_entrada, fecha_salida, fecha_creado ) VALUES ( ?,?,?,?,?,?,?,?,?,?,NOW() );";
+        querySQL_1 = "INSERT INTO reservas ( id_cliente, id_habitacion, id_empleado, monto_total, estado, fecha_reserva, fecha_entrada, fecha_salida, fecha_creado ) VALUES ( ?,?,?,?,?,?,?,?,NOW() );";
         Object[] parametrosSQL_1 = {reserva.getIdCliente(), reserva.getIdHabitacion(), reserva.getIdEmpleado(), reserva.getMontoTotal(), reserva.getEstado(), reserva.getFechaReserva(), reserva.getFechaEntrada(), reserva.getFechaSalida()};
         db.queryInsertar(querySQL_1, parametrosSQL_1);
 

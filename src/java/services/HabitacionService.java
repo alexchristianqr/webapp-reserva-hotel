@@ -16,7 +16,7 @@ public class HabitacionService extends BaseService {
     public List<Habitacion> listarHabitaciones() {
         List<Habitacion> habitaciones = new ArrayList<>();
 
-        querySQL_1 = "SELECT id,descripcion,id_tipohabitacion,nivel,numero_piso,precio,cantidad_camas,fecha_creado,fecha_actualizado FROM habitaciones";
+        querySQL_1 = "SELECT id,descripcion,id_tipohabitacion,nivel,numero_piso,precio,cantidad_camas,estado,fecha_creado,fecha_actualizado FROM habitaciones";
         Object[] parametrosSQL_1 = {};
         ResultSet rs = db.queryConsultar(querySQL_1, parametrosSQL_1);
 
@@ -31,6 +31,7 @@ public class HabitacionService extends BaseService {
                 habitacion.setNumeroPiso(rs.getString("numero_piso"));
                 habitacion.setPrecio(rs.getFloat("precio")); // BigDecimal para valores monetarios
                 habitacion.setCantidadCamas(rs.getInt("cantidad_camas"));
+                habitacion.setEstado(rs.getString("estado"));
                 habitacion.setFechaCreado(rs.getString("fecha_creado"));
                 habitacion.setFechaActualizado(rs.getString("fecha_actualizado"));
 

@@ -30,7 +30,7 @@
             <tr v-for="(reserva, index) in state.reservas" :key="reserva.idReserva">
                 <td>{{ index + 1 }}</td>
                 <td>{{ reserva.cliente.nombre }}</td>
-                <td>{{ reserva.habitacion.decripcion }}</td>
+                <td>{{ reserva.habitacion.descripcion }}</td>
                 <td>{{ reserva.fechaEntrada }}</td>
                 <td>{{ reserva.fechaSalida }}</td>
                 <td>
@@ -62,25 +62,25 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Cliente</label>
-                            <select v-model="state.form.idCliente" class="form-select" aria-label="Default select example">
+                            <select v-model="state.form.id_cliente" class="form-select" aria-label="Default select example">
                                 <option selected value="">- Seleccionar -</option>
                                 <option v-for="cliente in state.clientes" :value="cliente.idCliente">{{ cliente.nombre }}</option>
                             </select>           
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Habitacion</label>
-                            <select v-model="state.form.idHabitacion" class="form-select" aria-label="Default select example">
+                            <select v-model="state.form.id_habitacion" class="form-select" aria-label="Default select example">
                                 <option selected value="">- Seleccionar -</option>
                                 <option v-for="habitacion in state.habitaciones" :value="habitacion.idHabitacion">{{ habitacion.descripcion }}</option>
                             </select>        
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Fecha Entrada</label>
-                            <input type="date" class="form-control" v-model="state.form.fechaEntrada" required>
+                            <input type="date" class="form-control" v-model="state.form.fecha_entrada" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Fecha Salida</label>
-                            <input type="date" class="form-control" v-model="state.form.fechaSalida" required>
+                            <input type="date" class="form-control" v-model="state.form.fecha_salida" required>
                         </div>
                     </div>
 
@@ -100,36 +100,31 @@
 <script>
     const {createApp, reactive, onMounted} = Vue;
     const redirectLogin = '/webapp-reserva-hotel/login.jsp';
-    
-    const today = new Date().toLocaleDateString()
+
+    const sumarDias = (fecha, dias) => {
+        const nueva = new Date(fecha);
+        nueva.setDate(nueva.getDate() + dias);
+        return nueva.toISOString().substring(0, 10);
+    };
+
+    const today = new Date().toISOString().substring(0, 10);
+    const tomorrow = sumarDias(today, 1);
 
     createApp({
         setup() {
+            const defaultForm = {
+                id_cliente: "",
+                id_habitacion: "",
+                id_empleado: 1,
+                fecha_reserva: today,
+                fecha_entrada: today,
+                fecha_salida: tomorrow
+            };
             const state = reactive({
                 reservas: [],
                 clientes: [],
                 habitaciones: [],
-                form: {
-                    idReserva: null,
-<<<<<<< HEAD
-                    idCliente: "",
-                    idHabitacion: "",
-                    idEmpleado: 1,
-                    fechaReserva: new Date().toLocaleDateString(),
-                    fechaEntrada: today,
-                    fechaSalida: new Date().toLocaleDateString()
-//                    tipo: ''
-=======
-                    id_habitacion: null,
-                    id_cliente: null,
-                    id_empleado: null,
-                    tipo: null,
-                    cliente: '',
-                    habitacion: '',
-                    fechaEntrada: '',
-                    fechaSalida: ''
->>>>>>> 89a08275a0249db67f2012e8ea5bd7da489553dd
-                },
+                form: {...defaultForm},
                 modalMode: 'crear',
                 messageError: null,
                 modalInstance: null
@@ -138,12 +133,13 @@
             // Abre el modal en modo crear o editar
             const openModal = (reserva = null) => {
                 state.messageError = null;
+
                 if (reserva) {
                     state.modalMode = 'edit';
                     Object.assign(state.form, reserva);
                 } else {
                     state.modalMode = 'crear';
-                    Object.keys(state.form).forEach(k => state.form[k] = '');
+                    Object.assign(state.form, defaultForm);
                 }
 
                 if (!state.modalInstance) {
@@ -160,6 +156,12 @@
                     for (const key in state.form) {
                         formData.append(key, state.form[key]);
                     }
+
+                    const habitacion = state.habitaciones.find(h => h.idHabitacion === state.form.id_habitacion);
+                    const precio = habitacion.precio;
+                    formData.append('monto_total', precio);
+                    formData.append('estado', "activo");
+
                     formData.append('action', state.modalMode === 'crear' ? 'crear' : 'actualizar');
 
                     const response = await fetch('ReservaServlet', {
@@ -189,6 +191,9 @@
                     }
 
                     state.modalInstance.hide();
+                    
+                    await listarReservas();
+                    
                 } catch (error) {
                     state.messageError = error.message;
                 }
@@ -322,33 +327,19 @@
             };
 
             onMounted(async () => {
-
-//                state.form.fechaReserva = new Date().toLocaleDateString()
-                state.form.fechaEntrada.value = new Date().toLocaleDateString()
-
                 await listarReservas();
                 await listarClientes();
                 await listarHabitaciones();
             });
 
-            const obtenerFechaActualFormateada = () => {
-                const fecha = new Date();
-                // Formatea la fecha como YYYY-MM-DD
-                const anio = fecha.getFullYear();
-                const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
-                const dia = fecha.getDate().toString().padStart(2, '0');
-                return `${anio}-${mes}-${dia}`;
-                            };
-
-                            return {
-                                state,
-                                openModal,
-                                guardarReserva,
-                                eliminarReserva,
-                                obtenerFechaActualFormateada
-                            };
-                        }
-                    }).mount('#app');
+            return {
+                state,
+                openModal,
+                guardarReserva,
+                eliminarReserva
+            };
+        }
+    }).mount('#app');
 </script>
 
 <%@include file="../includes/footer.jsp" %>

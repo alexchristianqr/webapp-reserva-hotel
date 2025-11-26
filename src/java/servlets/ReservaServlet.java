@@ -51,7 +51,7 @@ public class ReservaServlet extends BaseServlet {
         Reserva reserva = new Reserva();
         reserva.setIdCliente(parseIntSafe(request.getParameter("id_cliente")));
         reserva.setIdEmpleado(parseIntSafe(request.getParameter("id_empleado")));
-        reserva.setIdEmpleado(parseIntSafe(request.getParameter("id_habitacion")));
+        reserva.setIdHabitacion(parseIntSafe(request.getParameter("id_habitacion")));
         reserva.setMontoTotal(parseDoubleSafe(request.getParameter("monto_total")));
         reserva.setFechaReserva(request.getParameter("fecha_reserva"));
         reserva.setFechaEntrada(request.getParameter("fecha_entrada"));
@@ -68,10 +68,10 @@ public class ReservaServlet extends BaseServlet {
         reserva.setIdCliente(parseIntSafe(request.getParameter("id_cliente")));
         reserva.setIdEmpleado(parseIntSafe(request.getParameter("id_empleado")));
         reserva.setTipo(request.getParameter("tipo"));
-        reserva.setTiempoReservado(request.getParameter("tiempo_reservado"));
-        reserva.setCostoTotal(parseDoubleSafe(request.getParameter("costo_total")));
+//        reserva.setTiempoReservado(request.getParameter("tiempo_reservado"));
+        reserva.setMontoTotal(parseDoubleSafe(request.getParameter("monto_total")));
         reserva.setEstado(request.getParameter("estado"));
-        reserva.setFechaReservado(request.getParameter("fecha_reservado"));
+        reserva.setFechaReserva(request.getParameter("fecha_reservado"));
         reserva.setFechaEntrada(request.getParameter("fecha_entrada"));
         reserva.setFechaSalida(request.getParameter("fecha_salida"));
 

@@ -30,8 +30,8 @@
             </tr>
             <tr v-for="(room, index) in state.rooms" :key="room.idHabitacion">
                 <td>{{ index + 1 }}</td>
-                <td>{{ room.tipo }}</td>
-                <td>{{ room.numero }}</td>
+                <td>{{ room.descripcion }}</td>
+                <td>{{ room.numeroPiso }}</td>
                 <td>{{ room.precio }}</td>
                 <td>
                     <span class="badge" :class="room.estado === 'disponible' ? 'bg-success' : 'bg-secondary'">
@@ -79,7 +79,7 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="numero" class="form-label">Número de Habitación</label>
-                                <input v-model="state.roomInForm.numero" type="text" class="form-control" id="numero" required>
+                                <input v-model="state.roomInForm.numeroPiso" type="text" class="form-control" id="numero" required>
                             </div>
                         </div>
 
@@ -91,8 +91,8 @@
                             <div class="col-md-6 mb-3">
                                 <label for="estado" class="form-label">Estado</label>
                                 <select v-model="state.roomInForm.estado" class="form-select" id="estado" required>
-                                    <option value="disponible">Disponible</option>
-                                    <option value="ocupado">Ocupado</option>
+                                    <option value="activo">Activo</option>
+                                    <option value="inactivo">Inactivo</option>
                                 </select>
                             </div>
                         </div>
