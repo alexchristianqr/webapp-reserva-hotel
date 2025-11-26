@@ -1,7 +1,6 @@
 package services;
 
 import core.services.MysqlDBService;
-import core.services.ResponseService;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

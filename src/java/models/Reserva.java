@@ -10,12 +10,12 @@ public class Reserva {
     private Empleado empleado;
     private int idEmpleado;
     private String tipo;// horas|noche
-    private String tiempoReservado;// 3(horas)|2(noches)
-    private double costoTotal;
+//    private String tiempoReservado;// 3(horas)|2(noches)
+    private double montoTotal;
     private String estado;// disponible|reservado|mantenimiento
     private String fechaCreado;
     private String fechaActualizado;
-    private String fechaReservado, fechaEntrada, fechaSalida;
+    private String fechaReserva, fechaEntrada, fechaSalida;
 
     public Reserva() {
     }
@@ -28,10 +28,10 @@ public class Reserva {
         this.habitacion = reserva.getHabitacion();
         this.empleado = reserva.getEmpleado();
         this.tipo = reserva.getTipo();
-        this.tiempoReservado = reserva.getTiempoReservado();
-        this.costoTotal = reserva.getCostoTotal();
+//        this.tiempoReservado = reserva.getTiempoReservado();
+        this.montoTotal = reserva.getMontoTotal();
         this.estado = reserva.getEstado();
-        this.fechaReservado = reserva.getFechaReservado();
+        this.fechaReserva = reserva.getFechaReserva();
         this.fechaEntrada = reserva.getFechaEntrada();
         this.fechaSalida = reserva.getFechaSalida();
         this.fechaCreado = reserva.getFechaCreado();
@@ -45,16 +45,16 @@ public class Reserva {
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
-    
-    
 
-    public double getCostoTotal() {
-        return costoTotal;
+    public double getMontoTotal() {
+        return montoTotal;
     }
 
-    public void setCostoTotal(double costoTotal) {
-        this.costoTotal = costoTotal;
+    public void setMontoTotal(double montoTotal) {
+        this.montoTotal = montoTotal;
     }
+    
+    
 
 //    public String getCliente() {
 //        return cliente;
@@ -148,12 +148,12 @@ public class Reserva {
         this.estado = estado;
     }
 
-    public String getFechaReservado() {
-        return fechaReservado;
+    public String getFechaReserva() {
+        return fechaReserva;
     }
 
-    public void setFechaReservado(String fechaReservado) {
-        this.fechaReservado = fechaReservado;
+    public void setFechaReserva(String fechaReserva) {
+        this.fechaReserva = fechaReserva;
     }
 
     public String getFechaCreado() {
@@ -188,12 +188,12 @@ public class Reserva {
         this.fechaSalida = fechaSalida;
     }
 
-    public String getTiempoReservado() {
-        return tiempoReservado;
-    }
-
-    public void setTiempoReservado(String tiempoReservado) {
-        this.tiempoReservado = tiempoReservado;
-    }
+//    public String getTiempoReservado() {
+//        return tiempoReservado;
+//    }
+//
+//    public void setTiempoReservado(String tiempoReservado) {
+//        this.tiempoReservado = tiempoReservado;
+//    }
 
 }

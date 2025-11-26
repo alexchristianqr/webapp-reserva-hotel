@@ -1,7 +1,6 @@
 package services;
 
 import core.services.MysqlDBService;
-import core.services.ResponseService;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -37,17 +36,16 @@ public class ClienteService extends BaseService {
                 cliente.setEstado(rs.getString("estado"));
                 cliente.setFechaCreado(rs.getString("fecha_creado"));
                 cliente.setFechaActualizado(rs.getString("fecha_actualizado"));
+                
                 clientes.add(cliente);
             }
 
             return clientes;
         } catch (SQLException ex) {
-            Logger.getLogger(ClienteService.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
         } finally {
             db.cerrarConsulta();
         }
-        
-        return null;
     }
 
     public Boolean crearCliente(Cliente cliente) {

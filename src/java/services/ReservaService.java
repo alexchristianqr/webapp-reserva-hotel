@@ -44,12 +44,13 @@ public class ReservaService extends BaseService {
                 habitacion.setDescripcion(rs.getString("habitacion_descripcion"));
                 reserva.setHabitacion(habitacion);
 
-                reserva.setTipo(rs.getString("tipo_habitacion"));
-                reserva.setCostoTotal(rs.getDouble("monto_total"));
+//                reserva.setTipo(rs.getString("tipo_habitacion"));
+                reserva.setMontoTotal(rs.getDouble("monto_total"));
                 reserva.setEstado(rs.getString("estado"));
-                reserva.setFechaReservado(rs.getString("fecha_reserva"));
+                reserva.setFechaReserva(rs.getString("fecha_reserva"));
                 reserva.setFechaEntrada(rs.getString("fecha_entrada"));
                 reserva.setFechaSalida(rs.getString("fecha_salida"));
+                
                 reserva.setFechaCreado(rs.getString("fecha_creado"));
                 reserva.setFechaActualizado(rs.getString("fecha_actualizado"));
                 reservas.add(reserva);
@@ -64,8 +65,8 @@ public class ReservaService extends BaseService {
     }
 
     public Boolean crearReserva(Reserva reserva) {
-        querySQL_1 = "INSERT INTO reservas ( id_cliente, id_habitacion, id_empleado, tipo, tiempo_reservado, monto_total, estado, fecha_reserva, fecha_entrada, fecha_salida, fecha_creado ) VALUES ( ?,?,?,?,?,?,?,?,?,?,NOW() );";
-        Object[] parametrosSQL_1 = {reserva.getIdCliente(), reserva.getIdHabitacion(), reserva.getIdEmpleado(), reserva.getTipo(), reserva.getTiempoReservado(), reserva.getCostoTotal(), reserva.getEstado(), reserva.getFechaReservado(), reserva.getFechaEntrada(), reserva.getFechaSalida()};
+        querySQL_1 = "INSERT INTO reservas ( id_cliente, id_habitacion, id_empleado, monto_total, estado, fecha_reserva, fecha_entrada, fecha_salida, fecha_creado ) VALUES ( ?,?,?,?,?,?,?,?,?,?,NOW() );";
+        Object[] parametrosSQL_1 = {reserva.getIdCliente(), reserva.getIdHabitacion(), reserva.getIdEmpleado(), reserva.getMontoTotal(), reserva.getEstado(), reserva.getFechaReserva(), reserva.getFechaEntrada(), reserva.getFechaSalida()};
         db.queryInsertar(querySQL_1, parametrosSQL_1);
 
         db.cerrarConsulta();
@@ -73,8 +74,8 @@ public class ReservaService extends BaseService {
     }
 
     public Boolean actualizarReserva(Reserva reserva) {
-        querySQL_1 = "UPDATE reservas SET tipo = ?, tiempo_reservado = ?, monto_total = ?, estado = ?, fecha_reserva = ?, fecha_entrada = ?, fecha_salida = ?, fecha_actualizado = NOW() WHERE id = ?";
-        Object[] parametrosSQL_1 = {reserva.getIdCliente(), reserva.getIdHabitacion(), reserva.getIdEmpleado(), reserva.getTipo(), reserva.getTiempoReservado(), reserva.getCostoTotal(), reserva.getEstado(), reserva.getFechaReservado(), reserva.getFechaEntrada(), reserva.getFechaSalida(), reserva.getIdReserva()};
+        querySQL_1 = "UPDATE reservas SET monto_total = ?, estado = ?, fecha_reserva = ?, fecha_entrada = ?, fecha_salida = ?, fecha_actualizado = NOW() WHERE id = ?";
+        Object[] parametrosSQL_1 = {reserva.getIdCliente(), reserva.getIdHabitacion(), reserva.getIdEmpleado(), reserva.getMontoTotal(), reserva.getEstado(), reserva.getFechaReserva(), reserva.getFechaEntrada(), reserva.getFechaSalida(), reserva.getIdReserva()};
         db.queryActualizar(querySQL_1, parametrosSQL_1);
 
         db.cerrarConsulta();

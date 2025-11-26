@@ -62,11 +62,17 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Cliente</label>
-                            <input type="text" class="form-control" v-model="state.form.cliente.nombre" required>
+                            <select v-model="state.form.idCliente" class="form-select" aria-label="Default select example">
+                                <option selected value="">- Seleccionar -</option>
+                                <option v-for="cliente in state.clientes" :value="cliente.idCliente">{{ cliente.nombre }}</option>
+                            </select>           
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Habitación</label>
-                            <input type="text" class="form-control" v-model="state.form.habitacion.descripcion" required>
+                            <label class="form-label">Habitacion</label>
+                            <select v-model="state.form.idHabitacion" class="form-select" aria-label="Default select example">
+                                <option selected value="">- Seleccionar -</option>
+                                <option v-for="habitacion in state.habitaciones" :value="habitacion.idHabitacion">{{ habitacion.descripcion }}</option>
+                            </select>        
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Fecha Entrada</label>
@@ -94,17 +100,24 @@
 <script>
     const {createApp, reactive, onMounted} = Vue;
     const redirectLogin = '/webapp-reserva-hotel/login.jsp';
+    
+    const today = new Date().toLocaleDateString()
 
     createApp({
         setup() {
             const state = reactive({
                 reservas: [],
+                clientes: [],
+                habitaciones: [],
                 form: {
                     idReserva: null,
-                    cliente: '',
-                    habitacion: '',
-                    fechaEntrada: '',
-                    fechaSalida: ''
+                    idCliente: "",
+                    idHabitacion: "",
+                    idEmpleado: 1,
+                    fechaReserva: new Date().toLocaleDateString(),
+                    fechaEntrada: today,
+                    fechaSalida: new Date().toLocaleDateString()
+//                    tipo: ''
                 },
                 modalMode: 'crear',
                 messageError: null,
@@ -204,8 +217,8 @@
                 }
             };
 
-            // Obtener reservas
-            const obtenerReservas = async () => {
+            // Listar reservas
+            const listarReservas = async () => {
                 state.messageError = null;
 
                 try {
@@ -235,18 +248,96 @@
                 }
             };
 
+            // Listar clientes
+            const listarClientes = async () => {
+                state.messageError = null;
+
+                try {
+                    const response = await fetch('ClienteServlet?action=listar', {
+                        method: 'GET'
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            window.location.href = redirectLogin;
+                            return;
+                        }
+                        throw new Error('Error de red');
+                    }
+
+                    const {success, result, message} = await response.json();
+                    console.log({success, result, message});
+
+                    if (success) {
+                        state.clientes = result;
+                    } else {
+                        state.messageError = message || 'Error al listar clientes';
+                    }
+                } catch (error) {
+                    console.error(error);
+                    state.messageError = error.message;
+                }
+            };
+
+            // Listar habitaciones
+            const listarHabitaciones = async () => {
+                state.messageError = null;
+
+                try {
+                    const response = await fetch('HabitacionServlet?action=listar', {
+                        method: 'GET'
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            window.location.href = redirectLogin;
+                            return;
+                        }
+                        throw new Error('Error de red');
+                    }
+
+                    const {success, result, message} = await response.json();
+                    console.log({success, result, message});
+
+                    if (success) {
+                        state.habitaciones = result;
+                    } else {
+                        state.messageError = message || 'Error al listar habitaciones';
+                    }
+                } catch (error) {
+                    console.error(error);
+                    state.messageError = error.message;
+                }
+            };
+
             onMounted(async () => {
-                obtenerReservas();
+
+//                state.form.fechaReserva = new Date().toLocaleDateString()
+                state.form.fechaEntrada.value = new Date().toLocaleDateString()
+
+                await listarReservas();
+                await listarClientes();
+                await listarHabitaciones();
             });
 
-            return {
-                state,
-                openModal,
-                guardarReserva,
-                eliminarReserva
-            };
-        }
-    }).mount('#app');
+            const obtenerFechaActualFormateada = () => {
+                const fecha = new Date();
+                // Formatea la fecha como YYYY-MM-DD
+                const anio = fecha.getFullYear();
+                const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+                const dia = fecha.getDate().toString().padStart(2, '0');
+                return `${anio}-${mes}-${dia}`;
+                            };
+
+                            return {
+                                state,
+                                openModal,
+                                guardarReserva,
+                                eliminarReserva,
+                                obtenerFechaActualFormateada
+                            };
+                        }
+                    }).mount('#app');
 </script>
 
 <%@include file="../includes/footer.jsp" %>

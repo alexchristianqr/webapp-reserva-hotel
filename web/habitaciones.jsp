@@ -51,7 +51,7 @@
     <div class="modal fade" id="roomModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <form @submit.prevent="saveRoom">
+                <form @submit.prevent="guardarHabitacion">
 
                     <div class="modal-header">
                         <h5 class="modal-title" id="modalLabel">{{ state.isEditing ? 'Editar Habitación' : 'Agregar Nueva Habitación' }}</h5>
@@ -124,15 +124,9 @@
                 messageError: null,
                 messageSuccess: null,
             });
-
             const roomModal = ref(null);
 
-            onMounted(() => {
-                roomModal.value = new bootstrap.Modal(document.getElementById('roomModal'));
-                fetchRooms();
-            });
-
-            const fetchRooms = async () => {
+            const listarHabitaciones = async () => {
                 try {
                     const response = await fetch('/webapp-reserva-hotel/HabitacionServlet?action=listar');
 
@@ -154,7 +148,6 @@
                     state.messageError = 'Error al cargar habitaciones: ' + error.message;
                 }
             };
-
             const openCreateModal = () => {
                 state.isEditing = false;
                 state.roomInForm = {tipo: 'Simple', estado: 'disponible'};
@@ -162,7 +155,6 @@
                 state.messageSuccess = null;
                 roomModal.value.show();
             };
-
             const openEditModal = (room) => {
                 state.isEditing = true;
                 state.roomInForm = {...room};
@@ -170,8 +162,7 @@
                 state.messageSuccess = null;
                 roomModal.value.show();
             };
-
-            const saveRoom = async () => {
+            const guardarHabitacion = async () => {
                 const action = state.isEditing ? 'actualizar' : 'crear';
                 const formData = new FormData();
                 formData.append('action', action);
@@ -197,7 +188,7 @@
 
                     if (data.success) {
                         state.messageSuccess = data.message;
-                        fetchRooms();
+                        listarHabitaciones();
                         if (!state.isEditing)
                             roomModal.value.hide();
                     } else {
@@ -208,11 +199,16 @@
                 }
             };
 
+            onMounted(() => {
+                roomModal.value = new bootstrap.Modal(document.getElementById('roomModal'));
+                listarHabitaciones();
+            });
+
             return {
                 state,
                 openCreateModal,
                 openEditModal,
-                saveRoom
+                guardarHabitacion
             };
         }
     }).mount('#app');

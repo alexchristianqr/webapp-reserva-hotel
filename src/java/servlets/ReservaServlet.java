@@ -49,16 +49,14 @@ public class ReservaServlet extends BaseServlet {
 
     private ResponseService<?> crearReserva(HttpServletRequest request) {
         Reserva reserva = new Reserva();
-        reserva.setIdHabitacion(parseIntSafe(request.getParameter("id_habitacion")));
         reserva.setIdCliente(parseIntSafe(request.getParameter("id_cliente")));
         reserva.setIdEmpleado(parseIntSafe(request.getParameter("id_empleado")));
-        reserva.setTipo(request.getParameter("tipo"));
-        reserva.setTiempoReservado(request.getParameter("tiempo_reservado"));
-        reserva.setCostoTotal(parseDoubleSafe(request.getParameter("costo_total")));
-        reserva.setEstado(request.getParameter("estado"));
-        reserva.setFechaReservado(request.getParameter("fecha_reservado"));
+        reserva.setIdEmpleado(parseIntSafe(request.getParameter("id_habitacion")));
+        reserva.setMontoTotal(parseDoubleSafe(request.getParameter("monto_total")));
+        reserva.setFechaReserva(request.getParameter("fecha_reserva"));
         reserva.setFechaEntrada(request.getParameter("fecha_entrada"));
         reserva.setFechaSalida(request.getParameter("fecha_salida"));
+        reserva.setEstado(request.getParameter("estado"));
 
         return reservaController.crearReserva(reserva);
     }
