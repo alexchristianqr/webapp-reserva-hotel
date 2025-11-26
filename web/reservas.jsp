@@ -111,6 +111,7 @@
                 habitaciones: [],
                 form: {
                     idReserva: null,
+<<<<<<< HEAD
                     idCliente: "",
                     idHabitacion: "",
                     idEmpleado: 1,
@@ -118,6 +119,16 @@
                     fechaEntrada: today,
                     fechaSalida: new Date().toLocaleDateString()
 //                    tipo: ''
+=======
+                    id_habitacion: null,
+                    id_cliente: null,
+                    id_empleado: null,
+                    tipo: null,
+                    cliente: '',
+                    habitacion: '',
+                    fechaEntrada: '',
+                    fechaSalida: ''
+>>>>>>> 89a08275a0249db67f2012e8ea5bd7da489553dd
                 },
                 modalMode: 'crear',
                 messageError: null,

@@ -13,9 +13,6 @@ public class AuthService extends BaseService {
     }
 
     public Usuario login(String username, String pwd) {
-
-//        boolean success = false;
-
         try {
             ResultSet rs_1, rs_2, rs_3, rs_4;
 
@@ -170,7 +167,6 @@ public class AuthService extends BaseService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }*/
-
         return success;
     }
 }
