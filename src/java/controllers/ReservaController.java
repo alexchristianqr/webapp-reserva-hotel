@@ -28,7 +28,7 @@ public class ReservaController extends BaseController<Reserva, ReservaService> {
         return response;
     }
 
-    public ResponseService<Boolean> crearReserva(Reserva reserva) {
+    public ResponseService<Boolean> crearReserva(Reserva reserva)  {
         ResponseService<Boolean> response = new ResponseService<>();
         Boolean success = service.crearReserva(reserva);
 

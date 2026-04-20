@@ -169,12 +169,13 @@
                         body: formData
                     });
 
+                    console.error(response);
                     if (!response.ok) {
                         if (response.status === 401) {
                             window.location.href = redirectLogin;
                             return;
                         }
-                        throw new Error('Error de red');
+                        throw new Error("Error al guardar");
                     }
 
                     const {success, message, result} = await response.json();

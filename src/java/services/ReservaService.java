@@ -1,8 +1,12 @@
 package services;
 
 import core.services.MysqlDBService;
+import jakarta.servlet.ServletException;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import models.Cliente;
@@ -50,7 +54,7 @@ public class ReservaService extends BaseService {
                 reserva.setFechaReserva(rs.getString("fecha_reserva"));
                 reserva.setFechaEntrada(rs.getString("fecha_entrada"));
                 reserva.setFechaSalida(rs.getString("fecha_salida"));
-                
+
                 reserva.setFechaCreado(rs.getString("fecha_creado"));
                 reserva.setFechaActualizado(rs.getString("fecha_actualizado"));
                 reservas.add(reserva);
@@ -65,12 +69,28 @@ public class ReservaService extends BaseService {
     }
 
     public Boolean crearReserva(Reserva reserva) {
-        querySQL_1 = "INSERT INTO reservas ( id_cliente, id_habitacion, id_empleado, monto_total, estado, fecha_reserva, fecha_entrada, fecha_salida, fecha_creado ) VALUES ( ?,?,?,?,?,?,?,?,NOW() );";
-        Object[] parametrosSQL_1 = {reserva.getIdCliente(), reserva.getIdHabitacion(), reserva.getIdEmpleado(), reserva.getMontoTotal(), reserva.getEstado(), reserva.getFechaReserva(), reserva.getFechaEntrada(), reserva.getFechaSalida()};
-        db.queryInsertar(querySQL_1, parametrosSQL_1);
+        try {
+            System.out.println("Entrada: " + reserva.getFechaEntrada());
+            System.out.println("Salida: " + reserva.getFechaSalida());
 
-        db.cerrarConsulta();
-        return true;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            LocalDate fechaEntrada = LocalDate.parse(reserva.getFechaEntrada(), formatter);
+            LocalDate fechaSalida = LocalDate.parse(reserva.getFechaSalida(), formatter);
+
+            if (!fechaSalida.isAfter(fechaEntrada)) {
+                throw new IllegalArgumentException("La fecha de salida debe ser mayor que la fecha de entrada");
+            }
+
+            querySQL_1 = "INSERT INTO reservas ( id_cliente, id_habitacion, id_empleado, monto_total, estado, fecha_reserva, fecha_entrada, fecha_salida, fecha_creado ) VALUES ( ?,?,?,?,?,?,?,?,NOW() );";
+            Object[] parametrosSQL_1 = {reserva.getIdCliente(), reserva.getIdHabitacion(), reserva.getIdEmpleado(), reserva.getMontoTotal(), reserva.getEstado(), reserva.getFechaReserva(), reserva.getFechaEntrada(), reserva.getFechaSalida()};
+            db.queryInsertar(querySQL_1, parametrosSQL_1);
+
+            db.cerrarConsulta();
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     public Boolean actualizarReserva(Reserva reserva) {
