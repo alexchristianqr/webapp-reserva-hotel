@@ -42,7 +42,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="password" class="form-label">Contrase�a</label>
+                        <label for="password" class="form-label">Contraseña</label>
                         <input 
                             v-model="state.password"
                             type="password"
@@ -53,7 +53,7 @@
                     </div>
 
                     <div class="d-grid">
-                        <button class="btn btn-primary" type="submit">Iniciar sesi�n</button>
+                        <button class="btn btn-primary" type="submit">Iniciar sesion</button>
                     </div>
                 </form>
                 <!-- . -->

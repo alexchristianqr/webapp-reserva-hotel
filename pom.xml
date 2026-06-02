@@ -76,7 +76,6 @@
                 <directory>${project.basedir}/src/java</directory>
                 <excludes>
                     <exclude>**/*.java</exclude>
-                    <exclude>**/*.form</exclude>
                 </excludes>
             </resource>
         </resources>

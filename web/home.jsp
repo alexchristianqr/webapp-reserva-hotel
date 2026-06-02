@@ -7,7 +7,7 @@
 
         <div class="d-flex gap-2">
             <button class="btn btn-outline-danger" @click="logout">
-                <i class="bi bi-box-arrow-right"></i> Cerrar sesi�n
+                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
             </button>
         </div>
     </div>
