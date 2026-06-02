@@ -1,8 +1,8 @@
-<%@include file="../includes/header.jsp" %>
+<%@include file="./includes/header.jsp" %>
 
 <header class="py-3 border-bottom mb-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Panel de Configuración</h2>
+        <h2 class="mb-0">Panel de Configuraciï¿½n</h2>
 
         <div class="d-flex gap-2">
             <a href="/webapp-reserva-hotel/home.jsp" class="btn btn-outline-secondary">
@@ -14,10 +14,10 @@
 
 <main class="flex-fill">
     <p class="text-muted mb-5">
-        Administra la información del sistema: habitaciones, empleados, productos, usuarios y clientes.
+        Administra la informaciï¿½n del sistema: habitaciones, empleados, productos, usuarios y clientes.
     </p>
 
-    <!-- Tarjetas de configuración -->
+    <!-- Tarjetas de configuraciï¿½n -->
     <div class="row g-4 pb-5">
         <!-- Habitaciones -->
         <div class="col-md-4">
@@ -73,7 +73,7 @@
                 <div class="card-body">
                     <i class="bi bi-person-lines-fill display-4 text-danger"></i>
                     <h5 class="card-title mt-3">Clientes</h5>
-                    <p class="text-muted">Consulta y gestiona los datos de tus huéspedes.</p>
+                    <p class="text-muted">Consulta y gestiona los datos de tus huï¿½spedes.</p>
                     <a href="clientes.jsp" class="btn btn-danger">Administrar</a>
                 </div>
             </div>
@@ -95,4 +95,4 @@
     }).mount('#app');
 </script>
 
-<%@include file="../includes/footer.jsp" %>
+<%@include file="./includes/footer.jsp" %>

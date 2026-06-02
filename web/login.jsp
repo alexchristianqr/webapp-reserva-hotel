@@ -1,4 +1,4 @@
-<%@include file="../includes/header.jsp" %>
+<%@include file="./includes/header.jsp" %>
 
 <header class="py-4 mb-4 text-center">
     <i class="bi bi-building text-primary" style="font-size: 5rem;"></i>
@@ -42,7 +42,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
+                        <label for="password" class="form-label">Contraseï¿½a</label>
                         <input 
                             v-model="state.password"
                             type="password"
@@ -53,7 +53,7 @@
                     </div>
 
                     <div class="d-grid">
-                        <button class="btn btn-primary" type="submit">Iniciar sesión</button>
+                        <button class="btn btn-primary" type="submit">Iniciar sesiï¿½n</button>
                     </div>
                 </form>
                 <!-- . -->
@@ -99,10 +99,10 @@
 
                     if (success) {
                         state.user = result;
-                        state.message = '¡Bienvenido!';
+                        state.message = 'ï¿½Bienvenido!';
                         window.location.href = '/webapp-reserva-hotel/home.jsp';
                     } else {
-                        state.messageError = message || 'Usuario o contraseña incorrectos';
+                        state.messageError = message || 'Usuario o contraseï¿½a incorrectos';
                     }
                 } catch (error) {
                     console.error(error);
@@ -118,4 +118,4 @@
     }).mount('#app');
 </script>
 
-<%@include file="../includes/footer.jsp" %>
+<%@include file="./includes/footer.jsp" %>

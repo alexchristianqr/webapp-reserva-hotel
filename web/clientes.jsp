@@ -1,8 +1,8 @@
-<%@include file="../includes/header.jsp" %>
+<%@include file="./includes/header.jsp" %>
 
 <header class="py-3 border-bottom mb-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Gestión de Clientes</h2>
+        <h2 class="mb-0">Gestiï¿½n de Clientes</h2>
         <div class="d-flex gap-2">
             <a href="/webapp-reserva-hotel/configuraciones.jsp" class="btn btn-outline-secondary">
                 <i class="bi bi-caret-left"></i> Volver
@@ -20,7 +20,7 @@
                 <th>Nombres</th>
                 <th>Apellidos</th>
                 <th>Nro. Documento</th>
-                <th>Teléfono</th>
+                <th>Telï¿½fono</th>
                 <th>Estado</th>
                 <th>Acciones</th>
             </tr>
@@ -101,7 +101,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label for="telefono" class="form-label">Teléfono</label>
+                                <label for="telefono" class="form-label">Telï¿½fono</label>
                                 <input v-model="state.clientInForm.telefono" type="text" class="form-control" id="telefono">
                             </div>
                         </div>
@@ -162,7 +162,7 @@
                     }
                 } catch (error) {
                     console.error("ERROR en fetchClients:", error);
-                    state.messageError = 'Error de conexión: ' + error.message;
+                    state.messageError = 'Error de conexiï¿½n: ' + error.message;
                 }
             };
 
@@ -170,8 +170,8 @@
                 state.isEditing = false;
                 state.clientInForm = {tipoDocumento: 1, sexo: 'M'};
 
-                // ### LÍNEAS AÑADIDAS ###
-                // Limpia los mensajes de error o éxito antes de mostrar el modal.
+                // ### Lï¿½NEAS Aï¿½ADIDAS ###
+                // Limpia los mensajes de error o ï¿½xito antes de mostrar el modal.
                 state.messageError = null;
                 state.messageSuccess = null;
                 // ### FIN DEL CAMBIO ###
@@ -183,8 +183,8 @@
                 state.isEditing = true;
                 state.clientInForm = {...client};
 
-                // ### LÍNEAS AÑADIDAS ###
-                // Limpia los mensajes de error o éxito antes de mostrar el modal.
+                // ### Lï¿½NEAS Aï¿½ADIDAS ###
+                // Limpia los mensajes de error o ï¿½xito antes de mostrar el modal.
                 state.messageError = null;
                 state.messageSuccess = null;
                 // ### FIN DEL CAMBIO ###
@@ -197,18 +197,18 @@
                 const formData = new FormData();
 
                 // ### INICIO DEL CAMBIO ###
-                // 1. Añadimos la acción como un campo más del formulario.
+                // 1. Aï¿½adimos la acciï¿½n como un campo mï¿½s del formulario.
                 formData.append('action', action);
                 // ### FIN DEL CAMBIO ###
 
-                // Añadimos el resto de los datos del formulario al FormData.
+                // Aï¿½adimos el resto de los datos del formulario al FormData.
                 for (const key in state.clientInForm) {
                     formData.append(key, state.clientInForm[key]);
                 }
 
                 try {
                     // ### INICIO DEL CAMBIO ###
-                    // 2. La URL ahora está limpia, sin parámetros.
+                    // 2. La URL ahora estï¿½ limpia, sin parï¿½metros.
                     const response = await fetch('/webapp-reserva-hotel/ClienteServlet', {
                         method: 'POST',
                         body: formData
@@ -234,7 +234,7 @@
                         }
 
                     } else {
-                        // Ahora veremos el error específico del backend si algo falla
+                        // Ahora veremos el error especï¿½fico del backend si algo falla
                         throw new Error(data.message || "Error desconocido en el servidor");
                     }
                 } catch (error) {
@@ -252,4 +252,4 @@
     }).mount('#app');
 </script>
 
-<%@include file="../includes/footer.jsp" %>
+<%@include file="./includes/footer.jsp" %>

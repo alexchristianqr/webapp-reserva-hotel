@@ -1,8 +1,8 @@
-<%@include file="../includes/header.jsp" %>
+<%@include file="./includes/header.jsp" %>
 
 <header class="py-3 border-bottom mb-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Gestión de Reservas</h2>
+        <h2 class="mb-0">Gestiï¿½n de Reservas</h2>
 
         <div class="d-flex gap-2">
             <a href="/webapp-reserva-hotel/home.jsp" class="btn btn-outline-secondary">
@@ -20,7 +20,7 @@
             <tr>
                 <th>#</th>
                 <th>Cliente</th>
-                <th>Habitación</th>
+                <th>Habitaciï¿½n</th>
                 <th>Fecha Entrada</th>
                 <th>Fecha Salida</th>
                 <th>Acciones</th>
@@ -202,7 +202,7 @@
 
             // Eliminar reserva
             const eliminarReserva = async (idReserva) => {
-                if (!confirm('¿Deseas eliminar esta reserva?'))
+                if (!confirm('ï¿½Deseas eliminar esta reserva?'))
                     return;
 
                 try {
@@ -257,7 +257,7 @@
                     if (success) {
                         state.reservas = result;
                     } else {
-                        state.messageError = message || 'Usuario o contraseña incorrectos';
+                        state.messageError = message || 'Usuario o contraseï¿½a incorrectos';
                     }
                 } catch (error) {
                     console.error(error);
@@ -343,4 +343,4 @@
     }).mount('#app');
 </script>
 
-<%@include file="../includes/footer.jsp" %>
+<%@include file="./includes/footer.jsp" %>

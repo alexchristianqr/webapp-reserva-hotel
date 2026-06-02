@@ -1,4 +1,4 @@
-<%@include file="../includes/header.jsp" %>
+<%@include file="./includes/header.jsp" %>
 
 
 <header class="py-3 border-bottom mb-4">
@@ -7,7 +7,7 @@
 
         <div class="d-flex gap-2">
             <button class="btn btn-outline-danger" @click="logout">
-                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                <i class="bi bi-box-arrow-right"></i> Cerrar sesiï¿½n
             </button>
         </div>
     </div>
@@ -36,7 +36,7 @@
                 <div class="card-body">
                     <i class="bi bi-calendar-plus display-4 text-primary"></i>
                     <h5 class="card-title mt-3">Nueva reserva</h5>
-                    <p class="card-text text-muted">Crea una nueva reserva para tus huéspedes.</p>
+                    <p class="card-text text-muted">Crea una nueva reserva para tus huï¿½spedes.</p>
                     <button class="btn btn-primary" @click="goToNewReservation">Reservar</button>
                 </div>
             </div>
@@ -57,7 +57,7 @@
             <div class="card h-100 text-center p-3">
                 <div class="card-body">
                     <i class="bi bi-gear display-4 text-secondary"></i>
-                    <h5 class="card-title mt-3">Configuración</h5>
+                    <h5 class="card-title mt-3">Configuraciï¿½n</h5>
                     <p class="card-text text-muted">Actualiza tus datos o preferencias del sistema.</p>
                     <button class="btn btn-secondary" @click="goToSettings">Configurar</button>
                 </div>
@@ -65,9 +65,9 @@
         </div>
     </div>
 
-    <!-- Últimas reservas -->
+    <!-- ï¿½ltimas reservas -->
     <div class="py-3">
-        <h4 class="mb-3">Últimas reservas</h4>
+        <h4 class="mb-3">ï¿½ltimas reservas</h4>
         <div v-if="state.reservations.length === 0" class="text-muted">
             No hay reservas registradas.
         </div>
@@ -76,7 +76,7 @@
                 <tr>
                     <th>#</th>
                     <th>Cliente</th>
-                    <th>Habitación</th>
+                    <th>Habitaciï¿½n</th>
                     <th>Check-in</th>
                     <th>Check-out</th>
                     <th>Estado</th>
@@ -145,7 +145,7 @@
                     if (success) {
                         window.location.href = redirectLogin;
                     } else {
-                        state.messageError = message || 'Usuario o contraseña incorrectos';
+                        state.messageError = message || 'Usuario o contraseï¿½a incorrectos';
                     }
                 } catch (error) {
                     console.error(error);
@@ -174,7 +174,7 @@
                     if (success) {
                         state.user = result;
                     } else {
-                        state.messageError = message || 'Usuario o contraseña incorrectos';
+                        state.messageError = message || 'Usuario o contraseï¿½a incorrectos';
                     }
                 } catch (error) {
                     console.error(error);
@@ -203,7 +203,7 @@
                     if (success) {
                         state.reservations = result;
                     } else {
-                        state.messageError = message || 'Usuario o contraseña incorrectos';
+                        state.messageError = message || 'Usuario o contraseï¿½a incorrectos';
                     }
                 } catch (error) {
                     console.error(error);
@@ -236,5 +236,5 @@
     }).mount('#app');
 </script>
 
-<%@include file="../includes/footer.jsp" %>
+<%@include file="./includes/footer.jsp" %>
 

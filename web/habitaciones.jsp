@@ -1,13 +1,13 @@
-<%@include file="../includes/header.jsp" %>
+<%@include file="./includes/header.jsp" %>
 
 <header class="py-3 border-bottom mb-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Gestión de Habitaciones</h2>
+        <h2 class="mb-0">Gestiï¿½n de Habitaciones</h2>
         <div class="d-flex gap-2">
             <a href="/webapp-reserva-hotel/configuraciones.jsp" class="btn btn-outline-secondary">
                 <i class="bi bi-caret-left"></i> Volver
             </a>
-            <button class="btn btn-primary mr-5" @click="openCreateModal()">Nueva Habitación</button>
+            <button class="btn btn-primary mr-5" @click="openCreateModal()">Nueva Habitaciï¿½n</button>
         </div>
     </div>
 </header>
@@ -17,8 +17,8 @@
         <thead class="table-light">
             <tr>
                 <th>#</th>
-                <th>Tipo de Habitación</th>
-                <th>Número</th>
+                <th>Tipo de Habitaciï¿½n</th>
+                <th>Nï¿½mero</th>
                 <th>Precio (S/)</th>
                 <th>Estado</th>
                 <th>Acciones</th>
@@ -39,7 +39,7 @@
                     </span>
                 </td>
                 <td>
-                    <button class="btn btn-sm btn-primary me-2" title="Editar Habitación" @click="openEditModal(room)">
+                    <button class="btn btn-sm btn-primary me-2" title="Editar Habitaciï¿½n" @click="openEditModal(room)">
                         <i class="bi bi-pencil-square"></i>
                     </button>
                 </td>
@@ -54,7 +54,7 @@
                 <form @submit.prevent="guardarHabitacion">
 
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalLabel">{{ state.isEditing ? 'Editar Habitación' : 'Agregar Nueva Habitación' }}</h5>
+                        <h5 class="modal-title" id="modalLabel">{{ state.isEditing ? 'Editar Habitaciï¿½n' : 'Agregar Nueva Habitaciï¿½n' }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
@@ -70,7 +70,7 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="tipo" class="form-label">Tipo de Habitación</label>
+                                <label for="tipo" class="form-label">Tipo de Habitaciï¿½n</label>
                                 <select v-model="state.roomInForm.tipo" class="form-select" id="tipo" required>
                                     <option value="Simple">Simple</option>
                                     <option value="Doble">Doble</option>
@@ -78,7 +78,7 @@
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="numero" class="form-label">Número de Habitación</label>
+                                <label for="numero" class="form-label">Nï¿½mero de Habitaciï¿½n</label>
                                 <input v-model="state.roomInForm.numeroPiso" type="text" class="form-control" id="numero" required>
                             </div>
                         </div>
@@ -181,7 +181,7 @@
                             window.location.href = redirectLogin;
                             return;
                         }
-                        throw new Error('Error al guardar la habitación');
+                        throw new Error('Error al guardar la habitaciï¿½n');
                     }
 
                     const data = await response.json();
@@ -214,4 +214,4 @@
     }).mount('#app');
 </script>
 
-<%@include file="../includes/footer.jsp" %>
+<%@include file="./includes/footer.jsp" %>
