@@ -111,23 +111,27 @@ public class MysqlDBService extends BaseService {
         return true; // Valor por defecto si no se puede obtener
     }
 
+    private void bindParameters(PreparedStatement statement, Object[] parametros) throws SQLException {
+        if (parametros == null || parametros.length == 0) {
+            return;
+        }
+
+        for (int i = 0; i < parametros.length; i++) {
+            statement.setObject(i + 1, parametros[i]);
+        }
+    }
+
     public ResultSet queryConsultar(String sql) {
-        Object[] parametros = null;
-        return queryConsultar(sql, parametros);
+        return queryConsultar(sql, new Object[0]);
     }
 
     public ResultSet queryConsultar(String sql, Object[] parametros) {
         try {
             conn = this.getConnection();
 
-            int tamano = parametros.length;
             stmt = conn.prepareStatement(sql);
 
-            if (parametros != null) {
-                for (int i = 0; i < tamano; i++) {
-                    stmt.setObject(i + 1, parametros[i]);
-                }
-            }
+            bindParameters(stmt, parametros);
 
             System.out.println("[MysqlDBService.queryConsultar()] QUERY: " + stmt.toString().replace("com.mysql.cj.jdbc.ClientPreparedStatement: ", ""));
 
@@ -145,12 +149,9 @@ public class MysqlDBService extends BaseService {
         int newId = -1;
 
         try {
-            int tamano = parametros.length;
             stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-            for (int i = 0; i < tamano; i++) {
-                stmt.setObject(i + 1, parametros[i]);
-            }
+            bindParameters(stmt, parametros);
 
             System.out.println("[MysqlDBService.queryInsertar()] QUERY: " + stmt.toString().replace("com.mysql.cj.jdbc.ClientPreparedStatement: ", ""));
 
@@ -172,12 +173,9 @@ public class MysqlDBService extends BaseService {
 
     public int queryActualizar(String sql, Object[] parametros) {
         try {
-            int tamano = parametros.length;
-            stmt = conn.prepareStatement(sql, tamano);
+            stmt = conn.prepareStatement(sql);
 
-            for (int i = 0; i < tamano; i++) {
-                stmt.setObject(i + 1, parametros[i]);
-            }
+            bindParameters(stmt, parametros);
 
             System.out.println("[MysqlDBService.queryActualizar()] QUERY: " + stmt.toString().replace("com.mysql.cj.jdbc.ClientPreparedStatement: ", ""));
 
@@ -190,12 +188,9 @@ public class MysqlDBService extends BaseService {
 
     public int queryEliminar(String sql, Object[] parametros) {
         try {
-            int tamano = parametros.length;
             stmt = conn.prepareStatement(sql);
 
-            for (int i = 0; i < tamano; i++) {
-                stmt.setObject(i + 1, parametros[i]);
-            }
+            bindParameters(stmt, parametros);
 
             System.out.println("[MysqlDBService.queryEliminar()] QUERY: " + stmt.toString().replace("com.mysql.cj.jdbc.ClientPreparedStatement: ", ""));
 

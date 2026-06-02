@@ -1,2 +1,7 @@
 /build/
 /dist/
+/target/
+/out/
+/.idea/
+*.iml
+/web/META-INF/MANIFEST.MF
