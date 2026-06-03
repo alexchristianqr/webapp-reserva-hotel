@@ -6,13 +6,14 @@
 -- 2fn: eliminar datos redundantes en la tabla principal y ponerlas en otra tabla por pk1 y pk2.
 -- 3fn: eliminar columnas que no dependen de la pk en la tabla principal en y ponerlas a otra tabla
 
--- # crear base de datos
+-- Crear y usar la base de datos
+DROP DATABASE IF EXISTS db_hotel;
 CREATE DATABASE db_hotel;
-
--- # usar base de datos
 USE db_hotel;
 
--- # crear tabla usuarios
+/* TABLAS */
+
+-- Crear tabla usuarios
 CREATE TABLE usuarios
 (
     id INT NOT NULL AUTO_INCREMENT,
@@ -28,7 +29,7 @@ CREATE TABLE usuarios
     PRIMARY KEY (id),
     UNIQUE (username, estado)
 );
--- # crear tabla personas
+-- Crear tabla personas
 CREATE TABLE personas
 (
     id INT NOT NULL AUTO_INCREMENT,
@@ -48,7 +49,7 @@ CREATE TABLE personas
     UNIQUE (tipo_documento, nrodocumento)
 );
 
--- # crear tabla clientes_perfiles
+-- Crear tabla clientes_perfiles
 CREATE TABLE clientes_perfiles
 (
     id INT NOT NULL AUTO_INCREMENT,
@@ -60,7 +61,7 @@ CREATE TABLE clientes_perfiles
     PRIMARY KEY (id)
 );
 
--- # crear tabla clientes
+-- Crear tabla clientes
 CREATE TABLE clientes
 (
     id INT NOT NULL AUTO_INCREMENT,
@@ -77,7 +78,7 @@ CREATE TABLE clientes
     FOREIGN KEY (id_cliente_perfil) REFERENCES clientes_perfiles(id)
 );
 
--- # crear tabla empleados_perfiles
+-- Crear tabla empleados_perfiles
 CREATE TABLE empleados_perfiles
 (
     id INT NOT NULL AUTO_INCREMENT,
@@ -89,11 +90,11 @@ CREATE TABLE empleados_perfiles
     PRIMARY KEY (id)
 );
 
--- # crear tabla empleado
+-- Crear tabla empleado
 CREATE TABLE empleados
 (
     id INT NOT NULL AUTO_INCREMENT,
-    id_persona INT NOT NULL,    
+    id_persona INT NOT NULL,
     id_usuario INT NOT NULL,
     id_empleado_perfil INT NOT NULL,
     sueldo DECIMAL(10,2) NOT NULL,
@@ -106,7 +107,7 @@ CREATE TABLE empleados
     FOREIGN KEY (id_empleado_perfil) REFERENCES empleados_perfiles(id)
 );
 
--- # crear tabla tipo habitación
+-- Crear tabla tipo habitación
 CREATE TABLE tipo_habitacion
 (
     id INT NOT NULL AUTO_INCREMENT,
@@ -116,7 +117,7 @@ CREATE TABLE tipo_habitacion
     PRIMARY KEY (id)
 );
 
--- # crear tabla habitación
+-- Crear tabla habitación
 CREATE TABLE habitaciones
 (
     id INT NOT NULL AUTO_INCREMENT,
@@ -133,7 +134,7 @@ CREATE TABLE habitaciones
     FOREIGN KEY (id_tipohabitacion) REFERENCES tipo_habitacion(id)
 );
 
--- # crear tabla producto
+-- Crear tabla producto
 CREATE TABLE productos
 (
     id INT NOT NULL AUTO_INCREMENT,
@@ -146,7 +147,7 @@ CREATE TABLE productos
     PRIMARY KEY (id)
 );
 
--- # crear tabla reservaconsumo
+-- Crear tabla reservas-consumo
 CREATE TABLE reservas_consumo
 (
     id INT NOT NULL AUTO_INCREMENT,
@@ -160,7 +161,7 @@ CREATE TABLE reservas_consumo
     PRIMARY KEY (id)
 );
 
--- # crear tabla reserva
+-- Crear tabla reservas
 CREATE TABLE reservas
 (
     id INT NOT NULL AUTO_INCREMENT,
@@ -182,7 +183,7 @@ CREATE TABLE reservas
     FOREIGN KEY (id_empleado) REFERENCES empleados(id)
 );
 
--- # Crear tabla comprobante de pago
+-- Crear tabla comprobante de pagos
 CREATE TABLE comprobantes
 (
     id INT NOT NULL AUTO_INCREMENT,
@@ -197,6 +198,8 @@ CREATE TABLE comprobantes
     FOREIGN KEY (id_empleado) REFERENCES empleados(id)
 );
 
+/* INSERTS */
+
 -- empleados_perfiles
 INSERT INTO empleados_perfiles (nombre, permisos) VALUES ('Administrador', '{}');
 INSERT INTO empleados_perfiles (nombre, permisos) VALUES ('Recepcionista', '{}');
@@ -207,52 +210,52 @@ INSERT INTO clientes_perfiles (nombre, permisos) VALUES ('Cliente', '{}');
 INSERT INTO clientes_perfiles (nombre, permisos) VALUES ('Invitado', '{}');
 
 -- usuarios
-INSERT INTO usuarios (nombres, apellidos, rol, username, pwd, estado) 
+INSERT INTO usuarios (nombres, apellidos, rol, username, pwd, estado)
 VALUES ('Alex', 'Quispe', 'empleado', 'alex.quispe@gmail.com', '12345678', 'activo');
-INSERT INTO usuarios (nombres, apellidos, rol, username, pwd, estado) 
+INSERT INTO usuarios (nombres, apellidos, rol, username, pwd, estado)
 VALUES ('Maria', 'Gonzales', 'cliente', 'maria.gonzales@utp.edu.pe', '12345678', 'activo');
-INSERT INTO usuarios (nombres, apellidos, rol, username, pwd, estado) 
+INSERT INTO usuarios (nombres, apellidos, rol, username, pwd, estado)
 VALUES ('Susan', 'Torres', 'cliente', 'susan.torres@utp.edu.pe', '12345678', 'activo');
 
 -- personas / empleados
-INSERT INTO personas (nombre, apellido, tipo_documento, nrodocumento, sexo, edad) 
+INSERT INTO personas (nombre, apellido, tipo_documento, nrodocumento, sexo, edad)
 VALUES ('Alex', 'Quispe', 1, '12345678', 'M', '30');
-INSERT INTO empleados (id_persona, id_usuario, id_empleado_perfil, sueldo) 
+INSERT INTO empleados (id_persona, id_usuario, id_empleado_perfil, sueldo)
 VALUES (1, 1, 1, 1250.69);
 
 -- personas / clientes
-INSERT INTO personas (nombre, apellido, tipo_documento, nrodocumento, sexo, edad) 
+INSERT INTO personas (nombre, apellido, tipo_documento, nrodocumento, sexo, edad)
 VALUES ('Maria', 'Gonzales', 1, '74567890', 'M', '34');
-INSERT INTO clientes (id_persona, id_usuario, id_cliente_perfil, empresa) 
+INSERT INTO clientes (id_persona, id_usuario, id_cliente_perfil, empresa)
 VALUES (2, 2, 1, NULL);
 -- //
-INSERT INTO personas (nombre, apellido, tipo_documento, nrodocumento, sexo, edad) 
+INSERT INTO personas (nombre, apellido, tipo_documento, nrodocumento, sexo, edad)
 VALUES ('Susan', 'Torres', 1, '87946521', 'M', '48');
-INSERT INTO clientes (id_persona, id_usuario, id_cliente_perfil, empresa) 
+INSERT INTO clientes (id_persona, id_usuario, id_cliente_perfil, empresa)
 VALUES (3, 3, 2, NULL);
 
 -- tipo habitacion
-INSERT INTO tipo_habitacion (descripcion) 
+INSERT INTO tipo_habitacion (descripcion)
 VALUES ('clasico');
 
 -- habitacion
-INSERT INTO habitaciones (id_tipohabitacion, descripcion, nivel, numero_piso, precio, cantidad_camas) 
+INSERT INTO habitaciones (id_tipohabitacion, descripcion, nivel, numero_piso, precio, cantidad_camas)
 VALUES (1, 'habitación con agua caliente + tv', '1', '101', 49.50, 1);
 
 -- reserva
 INSERT INTO reservas (id_cliente, id_habitacion, id_empleado, monto_total, numero_noches, cantidad_huespedes, fecha_reserva, fecha_entrada, fecha_salida)
-  VALUES (1, 1, 1, 89.90, 2, 1, '2023-11-10 18:45:29', '2023-11-10 00:00:00', '2023-11-12 00:00:00');
+VALUES (1, 1, 1, 89.90, 2, 1, '2023-11-10 18:45:29', '2023-11-10 00:00:00', '2023-11-12 00:00:00');
 
 -- producto
-INSERT INTO productos (descripcion, precio, cantidad_stock) 
+INSERT INTO productos (descripcion, precio, cantidad_stock)
 VALUES ('botella de agua cielo', 5, 100);
 
 -- reserva consumo
-INSERT INTO reservas_consumo (id_producto, id_reserva, cantidad, precio) 
+INSERT INTO reservas_consumo (id_producto, id_reserva, cantidad, precio)
 VALUES (1, 1, 3, 5.50);
 
 -- comprobante pago
-INSERT INTO comprobantes (id_reserva, id_empleado, tipo_comprobante, fecha_pagado, estado) 
+INSERT INTO comprobantes (id_reserva, id_empleado, tipo_comprobante, fecha_pagado, estado)
 VALUES (1, 1, '1', '2023-11-10 18:45:29', 'pagado');
 
 /*create or alter function dbo.fnclientetienedescuento
