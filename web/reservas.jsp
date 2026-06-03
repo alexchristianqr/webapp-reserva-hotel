@@ -1,8 +1,9 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@include file="./includes/header.jsp" %>
 
 <header class="py-3 border-bottom mb-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Gesti�n de Reservas</h2>
+        <h2 class="mb-0">Gestión de Reservas</h2>
 
         <div class="d-flex gap-2">
             <a href="/webapp-reserva-hotel/home.jsp" class="btn btn-outline-secondary">
@@ -20,7 +21,7 @@
             <tr>
                 <th>#</th>
                 <th>Cliente</th>
-                <th>Habitaci�n</th>
+                <th>Habitación</th>
                 <th>Fecha Entrada</th>
                 <th>Fecha Salida</th>
                 <th>Acciones</th>

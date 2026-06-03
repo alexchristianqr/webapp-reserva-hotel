@@ -1,3 +1,4 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@include file="./includes/header.jsp" %>
 
 <header class="py-3 border-bottom mb-4">
@@ -7,7 +8,7 @@
             <a href="/webapp-reserva-hotel/configuraciones.jsp" class="btn btn-outline-secondary">
                 <i class="bi bi-caret-left"></i> Volver
             </a>
-            <button class="btn btn-primary mr-5" @click="openCreateModal()">Nueva Habitaci�n</button>
+            <button class="btn btn-primary mr-5" @click="openCreateModal()">Nueva Habitación</button>
         </div>
     </div>
 </header>
@@ -17,8 +18,8 @@
         <thead class="table-light">
             <tr>
                 <th>#</th>
-                <th>Tipo de Habitaci�n</th>
-                <th>N�mero</th>
+                <th>Tipo de Habitación</th>
+                <th>Numero</th>
                 <th>Precio (S/)</th>
                 <th>Estado</th>
                 <th>Acciones</th>
@@ -54,7 +55,7 @@
                 <form @submit.prevent="guardarHabitacion">
 
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalLabel">{{ state.isEditing ? 'Editar Habitaci�n' : 'Agregar Nueva Habitaci�n' }}</h5>
+                        <h5 class="modal-title" id="modalLabel">{{ state.isEditing ? 'Editar Habitación' : 'Agregar Nueva Habitaci�n' }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
@@ -78,7 +79,7 @@
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="numero" class="form-label">N�mero de Habitaci�n</label>
+                                <label for="numero" class="form-label">Número de Habitación</label>
                                 <input v-model="state.roomInForm.numeroPiso" type="text" class="form-control" id="numero" required>
                             </div>
                         </div>

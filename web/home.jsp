@@ -1,3 +1,4 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@include file="./includes/header.jsp" %>
 
 
@@ -36,7 +37,7 @@
                 <div class="card-body">
                     <i class="bi bi-calendar-plus display-4 text-primary"></i>
                     <h5 class="card-title mt-3">Nueva reserva</h5>
-                    <p class="card-text text-muted">Crea una nueva reserva para tus hu�spedes.</p>
+                    <p class="card-text text-muted">Crea una nueva reserva para tus huéspedes.</p>
                     <button class="btn btn-primary" @click="goToNewReservation">Reservar</button>
                 </div>
             </div>
@@ -57,7 +58,7 @@
             <div class="card h-100 text-center p-3">
                 <div class="card-body">
                     <i class="bi bi-gear display-4 text-secondary"></i>
-                    <h5 class="card-title mt-3">Configuraci�n</h5>
+                    <h5 class="card-title mt-3">Configuración</h5>
                     <p class="card-text text-muted">Actualiza tus datos o preferencias del sistema.</p>
                     <button class="btn btn-secondary" @click="goToSettings">Configurar</button>
                 </div>
@@ -65,9 +66,9 @@
         </div>
     </div>
 
-    <!-- �ltimas reservas -->
+    <!--Ultimas reservas -->
     <div class="py-3">
-        <h4 class="mb-3">�ltimas reservas</h4>
+        <h4 class="mb-3">Últimas reservas</h4>
         <div v-if="state.reservations.length === 0" class="text-muted">
             No hay reservas registradas.
         </div>
@@ -76,7 +77,7 @@
                 <tr>
                     <th>#</th>
                     <th>Cliente</th>
-                    <th>Habitaci�n</th>
+                    <th>Habitación</th>
                     <th>Check-in</th>
                     <th>Check-out</th>
                     <th>Estado</th>
@@ -236,5 +237,5 @@
     }).mount('#app');
 </script>
 
-<%@include file="./includes/footer.jsp" %>
+<jsp:include page="./includes/footer.jsp" />
 

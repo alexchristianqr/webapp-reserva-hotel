@@ -1,9 +1,3 @@
-<%-- 
-    Document   : productos
-    Created on : Oct 11, 2025, 2:58:13 AM
-    Author     : alex
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>

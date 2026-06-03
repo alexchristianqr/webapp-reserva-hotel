@@ -1,3 +1,4 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@include file="./includes/header.jsp" %>
 
 <header class="py-4 mb-4 text-center">

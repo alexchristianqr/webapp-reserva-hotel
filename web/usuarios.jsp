@@ -1,9 +1,3 @@
-<%-- 
-    Document   : usuarios
-    Created on : Oct 11, 2025, 2:58:03 AM
-    Author     : alex
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
