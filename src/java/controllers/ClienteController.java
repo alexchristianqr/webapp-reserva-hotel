@@ -14,7 +14,7 @@ public class ClienteController extends BaseController<Cliente, ClienteService> {
 
     public ResponseService<List<Cliente>> listarClientes(String buscar) {
         ResponseService<List<Cliente>> response = new ResponseService<>();
-        List<Cliente> clientes = service.listarClientes();
+        List<Cliente> clientes = service.listarClientes(buscar);
 
         if (clientes.isEmpty()) {
             response.setSuccess(false);
@@ -53,6 +53,21 @@ public class ClienteController extends BaseController<Cliente, ClienteService> {
         } else {
             response.setSuccess(true);
             response.setMessage("Actualizado correctamente");
+        }
+
+        return response;
+    }
+
+    public ResponseService<Boolean> eliminarCliente(Cliente cliente) {
+        ResponseService<Boolean> response = new ResponseService<>();
+        Boolean success = service.eliminarCliente(cliente);
+
+        if (!success) {
+            response.setSuccess(false);
+            response.setMessage("Error al eliminar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Eliminado correctamente");
         }
 
         return response;

@@ -13,12 +13,19 @@ public class ProductoService extends BaseService {
         db = new MysqlDBService();
     }
 
-    public List<Producto> listarProductos() {
-
+    public List<Producto> listarProductos(String buscar) {
         List<Producto> productos = new ArrayList<>();
 
         querySQL_1 = "SELECT id, descripcion, precio, cantidad_stock, estado, fecha_creado, fecha_actualizado FROM productos";
         Object[] parametrosSQL_1 = {};
+
+        // Búsqueda parametrizada (SQL LIKE) cuando hay término de búsqueda
+        if (buscar != null && !buscar.isBlank()) {
+            querySQL_1 += " WHERE descripcion LIKE ?";
+            parametrosSQL_1 = new Object[]{"%" + buscar.trim() + "%"};
+        }
+
+        querySQL_1 += " ORDER BY id DESC";
         ResultSet rs = db.queryConsultar(querySQL_1, parametrosSQL_1);
 
         try {
@@ -70,12 +77,12 @@ public class ProductoService extends BaseService {
         return true;
     }
 
-    // Método para eliminar un producto por su código
+    // Eliminación lógica: marca el producto como inactivo (preserva integridad referencial con reservas_consumo)
     public Boolean eliminarProducto(Producto producto) {
-        querySQL_1 = "DELETE FROM productos WHERE id = ?";
+        querySQL_1 = "UPDATE productos SET estado = 'inactivo', fecha_actualizado = NOW() WHERE id = ?";
         Object[] parametros = {producto.getIdProducto()};
 
-        db.queryEliminar(querySQL_1, parametros);
+        db.queryActualizar(querySQL_1, parametros);
         db.cerrarConsulta();
         return true;
     }

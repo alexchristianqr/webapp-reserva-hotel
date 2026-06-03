@@ -14,7 +14,7 @@ public class EmpleadoController extends BaseController<Empleado, EmpleadoService
 
     public ResponseService<List<Empleado>> listarEmpleados(String buscar) {
         ResponseService<List<Empleado>> response = new ResponseService<>();
-        List<Empleado> empleados = service.listarEmpleados();
+        List<Empleado> empleados = service.listarEmpleados(buscar);
 
         if (empleados.isEmpty()) {
             response.setSuccess(false);
@@ -53,6 +53,21 @@ public class EmpleadoController extends BaseController<Empleado, EmpleadoService
         } else {
             response.setSuccess(true);
             response.setMessage("Actualizado correctamente");
+        }
+
+        return response;
+    }
+
+    public ResponseService<Boolean> eliminarEmpleado(Empleado empleado) {
+        ResponseService<Boolean> response = new ResponseService<>();
+        Boolean success = service.eliminarEmpleado(empleado);
+
+        if (!success) {
+            response.setSuccess(false);
+            response.setMessage("Error al eliminar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Eliminado correctamente");
         }
 
         return response;

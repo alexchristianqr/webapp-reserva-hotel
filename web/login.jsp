@@ -68,7 +68,6 @@
 
     createApp({
         setup() {
-            // Un solo objeto reactivo para todo el estado
             const state = reactive({
                 username: '',
                 password: '',

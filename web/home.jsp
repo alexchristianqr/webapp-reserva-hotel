@@ -153,6 +153,7 @@
                     state.messageError = error.message;
                 }
             };
+
             const me = async () => {
                 state.messageError = null;
 
@@ -182,6 +183,7 @@
                     state.messageError = error.message;
                 }
             };
+
             const getReservations = async () => {
                 state.messageError = null;
 
@@ -211,12 +213,15 @@
                     state.messageError = error.message;
                 }
             };
+
             const goToNewReservation = () => {
                 window.location.href = 'reservas.jsp';
             };
+
             const goToReservations = () => {
                 window.location.href = 'reservas.jsp';
             };
+
             const goToSettings = () => {
                 window.location.href = 'configuraciones.jsp';
             };

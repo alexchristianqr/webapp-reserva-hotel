@@ -36,6 +36,8 @@ public class ClienteServlet extends BaseServlet {
                 responseService = crearCliente(request);
             case "actualizar" ->
                 responseService = actualizarCliente(request);
+            case "eliminar" ->
+                responseService = eliminarCliente(request);
             default ->
                 responseService = defaultError(action);
         }
@@ -74,5 +76,11 @@ public class ClienteServlet extends BaseServlet {
         cliente.setTelefono(request.getParameter("telefono"));
         cliente.setEstado(request.getParameter("estado"));
         return clienteController.actualizarCliente(cliente);
+    }
+
+    private ResponseService<?> eliminarCliente(HttpServletRequest request) {
+        Cliente cliente = new Cliente();
+        cliente.setIdCliente(parseIntSafe(request.getParameter("idCliente")));
+        return clienteController.eliminarCliente(cliente);
     }
 }

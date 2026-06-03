@@ -1,14 +1,57 @@
 package services;
 
 import core.services.MysqlDBService;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import models.Cliente;
 import models.Empleado;
 import models.Usuario;
 
 public class UsuarioService extends BaseService {
-    
+
     public UsuarioService() {
         db = new MysqlDBService();
+    }
+
+    public List<Usuario> listarUsuarios(String buscar) {
+        List<Usuario> usuarios = new ArrayList<>();
+
+        querySQL_1 = "SELECT id, nombres, apellidos, rol, username, estado, fecha_creado, fecha_actualizado FROM usuarios";
+        Object[] parametrosSQL_1 = {};
+
+        // Búsqueda parametrizada (SQL LIKE) por nombres, apellidos o username
+        if (buscar != null && !buscar.isBlank()) {
+            querySQL_1 += " WHERE nombres LIKE ? OR apellidos LIKE ? OR username LIKE ?";
+            String like = "%" + buscar.trim() + "%";
+            parametrosSQL_1 = new Object[]{like, like, like};
+        }
+
+        querySQL_1 += " ORDER BY id DESC";
+        ResultSet rs = db.queryConsultar(querySQL_1, parametrosSQL_1);
+
+        try {
+            while (rs.next()) {
+                Usuario usuario = new Usuario();
+                usuario.setIdUsuario(rs.getInt("id"));
+                usuario.setNombres(rs.getString("nombres"));
+                usuario.setApellidos(rs.getString("apellidos"));
+                usuario.setRol(rs.getString("rol"));
+                usuario.setUsername(rs.getString("username"));
+                usuario.setEstado(rs.getString("estado"));
+                usuario.setFechaCreado(rs.getString("fecha_creado"));
+                usuario.setFechaActualizado(rs.getString("fecha_actualizado"));
+
+                usuarios.add(usuario);
+            }
+
+            return usuarios;
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            db.cerrarConsulta();
+        }
     }
 
     public boolean registrarUsuario(Usuario usuario) {
@@ -67,5 +110,30 @@ public class UsuarioService extends BaseService {
         }
 
         return success;
+    }
+
+    // Actualiza los datos de la cuenta de usuario (no modifica la contraseña)
+    public Boolean actualizarUsuario(Usuario usuario) {
+        querySQL_1 = "UPDATE usuarios SET nombres = ?, apellidos = ?, rol = ?, username = ?, estado = ?, fecha_actualizado = NOW() WHERE id = ?";
+        Object[] parametros = {
+            usuario.getNombres(),
+            usuario.getApellidos(),
+            usuario.getRol(),
+            usuario.getUsername(),
+            usuario.getEstado(),
+            usuario.getIdUsuario()
+        };
+        db.queryActualizar(querySQL_1, parametros);
+        db.cerrarConsulta();
+        return true;
+    }
+
+    // Eliminación lógica: marca el usuario como inactivo (preserva FKs de empleados/clientes)
+    public Boolean eliminarUsuario(Usuario usuario) {
+        querySQL_1 = "UPDATE usuarios SET estado = 'inactivo', fecha_eliminado = NOW() WHERE id = ?";
+        Object[] parametros = {usuario.getIdUsuario()};
+        db.queryActualizar(querySQL_1, parametros);
+        db.cerrarConsulta();
+        return true;
     }
 }

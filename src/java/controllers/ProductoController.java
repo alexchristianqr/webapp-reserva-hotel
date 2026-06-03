@@ -14,7 +14,7 @@ public class ProductoController extends BaseController<Producto, ProductoService
 
     public ResponseService<List<Producto>> listarProductos(String buscar) {
         ResponseService<List<Producto>> response = new ResponseService<>();
-        List<Producto> productos = service.listarProductos();
+        List<Producto> productos = service.listarProductos(buscar);
 
         if (productos.isEmpty()) {
             response.setSuccess(false);

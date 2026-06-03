@@ -11,6 +11,21 @@
             <button class="btn btn-primary mr-5" @click="openCreateModal()">Nuevo Cliente</button>
         </div>
     </div>
+    <div class="row g-2 align-items-center">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input v-model="state.buscar" @input="onBuscarInput" type="text" class="form-control"
+                       placeholder="Buscar por nombre, apellido o documento...">
+                <button v-if="state.buscar" class="btn btn-outline-secondary" @click="limpiarBusqueda" title="Limpiar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <span class="badge bg-secondary fs-6">{{ state.clients.length }} registro(s)</span>
+        </div>
+    </div>
 </header>
 
 <main class="flex-fill">
@@ -40,6 +55,10 @@
                 <td>
                     <button class="btn btn-sm btn-primary me-2" title="Editar" @click="openEditModal(client)">
                         <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" title="Eliminar" @click="eliminarCliente(client)"
+                            :disabled="client.estado !== 'activo'">
+                        <i class="bi bi-trash"></i>
                     </button>
                 </td>
             </tr>
@@ -131,20 +150,28 @@
                 clients: [],
                 clientInForm: {tipoDocumento: 1, sexo: 'Masculino'},
                 isEditing: false,
+                buscar: '',
                 messageError: null,
                 messageSuccess: null,
             });
 
             const clientModal = ref(null);
+            let buscarTimer = null;
 
-            onMounted(() => {
-                clientModal.value = new bootstrap.Modal(document.getElementById('clientModal'));
+            const onBuscarInput = () => {
+                clearTimeout(buscarTimer);
+                buscarTimer = setTimeout(fetchClients, 350);
+            };
+
+            const limpiarBusqueda = () => {
+                state.buscar = '';
                 fetchClients();
-            });
+            };
 
             const fetchClients = async () => {
                 try {
-                    const response = await fetch('/webapp-reserva-hotel/ClienteServlet?action=listar');
+                    const url = '/webapp-reserva-hotel/ClienteServlet?action=listar&buscar=' + encodeURIComponent(state.buscar);
+                    const response = await fetch(url);
 
                     if (!response.ok) {
                         if (response.status === 401) {
@@ -156,13 +183,10 @@
 
                     const data = await response.json();
 
-                    if (data.success) {
-                        state.clients = data.result;
-                    } else {
-                        throw new Error(data.message);
-                    }
+                    state.clients = data.success ? data.result : [];
                 } catch (error) {
                     console.error("ERROR en fetchClients:", error);
+                    state.clients = [];
                     state.messageError = 'Error de conexi�n: ' + error.message;
                 }
             };
@@ -243,11 +267,52 @@
                 }
             };
 
+            const eliminarCliente = async (client) => {
+                if (!confirm('¿Deseas dar de baja a "' + client.nombre + ' ' + client.apellidos + '"?'))
+                    return;
+
+                const formData = new FormData();
+                formData.append('action', 'eliminar');
+                formData.append('idCliente', client.idCliente);
+
+                try {
+                    const response = await fetch('/webapp-reserva-hotel/ClienteServlet', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            window.location.href = redirectLogin;
+                            return;
+                        }
+                        throw new Error('Error de red al eliminar');
+                    }
+
+                    const data = await response.json();
+                    if (data.success) {
+                        fetchClients();
+                    } else {
+                        throw new Error(data.message || "Error al eliminar");
+                    }
+                } catch (error) {
+                    alert(error.message);
+                }
+            };
+
+            onMounted(async () => {
+                clientModal.value = new bootstrap.Modal(document.getElementById('clientModal'));
+                await fetchClients();
+            });
+
             return {
                 state,
+                onBuscarInput,
+                limpiarBusqueda,
                 openCreateModal,
                 openEditModal,
-                saveClient
+                saveClient,
+                eliminarCliente
             };
         }
     }).mount('#app');

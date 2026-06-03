@@ -9,6 +9,7 @@ public class Habitacion {
     private double precio;
     private int cantidadCamas;
     private int idTipoHabitacion;
+    private String tipoDescripcion;
     private String estado;
     private String fechaCreado;
     private String fechaActualizado;
@@ -70,6 +71,14 @@ public class Habitacion {
 
     public void setIdTipoHabitacion(int idTipoHabitacion) {
         this.idTipoHabitacion = idTipoHabitacion;
+    }
+
+    public String getTipoDescripcion() {
+        return tipoDescripcion;
+    }
+
+    public void setTipoDescripcion(String tipoDescripcion) {
+        this.tipoDescripcion = tipoDescripcion;
     }
 
     public int getIdHabitacion() {

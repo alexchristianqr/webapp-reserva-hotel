@@ -35,6 +35,10 @@ public class HabitacionServlet extends BaseServlet {
                 responseService = crearHabitacion(request);
             case "actualizar" ->
                 responseService = actualizarHabitacion(request);
+            case "eliminar" ->
+                responseService = eliminarHabitacion(request);
+            case "tipos" ->
+                responseService = habitacionController.listarTiposHabitacion();
             default ->
                 responseService = defaultError(action);
         }
@@ -49,10 +53,13 @@ public class HabitacionServlet extends BaseServlet {
 
     private ResponseService<?> crearHabitacion(HttpServletRequest request) {
         Habitacion habitacion = new Habitacion();
-        habitacion.setIdTipoHabitacion(parseIntSafe(request.getParameter("idTipoHabitacion"))); // valor por defecto 1
+        habitacion.setIdTipoHabitacion(parseIntSafe(request.getParameter("idTipoHabitacion")));
+        habitacion.setDescripcion(request.getParameter("descripcion"));
+        habitacion.setNivel(request.getParameter("nivel"));
         habitacion.setNumeroPiso(request.getParameter("numero"));
         habitacion.setPrecio(parseDoubleSafe(request.getParameter("precio")));
-        habitacion.setEstado(request.getParameter("estado"));
+        habitacion.setCantidadCamas(parseIntSafe(request.getParameter("cantidadCamas")));
+        habitacion.setEstado("activo"); // Valor por defecto
         return habitacionController.crearHabitacion(habitacion);
     }
 
@@ -60,9 +67,18 @@ public class HabitacionServlet extends BaseServlet {
         Habitacion habitacion = new Habitacion();
         habitacion.setIdHabitacion(parseIntSafe(request.getParameter("idHabitacion")));
         habitacion.setIdTipoHabitacion(parseIntSafe(request.getParameter("idTipoHabitacion")));
+        habitacion.setDescripcion(request.getParameter("descripcion"));
+        habitacion.setNivel(request.getParameter("nivel"));
         habitacion.setNumeroPiso(request.getParameter("numero"));
         habitacion.setPrecio(parseDoubleSafe(request.getParameter("precio")));
+        habitacion.setCantidadCamas(parseIntSafe(request.getParameter("cantidadCamas")));
         habitacion.setEstado(request.getParameter("estado"));
         return habitacionController.actualizarHabitacion(habitacion);
+    }
+
+    private ResponseService<?> eliminarHabitacion(HttpServletRequest request) {
+        Habitacion habitacion = new Habitacion();
+        habitacion.setIdHabitacion(parseIntSafe(request.getParameter("idHabitacion")));
+        return habitacionController.eliminarHabitacion(habitacion);
     }
 }

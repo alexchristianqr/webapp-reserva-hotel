@@ -131,7 +131,7 @@
                 modalInstance: null
             });
 
-            // Abre el modal en modo crear o editar
+            // Abrir modal en modo crear o editar
             const openModal = (reserva = null) => {
                 state.messageError = null;
 

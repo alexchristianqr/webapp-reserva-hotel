@@ -15,11 +15,20 @@ public class ClienteService extends BaseService {
         db = new MysqlDBService();
     }
 
-    public List<Cliente> listarClientes() {
+    public List<Cliente> listarClientes(String buscar) {
         List<Cliente> clientes = new ArrayList<>();
 
         querySQL_1 = "SELECT c.id, p.nombre, p.apellido, p.tipo_documento, p.nrodocumento, p.edad, p.sexo, p.telefono, p.estado, p.fecha_creado, p.fecha_actualizado FROM clientes c JOIN personas p ON p.id = c.id_persona";
         Object[] parametrosSQL_1 = {};
+
+        // Búsqueda parametrizada (SQL LIKE) por nombre, apellido o documento
+        if (buscar != null && !buscar.isBlank()) {
+            querySQL_1 += " WHERE p.nombre LIKE ? OR p.apellido LIKE ? OR p.nrodocumento LIKE ?";
+            String like = "%" + buscar.trim() + "%";
+            parametrosSQL_1 = new Object[]{like, like, like};
+        }
+
+        querySQL_1 += " ORDER BY c.id DESC";
         ResultSet rs = db.queryConsultar(querySQL_1, parametrosSQL_1);
 
         try {
@@ -72,7 +81,22 @@ public class ClienteService extends BaseService {
         db.queryActualizar(querySQL_2, parametrosSQL_2);
 
         db.cerrarConsulta();
-        
+
+        return true;
+    }
+
+    // Eliminación lógica: marca cliente y persona como inactivos (preserva FKs de reservas)
+    public Boolean eliminarCliente(Cliente cliente) {
+        querySQL_1 = "UPDATE personas SET estado = 'inactivo', fecha_actualizado = NOW() WHERE id = (SELECT id_persona FROM clientes c WHERE c.id = ?)";
+        Object[] parametrosSQL_1 = {cliente.getIdCliente()};
+        db.queryActualizar(querySQL_1, parametrosSQL_1);
+
+        querySQL_2 = "UPDATE clientes SET estado = 'inactivo', fecha_actualizado = NOW() WHERE id = ?";
+        Object[] parametrosSQL_2 = {cliente.getIdCliente()};
+        db.queryActualizar(querySQL_2, parametrosSQL_2);
+
+        db.cerrarConsulta();
+
         return true;
     }
 }

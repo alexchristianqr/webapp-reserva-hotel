@@ -1,6 +1,7 @@
 package controllers;
 
 import core.services.ResponseService;
+import java.util.List;
 import models.Usuario;
 import services.AuthService;
 import services.UsuarioService;
@@ -31,6 +32,22 @@ public class UsuarioController extends BaseController<Usuario, UsuarioService> {
         return response;
     }
 
+    public ResponseService<List<Usuario>> listarUsuarios(String buscar) {
+        ResponseService<List<Usuario>> response = new ResponseService<>();
+        List<Usuario> usuarios = usuarioService.listarUsuarios(buscar);
+
+        if (usuarios.isEmpty()) {
+            response.setSuccess(false);
+            response.setMessage("No hay nada que listar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Procesado correctamente");
+            response.setResult(usuarios);
+        }
+
+        return response;
+    }
+
     public ResponseService<Boolean> registrarUsuario(Usuario usuario) {
         ResponseService<Boolean> response = new ResponseService<>();
         Boolean success = usuarioService.registrarUsuario(usuario);
@@ -42,6 +59,36 @@ public class UsuarioController extends BaseController<Usuario, UsuarioService> {
             response.setSuccess(true);
             response.setMessage("Registrado correctamente");
 
+        }
+
+        return response;
+    }
+
+    public ResponseService<Boolean> actualizarUsuario(Usuario usuario) {
+        ResponseService<Boolean> response = new ResponseService<>();
+        Boolean success = usuarioService.actualizarUsuario(usuario);
+
+        if (!success) {
+            response.setSuccess(false);
+            response.setMessage("Error al actualizar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Actualizado correctamente");
+        }
+
+        return response;
+    }
+
+    public ResponseService<Boolean> eliminarUsuario(Usuario usuario) {
+        ResponseService<Boolean> response = new ResponseService<>();
+        Boolean success = usuarioService.eliminarUsuario(usuario);
+
+        if (!success) {
+            response.setSuccess(false);
+            response.setMessage("Error al eliminar");
+        } else {
+            response.setSuccess(true);
+            response.setMessage("Eliminado correctamente");
         }
 
         return response;
