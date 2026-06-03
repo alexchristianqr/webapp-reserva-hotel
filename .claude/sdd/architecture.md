@@ -87,11 +87,11 @@ web/
 - Helpers: `getUsuarioAutenticado`, `defaultError(action)`, `parseIntSafe`,
   `parseDoubleSafe`, `sendJsonResponse`.
 
-### `controllers.BaseController<T, U>` (abstract)
+### `core.BaseController<T, U>` (abstract)
 - Campos: `List<T> lista`, `U service`, `querySQL_1..3`.
 - `idAutoincrementado()` utilitario.
 
-### `services.BaseService` (abstract)
+### `core.BaseService` (abstract)
 - Campos: `MysqlDBService db`, `querySQL_1..4`.
 
 ### `core.services.MysqlDBService` (extends BaseService)

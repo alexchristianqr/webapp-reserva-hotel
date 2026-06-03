@@ -69,11 +69,11 @@
 
     <build>
         <finalName>${project.artifactId}</finalName>
-        <sourceDirectory>${project.basedir}/src/java</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/main/test/java</testSourceDirectory>
         <resources>
             <resource>
-                <directory>${project.basedir}/src/java</directory>
+                <directory>src/main/java</directory>
                 <excludes>
                     <exclude>**/*.java</exclude>
                 </excludes>
@@ -103,7 +103,7 @@
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <packagingExcludes>META-INF/MANIFEST.MF</packagingExcludes>
-                    <warSourceDirectory>${project.basedir}/web</warSourceDirectory>
+                    <warSourceDirectory>src/main/web</warSourceDirectory>
                 </configuration>
             </plugin>
         </plugins>
