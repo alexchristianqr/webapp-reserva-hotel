@@ -168,6 +168,8 @@ CREATE TABLE reservas
     id_habitacion INT NOT NULL,
     id_empleado INT NOT NULL,
     monto_total DECIMAL(10,2) NOT NULL,
+    numero_noches INT NOT NULL DEFAULT 1,
+    cantidad_huespedes INT NOT NULL DEFAULT 1,
     fecha_reserva DATETIME,
     fecha_entrada DATETIME,
     fecha_salida DATETIME,
@@ -238,8 +240,8 @@ INSERT INTO habitaciones (id_tipohabitacion, descripcion, nivel, numero_piso, pr
 VALUES (1, 'habitación con agua caliente + tv', '1', '101', 49.50, 1);
 
 -- reserva
-INSERT INTO reservas (id_cliente, id_habitacion, id_empleado, monto_total, fecha_reserva, fecha_entrada, fecha_salida)
-  VALUES (1, 1, 1, 89.90, '2023-11-10 18:45:29', '2023-11-10 18:45:29', '2023-11-10 18:45:29');
+INSERT INTO reservas (id_cliente, id_habitacion, id_empleado, monto_total, numero_noches, cantidad_huespedes, fecha_reserva, fecha_entrada, fecha_salida)
+  VALUES (1, 1, 1, 89.90, 2, 1, '2023-11-10 18:45:29', '2023-11-10 00:00:00', '2023-11-12 00:00:00');
 
 -- producto
 INSERT INTO productos (descripcion, precio, cantidad_stock) 

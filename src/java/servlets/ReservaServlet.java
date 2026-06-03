@@ -31,10 +31,14 @@ public class ReservaServlet extends BaseServlet {
         switch (action) {
             case "listar" ->
                 responseService = listarReservas(request);
+            case "disponibilidad" ->
+                responseService = listarHabitacionesDisponibles(request);
             case "crear" ->
                 responseService = crearReserva(request);
             case "actualizar" ->
                 responseService = actualizarReserva(request);
+            case "eliminar" ->
+                responseService = cancelarReserva(request);
             default ->
                 responseService = defaultError(action);
         }
@@ -47,16 +51,25 @@ public class ReservaServlet extends BaseServlet {
         return reservaController.listarReservas(buscar);
     }
 
+    // GET ?action=disponibilidad&fecha_entrada=YYYY-MM-DD&fecha_salida=YYYY-MM-DD[&id_reserva=N]
+    private ResponseService<?> listarHabitacionesDisponibles(HttpServletRequest request) {
+        String fechaEntrada = request.getParameter("fecha_entrada");
+        String fechaSalida = request.getParameter("fecha_salida");
+        int idReservaExcluir = parseIntOrDefault(request.getParameter("id_reserva"), 0);
+
+        return reservaController.listarHabitacionesDisponibles(fechaEntrada, fechaSalida, idReservaExcluir);
+    }
+
     private ResponseService<?> crearReserva(HttpServletRequest request) {
         Reserva reserva = new Reserva();
         reserva.setIdCliente(parseIntSafe(request.getParameter("id_cliente")));
         reserva.setIdEmpleado(parseIntSafe(request.getParameter("id_empleado")));
         reserva.setIdHabitacion(parseIntSafe(request.getParameter("id_habitacion")));
-        reserva.setMontoTotal(parseDoubleSafe(request.getParameter("monto_total")));
-        reserva.setFechaReserva(request.getParameter("fecha_reserva"));
+        reserva.setCantidadHuespedes(parseIntOrDefault(request.getParameter("cantidad_huespedes"), 1));
         reserva.setFechaEntrada(request.getParameter("fecha_entrada"));
         reserva.setFechaSalida(request.getParameter("fecha_salida"));
         reserva.setEstado(request.getParameter("estado"));
+        // monto_total y numero_noches se calculan en el servidor (ReservaService)
 
         return reservaController.crearReserva(reserva);
     }
@@ -67,19 +80,23 @@ public class ReservaServlet extends BaseServlet {
         reserva.setIdHabitacion(parseIntSafe(request.getParameter("id_habitacion")));
         reserva.setIdCliente(parseIntSafe(request.getParameter("id_cliente")));
         reserva.setIdEmpleado(parseIntSafe(request.getParameter("id_empleado")));
-        reserva.setTipo(request.getParameter("tipo"));
-//        reserva.setTiempoReservado(request.getParameter("tiempo_reservado"));
-        reserva.setMontoTotal(parseDoubleSafe(request.getParameter("monto_total")));
+        reserva.setCantidadHuespedes(parseIntOrDefault(request.getParameter("cantidad_huespedes"), 1));
         reserva.setEstado(request.getParameter("estado"));
-        reserva.setFechaReserva(request.getParameter("fecha_reservado"));
         reserva.setFechaEntrada(request.getParameter("fecha_entrada"));
         reserva.setFechaSalida(request.getParameter("fecha_salida"));
 
         return reservaController.actualizarReserva(reserva);
     }
 
-//    private ResponseService<?> eliminarReserva(HttpServletRequest request) {
-//        int idReserva = parseIntSafe(request.getParameter("id_reserva"));
-//        return reservaController.eliminarReserva(idReserva);
-//    }
+    private ResponseService<?> cancelarReserva(HttpServletRequest request) {
+        int idReserva = parseIntSafe(request.getParameter("id"));
+        return reservaController.cancelarReserva(idReserva);
+    }
+
+    private int parseIntOrDefault(String value, int porDefecto) {
+        if (value == null || value.isBlank()) {
+            return porDefecto;
+        }
+        return parseIntSafe(value);
+    }
 }

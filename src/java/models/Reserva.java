@@ -12,7 +12,9 @@ public class Reserva {
     private String tipo;// horas|noche
 //    private String tiempoReservado;// 3(horas)|2(noches)
     private double montoTotal;
-    private String estado;// disponible|reservado|mantenimiento
+    private int numeroNoches;
+    private int cantidadHuespedes;
+    private String estado;// activo|pendiente_pago|pagado|cancelado
     private String fechaCreado;
     private String fechaActualizado;
     private String fechaReserva, fechaEntrada, fechaSalida;
@@ -30,6 +32,8 @@ public class Reserva {
         this.tipo = reserva.getTipo();
 //        this.tiempoReservado = reserva.getTiempoReservado();
         this.montoTotal = reserva.getMontoTotal();
+        this.numeroNoches = reserva.getNumeroNoches();
+        this.cantidadHuespedes = reserva.getCantidadHuespedes();
         this.estado = reserva.getEstado();
         this.fechaReserva = reserva.getFechaReserva();
         this.fechaEntrada = reserva.getFechaEntrada();
@@ -53,8 +57,24 @@ public class Reserva {
     public void setMontoTotal(double montoTotal) {
         this.montoTotal = montoTotal;
     }
-    
-    
+
+    public int getNumeroNoches() {
+        return numeroNoches;
+    }
+
+    public void setNumeroNoches(int numeroNoches) {
+        this.numeroNoches = numeroNoches;
+    }
+
+    public int getCantidadHuespedes() {
+        return cantidadHuespedes;
+    }
+
+    public void setCantidadHuespedes(int cantidadHuespedes) {
+        this.cantidadHuespedes = cantidadHuespedes;
+    }
+
+
 
 //    public String getCliente() {
 //        return cliente;
