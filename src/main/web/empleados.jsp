@@ -162,6 +162,52 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de confirmación de baja -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirmar baja de empleado
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" v-if="state.empleadoToDelete">
+                    <div v-if="state.deleteError" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ state.deleteError }}
+                        <button type="button" class="btn-close" @click="state.deleteError = null" aria-label="Close"></button>
+                    </div>
+
+                    <p>¿Deseas dar de baja al siguiente empleado?</p>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Nombres</strong>
+                            <span>{{ state.empleadoToDelete.nombre }} {{ state.empleadoToDelete.apellidos }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Nro. Documento</strong>
+                            <span>{{ state.empleadoToDelete.nroDocumento }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Perfil</strong>
+                            <span>{{ nombrePerfil(state.empleadoToDelete.idPerfil) }}</span>
+                        </li>
+                    </ul>
+                    <p class="text-muted small mb-0">
+                        El empleado pasará a estado <span class="badge bg-secondary">inactivo</span>.
+                        Sus datos no se eliminan y podrá reactivarse editándolo.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, cancelar</button>
+                    <button type="button" class="btn btn-danger" @click="confirmarEliminarEmpleado">
+                        <i class="bi bi-trash"></i> Sí, dar de baja
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 <script>
@@ -183,9 +229,12 @@
                 buscar: '',
                 messageError: null,
                 messageSuccess: null,
+                empleadoToDelete: null,
+                deleteError: null,
             });
 
             const empleadoModal = ref(null);
+            const deleteModal = ref(null);
             let buscarTimer = null;
 
             const nombrePerfil = (idPerfil) => {
@@ -283,8 +332,17 @@
                 }
             };
 
-            const eliminarEmpleado = async (empleado) => {
-                if (!confirm('¿Deseas dar de baja a "' + empleado.nombre + ' ' + empleado.apellidos + '"?'))
+            // Abre el modal de confirmación con el detalle del empleado a dar de baja.
+            const eliminarEmpleado = (empleado) => {
+                state.empleadoToDelete = empleado;
+                state.deleteError = null;
+                deleteModal.value.show();
+            };
+
+            // Ejecuta la baja solo cuando el usuario confirma en el modal.
+            const confirmarEliminarEmpleado = async () => {
+                const empleado = state.empleadoToDelete;
+                if (!empleado)
                     return;
 
                 const formData = new FormData();
@@ -307,17 +365,20 @@
 
                     const data = await response.json();
                     if (data.success) {
+                        deleteModal.value.hide();
+                        state.empleadoToDelete = null;
                         listarEmpleados();
                     } else {
                         throw new Error(data.message || "Error al eliminar");
                     }
                 } catch (error) {
-                    alert(error.message);
+                    state.deleteError = error.message;
                 }
             };
 
             onMounted(async () => {
                 empleadoModal.value = new bootstrap.Modal(document.getElementById('empleadoModal'));
+                deleteModal.value = new bootstrap.Modal(document.getElementById('deleteModal'));
                 await listarEmpleados();
             });
 
@@ -329,7 +390,8 @@
                 openCreateModal,
                 openEditModal,
                 guardarEmpleado,
-                eliminarEmpleado
+                eliminarEmpleado,
+                confirmarEliminarEmpleado
             };
         }
     }).mount('#app');

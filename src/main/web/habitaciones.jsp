@@ -148,6 +148,56 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de confirmación de baja -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirmar baja de habitación
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" v-if="state.roomToDelete">
+                    <div v-if="state.deleteError" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ state.deleteError }}
+                        <button type="button" class="btn-close" @click="state.deleteError = null" aria-label="Close"></button>
+                    </div>
+
+                    <p>¿Deseas dar de baja la siguiente habitación?</p>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Habitación</strong>
+                            <span>N° {{ state.roomToDelete.numeroPiso }} — Nivel {{ state.roomToDelete.nivel }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Tipo</strong>
+                            <span>{{ state.roomToDelete.tipoDescripcion }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Descripción</strong>
+                            <span>{{ state.roomToDelete.descripcion }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Precio por noche</strong>
+                            <span>S/ {{ state.roomToDelete.precio }}</span>
+                        </li>
+                    </ul>
+                    <p class="text-muted small mb-0">
+                        La habitación pasará a estado <span class="badge bg-secondary">inactivo</span> y
+                        dejará de aparecer como disponible para nuevas reservas.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, cancelar</button>
+                    <button type="button" class="btn btn-danger" @click="confirmarEliminarHabitacion">
+                        <i class="bi bi-trash"></i> Sí, dar de baja
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 <script>
@@ -164,8 +214,11 @@
                 buscar: '',
                 messageError: null,
                 messageSuccess: null,
+                roomToDelete: null,
+                deleteError: null,
             });
             const roomModal = ref(null);
+            const deleteModal = ref(null);
             let buscarTimer = null;
 
             const formDefaults = () => ({
@@ -283,8 +336,17 @@
                 }
             };
 
-            const eliminarHabitacion = async (room) => {
-                if (!confirm('¿Deseas dar de baja la habitación "' + room.numeroPiso + '"?'))
+            // Abre el modal de confirmación con el detalle de la habitación a dar de baja.
+            const eliminarHabitacion = (room) => {
+                state.roomToDelete = room;
+                state.deleteError = null;
+                deleteModal.value.show();
+            };
+
+            // Ejecuta la baja solo cuando el usuario confirma en el modal.
+            const confirmarEliminarHabitacion = async () => {
+                const room = state.roomToDelete;
+                if (!room)
                     return;
 
                 const formData = new FormData();
@@ -307,17 +369,20 @@
 
                     const data = await response.json();
                     if (data.success) {
+                        deleteModal.value.hide();
+                        state.roomToDelete = null;
                         listarHabitaciones();
                     } else {
                         throw new Error(data.message || "Error al eliminar");
                     }
                 } catch (error) {
-                    alert(error.message);
+                    state.deleteError = error.message;
                 }
             };
 
             onMounted(async () => {
                 roomModal.value = new bootstrap.Modal(document.getElementById('roomModal'));
+                deleteModal.value = new bootstrap.Modal(document.getElementById('deleteModal'));
                 await listarTipos();
                 await listarHabitaciones();
             });
@@ -329,7 +394,8 @@
                 openCreateModal,
                 openEditModal,
                 guardarHabitacion,
-                eliminarHabitacion
+                eliminarHabitacion,
+                confirmarEliminarHabitacion
             };
         }
     }).mount('#app');

@@ -54,7 +54,7 @@
                     </button>
                     <button class="btn btn-sm btn-danger me-2" title="Cancelar reserva"
                             :disabled="reserva.estado === 'cancelado'"
-                            @click="cancelarReserva(reserva.idReserva)">
+                            @click="cancelarReserva(reserva)">
                         <i class="bi bi-x-circle"></i>
                     </button>
                 </td>
@@ -154,6 +154,57 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de confirmación de cancelación -->
+    <div class="modal fade" id="cancelarModal" tabindex="-1" aria-labelledby="cancelarModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="cancelarModalLabel">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirmar cancelación de reserva
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" v-if="state.reservaACancelar">
+                    <div v-if="state.cancelError" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ state.cancelError }}
+                        <button type="button" class="btn-close" @click="state.cancelError = null" aria-label="Close"></button>
+                    </div>
+
+                    <p>¿Deseas cancelar la siguiente reserva?</p>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Cliente</strong>
+                            <span>{{ state.reservaACancelar.cliente.nombre }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Habitación</strong>
+                            <span>{{ state.reservaACancelar.habitacion.descripcion }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Estadía</strong>
+                            <span>{{ soloFecha(state.reservaACancelar.fechaEntrada) }} → {{ soloFecha(state.reservaACancelar.fechaSalida) }}
+                                ({{ state.reservaACancelar.numeroNoches }} noche(s))</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Monto</strong>
+                            <span>S/ {{ state.reservaACancelar.montoTotal.toFixed(2) }}</span>
+                        </li>
+                    </ul>
+                    <p class="text-muted small mb-0">
+                        La reserva pasará a estado <span class="badge bg-secondary">cancelado</span> y la
+                        habitación volverá a estar disponible para esas fechas. Esta acción no se puede deshacer.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, volver</button>
+                    <button type="button" class="btn btn-danger" @click="confirmarCancelarReserva">
+                        <i class="bi bi-x-circle"></i> Sí, cancelar reserva
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 <script>
@@ -189,7 +240,10 @@
                 form: {...defaultForm},
                 modalMode: 'crear',
                 messageError: null,
-                modalInstance: null
+                modalInstance: null,
+                reservaACancelar: null,
+                cancelError: null,
+                cancelarModalInstance: null
             });
 
             // ---- helpers de presentación ----
@@ -354,15 +408,27 @@
                 }
             };
 
-            // Cancelar reserva (eliminación lógica: estado pasa a 'cancelado')
-            const cancelarReserva = async (idReserva) => {
-                if (!confirm('¿Deseas cancelar esta reserva?'))
+            // Abre el modal de confirmación con el detalle de la reserva a cancelar.
+            const cancelarReserva = (reserva) => {
+                state.reservaACancelar = reserva;
+                state.cancelError = null;
+
+                if (!state.cancelarModalInstance) {
+                    state.cancelarModalInstance = new bootstrap.Modal(document.getElementById('cancelarModal'));
+                }
+                state.cancelarModalInstance.show();
+            };
+
+            // Cancelar reserva (eliminación lógica: estado pasa a 'cancelado');
+            // se ejecuta solo cuando el usuario confirma en el modal.
+            const confirmarCancelarReserva = async () => {
+                if (!state.reservaACancelar)
                     return;
 
                 try {
                     const formData = new FormData();
                     formData.append('action', 'eliminar');
-                    formData.append('id', idReserva);
+                    formData.append('id', state.reservaACancelar.idReserva);
 
                     const response = await fetch('ReservaServlet', {
                         method: 'POST',
@@ -382,9 +448,11 @@
                     if (!success)
                         throw new Error(message || 'Error al cancelar la reserva.');
 
+                    state.cancelarModalInstance.hide();
+                    state.reservaACancelar = null;
                     await listarReservas();
                 } catch (error) {
-                    alert(error.message);
+                    state.cancelError = error.message;
                 }
             };
 
@@ -449,7 +517,8 @@
                 estadoTexto,
                 openModal,
                 guardarReserva,
-                cancelarReserva
+                cancelarReserva,
+                confirmarCancelarReserva
             };
         }
     }).mount('#app');

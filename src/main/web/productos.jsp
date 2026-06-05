@@ -58,7 +58,8 @@
                     <button class="btn btn-sm btn-primary me-2" title="Editar" @click="openEditModal(producto)">
                         <i class="bi bi-pencil-square"></i>
                     </button>
-                    <button class="btn btn-sm btn-danger" title="Eliminar" @click="eliminarProducto(producto.idProducto)">
+                    <button class="btn btn-sm btn-danger" title="Eliminar" @click="eliminarProducto(producto)"
+                            :disabled="producto.estado !== 'activo'">
                         <i class="bi bi-trash"></i>
                     </button>
                 </td>
@@ -125,6 +126,52 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de confirmación de eliminación -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirmar eliminación de producto
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" v-if="state.productoToDelete">
+                    <div v-if="state.deleteError" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ state.deleteError }}
+                        <button type="button" class="btn-close" @click="state.deleteError = null" aria-label="Close"></button>
+                    </div>
+
+                    <p>¿Deseas eliminar el siguiente producto?</p>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Descripción</strong>
+                            <span>{{ state.productoToDelete.descripcion }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Precio</strong>
+                            <span>S/ {{ state.productoToDelete.precio }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Stock actual</strong>
+                            <span>{{ state.productoToDelete.cantidadStock }}</span>
+                        </li>
+                    </ul>
+                    <p class="text-muted small mb-0">
+                        El producto pasará a estado <span class="badge bg-secondary">inactivo</span> y
+                        dejará de estar disponible. Sus datos no se eliminan de la base.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, cancelar</button>
+                    <button type="button" class="btn btn-danger" @click="confirmarEliminarProducto">
+                        <i class="bi bi-trash"></i> Sí, eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 <script>
@@ -140,9 +187,12 @@
                 buscar: '',
                 messageError: null,
                 messageSuccess: null,
+                productoToDelete: null,
+                deleteError: null,
             });
 
             const productoModal = ref(null);
+            const deleteModal = ref(null);
             let buscarTimer = null;
 
             const onBuscarInput = () => {
@@ -235,13 +285,22 @@
                 }
             };
 
-            const eliminarProducto = async (idProducto) => {
-                if (!confirm('¿Deseas eliminar este producto?'))
+            // Abre el modal de confirmación con el detalle del producto a eliminar.
+            const eliminarProducto = (producto) => {
+                state.productoToDelete = producto;
+                state.deleteError = null;
+                deleteModal.value.show();
+            };
+
+            // Ejecuta la eliminación solo cuando el usuario confirma en el modal.
+            const confirmarEliminarProducto = async () => {
+                const producto = state.productoToDelete;
+                if (!producto)
                     return;
 
                 const formData = new FormData();
                 formData.append('action', 'eliminar');
-                formData.append('idProducto', idProducto);
+                formData.append('idProducto', producto.idProducto);
 
                 try {
                     const response = await fetch('/webapp-reserva-hotel/ProductoServlet', {
@@ -259,17 +318,20 @@
 
                     const data = await response.json();
                     if (data.success) {
+                        deleteModal.value.hide();
+                        state.productoToDelete = null;
                         listarProductos();
                     } else {
                         throw new Error(data.message || "Error al eliminar");
                     }
                 } catch (error) {
-                    alert(error.message);
+                    state.deleteError = error.message;
                 }
             };
 
             onMounted(async () => {
                 productoModal.value = new bootstrap.Modal(document.getElementById('productoModal'));
+                deleteModal.value = new bootstrap.Modal(document.getElementById('deleteModal'));
                 await listarProductos();
             });
 
@@ -280,7 +342,8 @@
                 openCreateModal,
                 openEditModal,
                 guardarProducto,
-                eliminarProducto
+                eliminarProducto,
+                confirmarEliminarProducto
             };
         }
     }).mount('#app');

@@ -138,6 +138,52 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de confirmación de baja -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirmar baja de cliente
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" v-if="state.clientToDelete">
+                    <div v-if="state.deleteError" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ state.deleteError }}
+                        <button type="button" class="btn-close" @click="state.deleteError = null" aria-label="Close"></button>
+                    </div>
+
+                    <p>¿Deseas dar de baja al siguiente cliente?</p>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Nombres</strong>
+                            <span>{{ state.clientToDelete.nombre }} {{ state.clientToDelete.apellidos }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Nro. Documento</strong>
+                            <span>{{ state.clientToDelete.nroDocumento }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Teléfono</strong>
+                            <span>{{ state.clientToDelete.telefono || '-' }}</span>
+                        </li>
+                    </ul>
+                    <p class="text-muted small mb-0">
+                        El cliente pasará a estado <span class="badge bg-secondary">inactivo</span> y no podrá
+                        ser usado en nuevas reservas. Sus datos e historial no se eliminan.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, cancelar</button>
+                    <button type="button" class="btn btn-danger" @click="confirmarEliminarCliente">
+                        <i class="bi bi-trash"></i> Sí, dar de baja
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 <script>
@@ -153,9 +199,12 @@
                 buscar: '',
                 messageError: null,
                 messageSuccess: null,
+                clientToDelete: null,
+                deleteError: null,
             });
 
             const clientModal = ref(null);
+            const deleteModal = ref(null);
             let buscarTimer = null;
 
             const onBuscarInput = () => {
@@ -267,8 +316,17 @@
                 }
             };
 
-            const eliminarCliente = async (client) => {
-                if (!confirm('¿Deseas dar de baja a "' + client.nombre + ' ' + client.apellidos + '"?'))
+            // Abre el modal de confirmación con el detalle del cliente a dar de baja.
+            const eliminarCliente = (client) => {
+                state.clientToDelete = client;
+                state.deleteError = null;
+                deleteModal.value.show();
+            };
+
+            // Ejecuta la baja solo cuando el usuario confirma en el modal.
+            const confirmarEliminarCliente = async () => {
+                const client = state.clientToDelete;
+                if (!client)
                     return;
 
                 const formData = new FormData();
@@ -291,17 +349,20 @@
 
                     const data = await response.json();
                     if (data.success) {
+                        deleteModal.value.hide();
+                        state.clientToDelete = null;
                         fetchClients();
                     } else {
                         throw new Error(data.message || "Error al eliminar");
                     }
                 } catch (error) {
-                    alert(error.message);
+                    state.deleteError = error.message;
                 }
             };
 
             onMounted(async () => {
                 clientModal.value = new bootstrap.Modal(document.getElementById('clientModal'));
+                deleteModal.value = new bootstrap.Modal(document.getElementById('deleteModal'));
                 await fetchClients();
             });
 
@@ -312,7 +373,8 @@
                 openCreateModal,
                 openEditModal,
                 saveClient,
-                eliminarCliente
+                eliminarCliente,
+                confirmarEliminarCliente
             };
         }
     }).mount('#app');

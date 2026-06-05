@@ -135,6 +135,52 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de confirmación de desactivación -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirmar desactivación de usuario
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" v-if="state.usuarioToDelete">
+                    <div v-if="state.deleteError" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ state.deleteError }}
+                        <button type="button" class="btn-close" @click="state.deleteError = null" aria-label="Close"></button>
+                    </div>
+
+                    <p>¿Deseas desactivar al siguiente usuario?</p>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Nombres</strong>
+                            <span>{{ state.usuarioToDelete.nombres }} {{ state.usuarioToDelete.apellidos }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Usuario</strong>
+                            <span>{{ state.usuarioToDelete.username }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>Rol</strong>
+                            <span class="badge bg-info text-dark">{{ state.usuarioToDelete.rol }}</span>
+                        </li>
+                    </ul>
+                    <p class="text-muted small mb-0">
+                        El usuario pasará a estado <span class="badge bg-secondary">inactivo</span> y
+                        no podrá iniciar sesión. Podrá reactivarse editándolo.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, cancelar</button>
+                    <button type="button" class="btn btn-danger" @click="confirmarEliminarUsuario">
+                        <i class="bi bi-trash"></i> Sí, desactivar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 <script>
@@ -150,9 +196,12 @@
                 buscar: '',
                 messageError: null,
                 messageSuccess: null,
+                usuarioToDelete: null,
+                deleteError: null,
             });
 
             const usuarioModal = ref(null);
+            const deleteModal = ref(null);
             let buscarTimer = null;
 
             const listarUsuarios = async () => {
@@ -240,8 +289,17 @@
                 }
             };
 
-            const eliminarUsuario = async (usuario) => {
-                if (!confirm('¿Deseas desactivar al usuario "' + usuario.username + '"?'))
+            // Abre el modal de confirmación con el detalle del usuario a desactivar.
+            const eliminarUsuario = (usuario) => {
+                state.usuarioToDelete = usuario;
+                state.deleteError = null;
+                deleteModal.value.show();
+            };
+
+            // Ejecuta la desactivación solo cuando el usuario confirma en el modal.
+            const confirmarEliminarUsuario = async () => {
+                const usuario = state.usuarioToDelete;
+                if (!usuario)
                     return;
 
                 const formData = new FormData();
@@ -264,17 +322,20 @@
 
                     const data = await response.json();
                     if (data.success) {
+                        deleteModal.value.hide();
+                        state.usuarioToDelete = null;
                         listarUsuarios();
                     } else {
                         throw new Error(data.message || "Error al eliminar");
                     }
                 } catch (error) {
-                    alert(error.message);
+                    state.deleteError = error.message;
                 }
             };
 
             onMounted(async () => {
                 usuarioModal.value = new bootstrap.Modal(document.getElementById('usuarioModal'));
+                deleteModal.value = new bootstrap.Modal(document.getElementById('deleteModal'));
                 await listarUsuarios();
             });
 
@@ -285,7 +346,8 @@
                 openCreateModal,
                 openEditModal,
                 guardarUsuario,
-                eliminarUsuario
+                eliminarUsuario,
+                confirmarEliminarUsuario
             };
         }
     }).mount('#app');
