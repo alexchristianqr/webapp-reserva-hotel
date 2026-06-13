@@ -2,12 +2,10 @@ package services;
 
 import core.BaseService;
 import core.services.MysqlDBService;
+import core.utils.ReservaReglas;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +15,6 @@ import models.Habitacion;
 import models.Reserva;
 
 public class ReservaService extends BaseService {
-
-    private static final DateTimeFormatter FORMATO_FECHA = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public ReservaService() {
         db = new MysqlDBService();
@@ -73,23 +69,10 @@ public class ReservaService extends BaseService {
         }
     }
 
-    // Valida el rango de fechas y devuelve el número de noches (salida - entrada)
+    // Valida el rango de fechas y devuelve el número de noches (salida - entrada).
+    // La lógica pura vive en core.utils.ReservaReglas (testeable sin BD).
     private long validarFechas(String fechaEntrada, String fechaSalida, boolean exigirEntradaFutura) {
-        if (fechaEntrada == null || fechaSalida == null) {
-            throw new IllegalArgumentException("Debe indicar fecha de entrada y fecha de salida");
-        }
-
-        LocalDate entrada = LocalDate.parse(fechaEntrada, FORMATO_FECHA);
-        LocalDate salida = LocalDate.parse(fechaSalida, FORMATO_FECHA);
-
-        if (!salida.isAfter(entrada)) {
-            throw new IllegalArgumentException("La fecha de salida debe ser mayor que la fecha de entrada");
-        }
-        if (exigirEntradaFutura && entrada.isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("La fecha de entrada no puede ser anterior a hoy");
-        }
-
-        return ChronoUnit.DAYS.between(entrada, salida);
+        return ReservaReglas.calcularNoches(fechaEntrada, fechaSalida, exigirEntradaFutura);
     }
 
     // Regla de solape de fechas: una reserva no cancelada choca con el rango pedido si

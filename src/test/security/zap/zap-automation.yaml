@@ -1,0 +1,124 @@
+# =====================================================================
+# OWASP ZAP - Automation Framework
+# Pruebas de seguridad para webapp-reserva-hotel
+# Objetivo: detectar SQL Injection y Cross-Site Scripting (XSS)
+# en los endpoints web principales.
+#
+# Ejecutar (Docker, app corriendo en el host):
+#   docker run --rm -v "%cd%/src/test/security/zap:/zap/wrk:rw" \
+#     -t zaproxy/zap-stable zap.sh -cmd \
+#     -autorun /zap/wrk/zap-automation.yaml
+#
+# (en Linux/macOS usar $(pwd) en lugar de %cd%)
+# Tambien disponible vía Maven:  mvn -Psecurity verify
+# =====================================================================
+
+env:
+  contexts:
+    - name: "reserva-hotel"
+      urls:
+        - "http://localhost:8080/webapp-reserva-hotel/"
+      includePaths:
+        - "http://localhost:8080/webapp-reserva-hotel.*"
+      excludePaths:
+        - ".*logout.*"
+      # Autenticacion basada en formulario para escanear endpoints protegidos.
+      authentication:
+        method: "form"
+        parameters:
+          loginPageUrl: "http://localhost:8080/webapp-reserva-hotel/login.jsp"
+          loginRequestUrl: "http://localhost:8080/webapp-reserva-hotel/AutenticacionServlet"
+          loginRequestBody: "action=login&username={%username%}&password={%password%}"
+        verification:
+          method: "poll"
+          pollUrl: "http://localhost:8080/webapp-reserva-hotel/ReservaServlet?action=listar"
+          pollFrequency: 60
+          pollUnits: "requests"
+          loggedInRegex: "\\Qsuccess\\E.*\\Qtrue\\E"
+          loggedOutRegex: "\\Q401\\E|login.jsp"
+      users:
+        - name: "empleado"
+          credentials:
+            username: "alex.quispe@gmail.com"
+            password: "12345678"
+      sessionManagement:
+        method: "cookie"
+  parameters:
+    failOnError: true
+    progressToStdout: true
+
+jobs:
+  # 1) Definir las URLs/endpoints a probar (con parametros reflejados/inyectables)
+  - type: requestor
+    name: "semillas-endpoints"
+    requests:
+      - url: "http://localhost:8080/webapp-reserva-hotel/ReservaServlet?action=listar&buscar=test"
+        method: "GET"
+      - url: "http://localhost:8080/webapp-reserva-hotel/ReservaServlet?action=disponibilidad&fecha_entrada=2026-06-10&fecha_salida=2026-06-12"
+        method: "GET"
+      - url: "http://localhost:8080/webapp-reserva-hotel/AutenticacionServlet"
+        method: "POST"
+        data: "action=login&username=test&password=test"
+
+  # 2) Rastrear la aplicacion (descubrir endpoints y parametros)
+  - type: spider
+    parameters:
+      context: "reserva-hotel"
+      user: "empleado"
+      maxDuration: 3
+      maxDepth: 8
+
+  # 3) Politica de escaneo activo enfocada SOLO en SQLi + XSS
+  - type: activeScan
+    parameters:
+      context: "reserva-hotel"
+      user: "empleado"
+      maxRuleDurationInMins: 5
+      maxScanDurationInMins: 20
+    policyDefinition:
+      defaultStrength: "medium"
+      defaultThreshold: "off"        # desactiva el resto de reglas
+      rules:
+        - id: 40018                  # SQL Injection
+          name: "SQL Injection"
+          strength: "high"
+          threshold: "low"
+        - id: 40019                  # SQL Injection - MySQL (time based)
+          name: "SQL Injection - MySQL"
+          strength: "high"
+          threshold: "low"
+        - id: 40012                  # Cross Site Scripting (Reflected)
+          name: "XSS (Reflected)"
+          strength: "high"
+          threshold: "low"
+        - id: 40014                  # Cross Site Scripting (Persistent)
+          name: "XSS (Persistent)"
+          strength: "high"
+          threshold: "low"
+        - id: 40016                  # XSS (Persistent) - Prime
+          name: "XSS (Persistent) - Prime"
+          strength: "high"
+          threshold: "low"
+        - id: 40017                  # XSS (Persistent) - Spider
+          name: "XSS (Persistent) - Spider"
+          strength: "high"
+          threshold: "low"
+
+  # 4) Reportes (HTML legible + JSON para CI). Quedan en src/test/security/zap/
+  - type: report
+    parameters:
+      template: "traditional-html"
+      reportDir: "/zap/wrk"
+      reportFile: "zap-report-seguridad"
+      reportTitle: "Reporte de Seguridad - Reserva Hotel (SQLi + XSS)"
+  - type: report
+    parameters:
+      template: "traditional-json"
+      reportDir: "/zap/wrk"
+      reportFile: "zap-report-seguridad"
+
+  # 5) Fallar el build si se encuentran hallazgos de riesgo medio o superior
+  - type: exitStatus
+    parameters:
+      errorLevel: "medium"
+      okLevel: "low"
