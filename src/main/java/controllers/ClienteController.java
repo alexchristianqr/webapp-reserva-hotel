@@ -31,31 +31,27 @@ public class ClienteController extends BaseController<Cliente, ClienteService> {
 
     public ResponseService<Boolean> crearCliente(Cliente cliente) {
         ResponseService<Boolean> response = new ResponseService<>();
-        Boolean success = service.crearCliente(cliente);
-
-        if (!success) {
+        try {
+            Boolean success = service.crearCliente(cliente);
+            response.setSuccess(success);
+            response.setMessage(success ? "Guardado correctamente" : "Error al guardar");
+        } catch (RuntimeException e) {
             response.setSuccess(false);
-            response.setMessage("Error al guardar");
-        } else {
-            response.setSuccess(true);
-            response.setMessage("Guardado correctamente");
+            response.setMessage(e.getMessage());
         }
-
         return response;
     }
 
     public ResponseService<Boolean> actualizarCliente(Cliente cliente) {
         ResponseService<Boolean> response = new ResponseService<>();
-        Boolean success = service.actualizarCliente(cliente);
-
-        if (!success) {
+        try {
+            Boolean success = service.actualizarCliente(cliente);
+            response.setSuccess(success);
+            response.setMessage(success ? "Actualizado correctamente" : "Error al actualizar");
+        } catch (RuntimeException e) {
             response.setSuccess(false);
-            response.setMessage("Error al actualizar");
-        } else {
-            response.setSuccess(true);
-            response.setMessage("Actualizado correctamente");
+            response.setMessage(e.getMessage());
         }
-
         return response;
     }
 

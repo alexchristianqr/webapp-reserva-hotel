@@ -56,10 +56,12 @@ public class ClienteServlet extends BaseServlet {
         cliente.setNombre(request.getParameter("nombre"));
         cliente.setApellidos(request.getParameter("apellidos"));
         cliente.setNroDocumento(request.getParameter("nroDocumento"));
-        cliente.setTipoDocumento(parseIntSafe(request.getParameter("tipoDocumento")));
+        cliente.setTipoDocumento(parseIntOrDefault(request.getParameter("tipoDocumento"), 1));
         cliente.setEdad(request.getParameter("edad"));
         cliente.setSexo(request.getParameter("sexo"));
         cliente.setTelefono(request.getParameter("telefono"));
+        cliente.setUsername(request.getParameter("username"));
+        cliente.setPassword(request.getParameter("password"));
         cliente.setEstado("activo"); // Valor por defecto
         return clienteController.crearCliente(cliente);
     }
@@ -70,12 +72,20 @@ public class ClienteServlet extends BaseServlet {
         cliente.setNombre(request.getParameter("nombre"));
         cliente.setApellidos(request.getParameter("apellidos"));
         cliente.setNroDocumento(request.getParameter("nroDocumento"));
-        cliente.setTipoDocumento(parseIntSafe(request.getParameter("tipoDocumento")));
+        cliente.setTipoDocumento(parseIntOrDefault(request.getParameter("tipoDocumento"), 1));
         cliente.setEdad(request.getParameter("edad"));
         cliente.setSexo(request.getParameter("sexo"));
         cliente.setTelefono(request.getParameter("telefono"));
         cliente.setEstado(request.getParameter("estado"));
         return clienteController.actualizarCliente(cliente);
+    }
+
+    // Variante tolerante para campos opcionales/numéricos del formulario
+    private int parseIntOrDefault(String value, int porDefecto) {
+        if (value == null || value.isBlank()) {
+            return porDefecto;
+        }
+        return parseIntSafe(value);
     }
 
     private ResponseService<?> eliminarCliente(HttpServletRequest request) {

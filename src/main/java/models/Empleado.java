@@ -6,6 +6,8 @@ public class Empleado extends Persona {
     private int idUsuario;
     private int idPerfil;
     private double sueldo;
+    private String username; // correo de acceso del usuario asociado
+    private String password; // solo se usa al crear la cuenta
 
     public Empleado() {
     }
@@ -46,6 +48,22 @@ public class Empleado extends Persona {
 
     public void setIdUsuario(int idUsuario) {
         this.idUsuario = idUsuario;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }

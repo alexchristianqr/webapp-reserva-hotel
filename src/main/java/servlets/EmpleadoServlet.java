@@ -60,6 +60,8 @@ public class EmpleadoServlet extends BaseServlet {
         empleado.setTelefono(request.getParameter("telefono"));
         empleado.setIdPerfil(parseIntSafe(request.getParameter("idPerfil")));
         empleado.setSueldo(parseDoubleSafe(request.getParameter("sueldo")));
+        empleado.setUsername(request.getParameter("username"));
+        empleado.setPassword(request.getParameter("password"));
         empleado.setEstado("activo"); // Valor por defecto
         return empleadoController.crearEmpleado(empleado);
     }

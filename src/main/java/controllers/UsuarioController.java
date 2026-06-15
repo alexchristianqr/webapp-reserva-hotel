@@ -51,17 +51,14 @@ public class UsuarioController extends BaseController<Usuario, UsuarioService> {
 
     public ResponseService<Boolean> registrarUsuario(Usuario usuario) {
         ResponseService<Boolean> response = new ResponseService<>();
-        Boolean success = usuarioService.registrarUsuario(usuario);
-
-        if (!success) {
+        try {
+            Boolean success = usuarioService.registrarUsuario(usuario);
+            response.setSuccess(success);
+            response.setMessage(success ? "Registrado correctamente" : "Error al registrar");
+        } catch (RuntimeException e) {
             response.setSuccess(false);
-            response.setMessage("Error al registrar");
-        } else {
-            response.setSuccess(true);
-            response.setMessage("Registrado correctamente");
-
+            response.setMessage(e.getMessage());
         }
-
         return response;
     }
 

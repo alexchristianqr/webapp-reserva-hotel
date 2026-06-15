@@ -52,6 +52,15 @@
                             @click="openModal(reserva)">
                         <i class="bi bi-pencil-square"></i>
                     </button>
+                    <button class="btn btn-sm btn-info text-white me-2" title="Consumos y facturación"
+                            :disabled="reserva.estado === 'cancelado'"
+                            @click="openGestionModal(reserva)">
+                        <i class="bi bi-receipt"></i>
+                    </button>
+                    <a class="btn btn-sm btn-outline-dark me-2" title="Reporte PDF" target="_blank"
+                       :href="'/webapp-reserva-hotel/ReporteServlet?action=reserva&id=' + reserva.idReserva">
+                        <i class="bi bi-file-earmark-pdf"></i>
+                    </a>
                     <button class="btn btn-sm btn-danger me-2" title="Cancelar reserva"
                             :disabled="reserva.estado === 'cancelado'"
                             @click="cancelarReserva(reserva)">
@@ -205,6 +214,158 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL de gestión: consumos + facturación + reporte -->
+    <div class="modal fade" id="gestionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content" v-if="state.gestion.reserva">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-receipt me-1"></i>
+                        Consumos y facturación — Reserva N° {{ state.gestion.reserva.idReserva }}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div v-if="state.gestion.error" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ state.gestion.error }}
+                        <button type="button" class="btn-close" @click="state.gestion.error = null"></button>
+                    </div>
+                    <div v-if="state.gestion.success" class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ state.gestion.success }}
+                        <button type="button" class="btn-close" @click="state.gestion.success = null"></button>
+                    </div>
+
+                    <!-- Resumen reserva -->
+                    <div class="row mb-3">
+                        <div class="col-md-6"><strong>Cliente:</strong> {{ state.gestion.reserva.cliente.nombre }}</div>
+                        <div class="col-md-6"><strong>Habitación:</strong> {{ state.gestion.reserva.habitacion.descripcion }}</div>
+                        <div class="col-md-6">
+                            <strong>Estado:</strong>
+                            <span class="badge" :class="estadoBadge(state.gestion.reserva.estado)">{{ estadoTexto(state.gestion.reserva.estado) }}</span>
+                        </div>
+                        <div class="col-md-6"><strong>Hospedaje:</strong> S/ {{ state.gestion.reserva.montoTotal.toFixed(2) }}</div>
+                    </div>
+
+                    <!-- Agregar consumo -->
+                    <h6 class="text-primary"><i class="bi bi-basket me-1"></i>Productos de consumo</h6>
+                    <div class="row g-2 align-items-end mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label mb-1">Producto</label>
+                            <select v-model="state.gestion.nuevoProducto" class="form-select form-select-sm">
+                                <option value="">- Seleccionar -</option>
+                                <option v-for="p in state.gestion.productos" :value="p.idProducto">
+                                    {{ p.descripcion }} (S/ {{ Number(p.precio).toFixed(2) }} · stock {{ p.cantidadStock }})
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label mb-1">Cantidad</label>
+                            <input type="number" min="1" v-model.number="state.gestion.nuevaCantidad" class="form-control form-control-sm">
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-sm btn-success w-100" @click="agregarConsumo"
+                                    :disabled="!state.gestion.nuevoProducto || state.gestion.reserva.estado === 'cancelado'">
+                                <i class="bi bi-plus-lg"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+
+                    <table class="table table-sm table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Producto</th>
+                                <th class="text-center">Cant.</th>
+                                <th class="text-end">P. Unit</th>
+                                <th class="text-end">Subtotal</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="state.gestion.consumos.length === 0">
+                                <td colspan="5" class="text-center text-muted">Sin consumos registrados</td>
+                            </tr>
+                            <tr v-for="c in state.gestion.consumos" :key="c.idConsumo">
+                                <td>{{ c.descripcionProducto }}</td>
+                                <td class="text-center">{{ c.cantidad }}</td>
+                                <td class="text-end">S/ {{ c.precio.toFixed(2) }}</td>
+                                <td class="text-end">S/ {{ (c.cantidad * c.precio).toFixed(2) }}</td>
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-outline-danger" title="Anular"
+                                            @click="eliminarConsumo(c)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3" class="text-end">Total consumos</th>
+                                <th class="text-end">S/ {{ totalConsumos.toFixed(2) }}</th>
+                                <th></th>
+                            </tr>
+                            <tr class="table-primary">
+                                <th colspan="3" class="text-end">TOTAL GENERAL (hospedaje + consumos)</th>
+                                <th class="text-end">S/ {{ totalGeneral.toFixed(2) }}</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <!-- Facturación -->
+                    <h6 class="text-primary mt-4"><i class="bi bi-cash-coin me-1"></i>Facturación</h6>
+                    <div class="row g-2 align-items-end mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label mb-1">Tipo de comprobante</label>
+                            <select v-model.number="state.gestion.tipoComprobante" class="form-select form-select-sm">
+                                <option :value="1">Factura</option>
+                                <option :value="2">Boleta</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-sm btn-primary w-100" @click="generarComprobante"
+                                    :disabled="state.gestion.reserva.estado === 'cancelado'">
+                                <i class="bi bi-cash-coin"></i> Generar comprobante y marcar pagado
+                            </button>
+                        </div>
+                    </div>
+
+                    <table class="table table-sm table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Tipo</th>
+                                <th class="text-end">Monto</th>
+                                <th>Emitido</th>
+                                <th>Empleado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-if="state.gestion.comprobantes.length === 0">
+                                <td colspan="5" class="text-center text-muted">Sin comprobantes emitidos</td>
+                            </tr>
+                            <tr v-for="cmp in state.gestion.comprobantes" :key="cmp.idComprobante">
+                                <td>{{ cmp.idComprobante }}</td>
+                                <td>{{ cmp.tipoComprobante === 1 ? 'Factura' : 'Boleta' }}</td>
+                                <td class="text-end">S/ {{ cmp.montoTotal.toFixed(2) }}</td>
+                                <td>{{ soloFecha(cmp.fechaPagado || cmp.fechaCreado) }}</td>
+                                <td>{{ cmp.nombreEmpleado || '-' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="modal-footer">
+                    <a class="btn btn-outline-dark me-auto" target="_blank"
+                       :href="'/webapp-reserva-hotel/ReporteServlet?action=reserva&id=' + state.gestion.reserva.idReserva">
+                        <i class="bi bi-file-earmark-pdf"></i> Ver reporte PDF
+                    </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
 <script>
@@ -243,7 +404,19 @@
                 modalInstance: null,
                 reservaACancelar: null,
                 cancelError: null,
-                cancelarModalInstance: null
+                cancelarModalInstance: null,
+                gestionModalInstance: null,
+                gestion: {
+                    reserva: null,
+                    consumos: [],
+                    comprobantes: [],
+                    productos: [],
+                    nuevoProducto: "",
+                    nuevaCantidad: 1,
+                    tipoComprobante: 1,
+                    error: null,
+                    success: null
+                }
             });
 
             // ---- helpers de presentación ----
@@ -281,6 +454,15 @@
 
             const montoEstimado = computed(() =>
                 habitacionSeleccionada.value ? habitacionSeleccionada.value.precio * noches.value : 0
+            );
+
+            // ---- totales del modal de gestión (consumos + facturación) ----
+            const totalConsumos = computed(() =>
+                state.gestion.consumos.reduce((acc, c) => acc + (c.cantidad * c.precio), 0)
+            );
+
+            const totalGeneral = computed(() =>
+                (state.gestion.reserva ? state.gestion.reserva.montoTotal : 0) + totalConsumos.value
             );
 
             // ---- consulta de disponibilidad al servidor ----
@@ -456,6 +638,127 @@
                 }
             };
 
+            // ---- gestión de consumos y facturación ----
+            const fetchJson = async (url, options) => {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        window.location.href = redirectLogin;
+                        return null;
+                    }
+                    throw new Error('Error de red (' + response.status + ')');
+                }
+                return response.json();
+            };
+
+            const cargarProductos = async () => {
+                try {
+                    const data = await fetchJson('ProductoServlet?action=listar');
+                    // solo productos activos pueden consumirse
+                    state.gestion.productos = (data && data.success ? data.result : [])
+                            .filter(p => p.estado === 'activo');
+                } catch (e) {
+                    console.error(e);
+                }
+            };
+
+            const cargarConsumos = async (idReserva) => {
+                const data = await fetchJson('ConsumoServlet?action=listar&id_reserva=' + idReserva);
+                state.gestion.consumos = data && data.success ? data.result : [];
+            };
+
+            const cargarComprobantes = async (idReserva) => {
+                const data = await fetchJson('ComprobanteServlet?action=listar&id_reserva=' + idReserva);
+                state.gestion.comprobantes = data && data.success ? data.result : [];
+            };
+
+            const openGestionModal = async (reserva) => {
+                state.gestion.reserva = reserva;
+                state.gestion.error = null;
+                state.gestion.success = null;
+                state.gestion.nuevoProducto = "";
+                state.gestion.nuevaCantidad = 1;
+                state.gestion.tipoComprobante = 1;
+                state.gestion.consumos = [];
+                state.gestion.comprobantes = [];
+
+                if (!state.gestionModalInstance) {
+                    state.gestionModalInstance = new bootstrap.Modal(document.getElementById('gestionModal'));
+                }
+                state.gestionModalInstance.show();
+
+                await Promise.all([
+                    cargarConsumos(reserva.idReserva),
+                    cargarComprobantes(reserva.idReserva),
+                    state.gestion.productos.length === 0 ? cargarProductos() : Promise.resolve()
+                ]);
+            };
+
+            const agregarConsumo = async () => {
+                state.gestion.error = null;
+                state.gestion.success = null;
+                try {
+                    const formData = new FormData();
+                    formData.append('action', 'crear');
+                    formData.append('id_reserva', state.gestion.reserva.idReserva);
+                    formData.append('id_producto', state.gestion.nuevoProducto);
+                    formData.append('cantidad', state.gestion.nuevaCantidad);
+
+                    const data = await fetchJson('ConsumoServlet', {method: 'POST', body: formData});
+                    if (!data) return;
+                    if (!data.success) throw new Error(data.message);
+
+                    state.gestion.success = data.message;
+                    state.gestion.nuevoProducto = "";
+                    state.gestion.nuevaCantidad = 1;
+                    await Promise.all([cargarConsumos(state.gestion.reserva.idReserva), cargarProductos()]);
+                } catch (e) {
+                    state.gestion.error = e.message;
+                }
+            };
+
+            const eliminarConsumo = async (consumo) => {
+                state.gestion.error = null;
+                state.gestion.success = null;
+                try {
+                    const formData = new FormData();
+                    formData.append('action', 'eliminar');
+                    formData.append('id_consumo', consumo.idConsumo);
+
+                    const data = await fetchJson('ConsumoServlet', {method: 'POST', body: formData});
+                    if (!data) return;
+                    if (!data.success) throw new Error(data.message);
+
+                    state.gestion.success = data.message;
+                    await Promise.all([cargarConsumos(state.gestion.reserva.idReserva), cargarProductos()]);
+                } catch (e) {
+                    state.gestion.error = e.message;
+                }
+            };
+
+            const generarComprobante = async () => {
+                state.gestion.error = null;
+                state.gestion.success = null;
+                try {
+                    const formData = new FormData();
+                    formData.append('action', 'crear');
+                    formData.append('id_reserva', state.gestion.reserva.idReserva);
+                    formData.append('tipo_comprobante', state.gestion.tipoComprobante);
+
+                    const data = await fetchJson('ComprobanteServlet', {method: 'POST', body: formData});
+                    if (!data) return;
+                    if (!data.success) throw new Error(data.message);
+
+                    state.gestion.success = data.message;
+                    // la reserva pasó a 'pagado': reflejarlo en la tabla y en el modal
+                    state.gestion.reserva.estado = 'pagado';
+                    await cargarComprobantes(state.gestion.reserva.idReserva);
+                    await listarReservas();
+                } catch (e) {
+                    state.gestion.error = e.message;
+                }
+            };
+
             // Listar reservas
             const listarReservas = async () => {
                 try {
@@ -518,7 +821,13 @@
                 openModal,
                 guardarReserva,
                 cancelarReserva,
-                confirmarCancelarReserva
+                confirmarCancelarReserva,
+                totalConsumos,
+                totalGeneral,
+                openGestionModal,
+                agregarConsumo,
+                eliminarConsumo,
+                generarComprobante
             };
         }
     }).mount('#app');

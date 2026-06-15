@@ -139,7 +139,7 @@ CREATE TABLE productos
 (
     id INT NOT NULL AUTO_INCREMENT,
     descripcion VARCHAR(250) NOT NULL,
-    precio DECIMAL NOT NULL,
+    precio DECIMAL(10,2) NOT NULL,
     cantidad_stock INT NOT NULL,
     estado ENUM('activo','inactivo') DEFAULT 'activo',
     fecha_creado DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,

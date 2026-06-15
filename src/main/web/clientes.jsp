@@ -121,8 +121,29 @@
                                 </select>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <label for="telefono" class="form-label">Tel�fono</label>
+                                <label for="telefono" class="form-label">Tel&eacute;fono</label>
                                 <input v-model="state.clientInForm.telefono" type="text" class="form-control" id="telefono">
+                            </div>
+                        </div>
+
+                        <hr>
+                        <p class="text-muted small mb-2"><i class="bi bi-person-lock me-1"></i>Cuenta de acceso del cliente</p>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="username" class="form-label">Correo (usuario)</label>
+                                <input v-model="state.clientInForm.username" type="email" class="form-control" id="username"
+                                       :readonly="state.isEditing" :required="!state.isEditing">
+                            </div>
+                            <div class="col-md-6 mb-3" v-if="!state.isEditing">
+                                <label for="password" class="form-label">Contrase&ntilde;a</label>
+                                <input v-model="state.clientInForm.password" type="password" class="form-control" id="password" required>
+                            </div>
+                            <div class="col-md-6 mb-3" v-if="state.isEditing">
+                                <label for="estado" class="form-label">Estado</label>
+                                <select v-model="state.clientInForm.estado" class="form-select" id="estado">
+                                    <option value="activo">Activo</option>
+                                    <option value="inactivo">Inactivo</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -194,7 +215,7 @@
         setup() {
             const state = reactive({
                 clients: [],
-                clientInForm: {tipoDocumento: 1, sexo: 'Masculino'},
+                clientInForm: {tipoDocumento: 1, sexo: 'M'},
                 isEditing: false,
                 buscar: '',
                 messageError: null,

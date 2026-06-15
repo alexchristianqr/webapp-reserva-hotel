@@ -63,7 +63,7 @@ public class ReservaServlet extends BaseServlet {
     private ResponseService<?> crearReserva(HttpServletRequest request) {
         Reserva reserva = new Reserva();
         reserva.setIdCliente(parseIntSafe(request.getParameter("id_cliente")));
-        reserva.setIdEmpleado(parseIntSafe(request.getParameter("id_empleado")));
+        reserva.setIdEmpleado(empleadoEnSesion(request.getParameter("id_empleado")));
         reserva.setIdHabitacion(parseIntSafe(request.getParameter("id_habitacion")));
         reserva.setCantidadHuespedes(parseIntOrDefault(request.getParameter("cantidad_huespedes"), 1));
         reserva.setFechaEntrada(request.getParameter("fecha_entrada"));
@@ -79,7 +79,7 @@ public class ReservaServlet extends BaseServlet {
         reserva.setIdReserva(parseIntSafe(request.getParameter("id_reserva")));
         reserva.setIdHabitacion(parseIntSafe(request.getParameter("id_habitacion")));
         reserva.setIdCliente(parseIntSafe(request.getParameter("id_cliente")));
-        reserva.setIdEmpleado(parseIntSafe(request.getParameter("id_empleado")));
+        reserva.setIdEmpleado(empleadoEnSesion(request.getParameter("id_empleado")));
         reserva.setCantidadHuespedes(parseIntOrDefault(request.getParameter("cantidad_huespedes"), 1));
         reserva.setEstado(request.getParameter("estado"));
         reserva.setFechaEntrada(request.getParameter("fecha_entrada"));
@@ -98,5 +98,14 @@ public class ReservaServlet extends BaseServlet {
             return porDefecto;
         }
         return parseIntSafe(value);
+    }
+
+    // La reserva queda a nombre del empleado autenticado; si no hubiera sesión válida
+    // (caso improbable), se respeta el valor recibido del formulario.
+    private int empleadoEnSesion(String valorFormulario) {
+        if (usuarioAutenticado != null && usuarioAutenticado.getIdEmpleado() > 0) {
+            return usuarioAutenticado.getIdEmpleado();
+        }
+        return parseIntOrDefault(valorFormulario, 1);
     }
 }

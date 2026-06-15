@@ -140,8 +140,19 @@
                                 <input v-model="state.empleadoInForm.sueldo" type="number" step="0.01" class="form-control" id="sueldo" required>
                             </div>
                         </div>
-                        <div class="row" v-if="state.isEditing">
+                        <hr>
+                        <p class="text-muted small mb-2"><i class="bi bi-person-lock me-1"></i>Cuenta de acceso del empleado</p>
+                        <div class="row">
                             <div class="col-md-6 mb-3">
+                                <label for="username" class="form-label">Correo (usuario)</label>
+                                <input v-model="state.empleadoInForm.username" type="email" class="form-control" id="username"
+                                       :readonly="state.isEditing" :required="!state.isEditing">
+                            </div>
+                            <div class="col-md-6 mb-3" v-if="!state.isEditing">
+                                <label for="password" class="form-label">Contrase&ntilde;a</label>
+                                <input v-model="state.empleadoInForm.password" type="password" class="form-control" id="password" required>
+                            </div>
+                            <div class="col-md-6 mb-3" v-if="state.isEditing">
                                 <label for="estado" class="form-label">Estado</label>
                                 <select v-model="state.empleadoInForm.estado" class="form-select" id="estado">
                                     <option value="activo">Activo</option>
