@@ -4,4 +4,4 @@
 /out/
 /.idea/
 *.iml
-/src/main/web/META-INF/MANIFEST.MF
+/src/main/resources/META-INF/MANIFEST.MF
