@@ -210,6 +210,9 @@ INSERT INTO clientes_perfiles (nombre, permisos) VALUES ('Cliente', '{}');
 INSERT INTO clientes_perfiles (nombre, permisos) VALUES ('Invitado', '{}');
 
 -- usuarios
+-- NOTA: estas contraseñas se siembran en texto plano por comodidad de desarrollo.
+-- La app las verifica con bcrypt y, al primer inicio de sesión exitoso, las
+-- re-guarda automáticamente como hash bcrypt (ver core.utils.PasswordUtil y AuthService).
 INSERT INTO usuarios (nombres, apellidos, rol, username, pwd, estado)
 VALUES ('Alex', 'Quispe', 'empleado', 'alex.quispe@gmail.com', '12345678', 'activo');
 INSERT INTO usuarios (nombres, apellidos, rol, username, pwd, estado)

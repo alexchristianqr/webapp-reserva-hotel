@@ -2,6 +2,7 @@ package services;
 
 import core.BaseService;
 import core.services.MysqlDBService;
+import core.utils.PasswordUtil;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -91,17 +92,24 @@ public class UsuarioService extends BaseService {
         }
     }
 
-    // Actualiza los datos de la cuenta de usuario (no modifica la contraseña)
+    // Actualiza los datos de la cuenta de usuario. La contraseña solo se modifica
+    // si se envía una nueva (campo opcional); en ese caso se guarda hasheada con bcrypt.
     public Boolean actualizarUsuario(Usuario usuario) {
-        querySQL_1 = "UPDATE usuarios SET nombres = ?, apellidos = ?, rol = ?, username = ?, estado = ?, fecha_actualizado = NOW() WHERE id = ?";
-        Object[] parametros = {
-            usuario.getNombres(),
-            usuario.getApellidos(),
-            usuario.getRol(),
-            usuario.getUsername(),
-            usuario.getEstado(),
-            usuario.getIdUsuario()
-        };
+        boolean cambiaPassword = usuario.getPassword() != null && !usuario.getPassword().isBlank();
+
+        if (cambiaPassword) {
+            querySQL_1 = "UPDATE usuarios SET nombres = ?, apellidos = ?, rol = ?, username = ?, estado = ?, pwd = ?, fecha_actualizado = NOW() WHERE id = ?";
+        } else {
+            querySQL_1 = "UPDATE usuarios SET nombres = ?, apellidos = ?, rol = ?, username = ?, estado = ?, fecha_actualizado = NOW() WHERE id = ?";
+        }
+
+        Object[] parametros = cambiaPassword
+                ? new Object[]{usuario.getNombres(), usuario.getApellidos(), usuario.getRol(),
+                    usuario.getUsername(), usuario.getEstado(), PasswordUtil.hashear(usuario.getPassword()),
+                    usuario.getIdUsuario()}
+                : new Object[]{usuario.getNombres(), usuario.getApellidos(), usuario.getRol(),
+                    usuario.getUsername(), usuario.getEstado(), usuario.getIdUsuario()};
+
         db.queryActualizar(querySQL_1, parametros);
         db.cerrarConsulta();
         return true;

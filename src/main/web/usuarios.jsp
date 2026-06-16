@@ -122,6 +122,14 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="row" v-if="state.isEditing">
+                            <div class="col-md-6 mb-3">
+                                <label for="passwordEdit" class="form-label">Nueva contraseña</label>
+                                <input v-model="state.usuarioInForm.password" type="password" class="form-control"
+                                       id="passwordEdit" autocomplete="new-password">
+                                <small class="text-muted">Déjala en blanco para mantener la contraseña actual.</small>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="modal-footer">

@@ -68,6 +68,7 @@ public class UsuarioServlet extends BaseServlet {
         usuario.setRol(request.getParameter("rol"));
         usuario.setUsername(request.getParameter("username"));
         usuario.setEstado(request.getParameter("estado"));
+        usuario.setPassword(request.getParameter("password")); // opcional: solo si se quiere cambiar
         return usuarioController.actualizarUsuario(usuario);
     }
 

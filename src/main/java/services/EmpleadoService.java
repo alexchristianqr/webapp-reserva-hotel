@@ -2,6 +2,7 @@ package services;
 
 import core.BaseService;
 import core.services.MysqlDBService;
+import core.utils.PasswordUtil;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class EmpleadoService extends BaseService {
             querySQL_1 = "INSERT INTO usuarios (nombres, apellidos, rol, username, pwd, estado) VALUES (?,?,'empleado',?,?,?)";
             Object[] parametrosSQL_1 = {
                 empleado.getNombre(), empleado.getApellidos(),
-                empleado.getUsername(), empleado.getPassword(),
+                empleado.getUsername(), PasswordUtil.hashear(empleado.getPassword()),
                 estadoOActivo(empleado.getEstado())
             };
             int idUsuario = db.queryInsertar(querySQL_1, parametrosSQL_1);

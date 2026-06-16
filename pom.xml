@@ -17,6 +17,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.release>21</maven.compiler.release>
         <gson.version>2.10.1</gson.version>
+        <bcrypt.version>0.10.2</bcrypt.version>
         <openpdf.version>1.3.39</openpdf.version>
         <mysql.connector.version>8.2.0</mysql.connector.version>
         <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
@@ -32,6 +33,13 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
+        </dependency>
+
+        <!-- Hashing seguro de contraseñas (bcrypt) -->
+        <dependency>
+            <groupId>at.favre.lib</groupId>
+            <artifactId>bcrypt</artifactId>
+            <version>${bcrypt.version}</version>
         </dependency>
 
         <!-- Generacion de reportes PDF (servicio de reportes de reservas) -->

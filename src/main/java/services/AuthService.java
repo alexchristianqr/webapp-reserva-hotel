@@ -2,6 +2,7 @@ package services;
 
 import core.BaseService;
 import core.services.MysqlDBService;
+import core.utils.PasswordUtil;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import models.Empleado;
@@ -17,28 +18,43 @@ public class AuthService extends BaseService {
         try {
             ResultSet rs_1, rs_2, rs_3, rs_4;
 
-            querySQL_1 = "SELECT u.rol FROM usuarios u WHERE u.username = ? AND u.pwd = ? AND u.estado = 'activo' LIMIT 1;";
-            Object[] parametrosSQL_1 = {username, pwd};
+            // 1) Buscamos la cuenta por usuario (NO por contraseña: bcrypt incluye
+            //    la sal en el hash, así que la verificación se hace en Java).
+            querySQL_1 = "SELECT u.rol, u.pwd FROM usuarios u WHERE u.username = ? AND u.estado = 'activo' LIMIT 1;";
+            Object[] parametrosSQL_1 = {username};
             rs_1 = db.queryConsultar(querySQL_1, parametrosSQL_1);
 
             String rol = "";
+            String hashGuardado = null;
 
             if (rs_1.next()) {
                 rol = rs_1.getString("rol");
+                hashGuardado = rs_1.getString("pwd");
+            }
+
+            // 2) Verificamos la contraseña contra el hash guardado.
+            if (!PasswordUtil.verificar(pwd, hashGuardado)) {
+                return null;
+            }
+
+            // Migración transparente: si la contraseña estaba en texto plano
+            // (cuenta heredada), la re-guardamos como hash bcrypt al iniciar sesión.
+            if (!PasswordUtil.esHashBcrypt(hashGuardado)) {
+                rehashearPassword(username, pwd);
             }
 
             switch (rol) {
                 case "empleado":
-                    querySQL_2 = "SELECT u.*, e.id AS 'id_empleado', e.id_persona FROM usuarios u JOIN empleados e ON e.id_usuario = u.id AND e.estado = 'activo' WHERE u.username = ? AND u.pwd = ? AND u.estado = 'activo' LIMIT 1;";
+                    querySQL_2 = "SELECT u.*, e.id AS 'id_empleado', e.id_persona FROM usuarios u JOIN empleados e ON e.id_usuario = u.id AND e.estado = 'activo' WHERE u.username = ? AND u.estado = 'activo' LIMIT 1;";
                     break;
 //                case "cliente":
-//                    querySQL_2 = "SELECT u.*, c.id AS 'id_cliente', c.id_persona FROM usuarios u JOIN clientes c ON c.id_usuario = u.id AND c.estado = 'activo' WHERE u.username = ? AND u.pwd = ? AND u.estado = 'activo' LIMIT 1;";
+//                    querySQL_2 = "SELECT u.*, c.id AS 'id_cliente', c.id_persona FROM usuarios u JOIN clientes c ON c.id_usuario = u.id AND c.estado = 'activo' WHERE u.username = ? AND u.estado = 'activo' LIMIT 1;";
 //                    break;
                 default:
                     return null;
             }
 
-            Object[] parametrosSQL_2 = {username, pwd};
+            Object[] parametrosSQL_2 = {username};
             rs_2 = db.queryConsultar(querySQL_2, parametrosSQL_2);
 
             Usuario usuario = new Usuario();
@@ -145,6 +161,9 @@ public class AuthService extends BaseService {
                 }
             }
 
+            // No exponemos el hash de la contraseña hacia el cliente/sesión.
+            usuario.setPassword(null);
+
             return usuario;
 
         } catch (SQLException ex) {
@@ -152,6 +171,12 @@ public class AuthService extends BaseService {
         } finally {
             db.cerrarConsulta();
         }
+    }
+
+    // Re-guarda una contraseña heredada (texto plano) como hash bcrypt.
+    private void rehashearPassword(String username, String passwordPlano) {
+        String sql = "UPDATE usuarios SET pwd = ? WHERE username = ?";
+        db.queryActualizar(sql, new Object[]{PasswordUtil.hashear(passwordPlano), username});
     }
 
     public boolean logout() {
