@@ -11,11 +11,22 @@ import core.BaseService;
 public class MysqlDBService extends BaseService {
 
     private static final String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
-    private static final String URL = "jdbc:mysql://127.0.0.1:3306/db_hotel?useSSL=false&serverTimezone=UTC";
-    private static final String USER = "root";
-    private static final String PASSWORD = "";
+
+    // Conexion configurable por variables de entorno (para AWS/contenedor),
+    // con valores por defecto para desarrollo local.
+    private static final String HOST = env("DB_HOST", "127.0.0.1");
+    private static final String PORT = env("DB_PORT", "3306");
+    private static final String NAME = env("DB_NAME", "db_hotel");
+    private static final String URL = "jdbc:mysql://" + HOST + ":" + PORT + "/" + NAME + "?useSSL=false&serverTimezone=UTC";
+    private static final String USER = env("DB_USER", "root");
+    private static final String PASSWORD = env("DB_PASSWORD", "");
     public Connection conn = null;
     public PreparedStatement stmt = null;
+
+    private static String env(String clave, String porDefecto) {
+        String valor = System.getenv(clave);
+        return (valor == null || valor.isBlank()) ? porDefecto : valor;
+    }
 
     public MysqlDBService() {
         this.conn = conectar();

@@ -1,0 +1,34 @@
+version: 0.2
+
+# Usado por el CodeBuild del step_05 (cicd-stack.yml).
+# Variables de entorno inyectadas por CodeBuild:
+# AWS_REGION, AWS_ACCOUNT_ID, ECR_REGISTRY, REPOSITORY_NAME, CONTAINER_NAME_1
+# El build del WAR ocurre dentro del Dockerfile multi-stage (Maven + Tomcat).
+
+phases:
+  pre_build:
+    commands:
+      - echo "Login a Amazon ECR..."
+      - aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+      - IMAGE_TAG="${CODEBUILD_RESOLVED_SOURCE_VERSION:-latest}"
+      - IMAGE_TAG="${IMAGE_TAG:0:7}"
+      - IMAGE_URI="$ECR_REGISTRY/$REPOSITORY_NAME:$IMAGE_TAG"
+      - echo "Imagen destino: $IMAGE_URI"
+
+  build:
+    commands:
+      - echo "Construyendo imagen Docker (Maven + Tomcat)..."
+      - docker build -t "$IMAGE_URI" -t "$ECR_REGISTRY/$REPOSITORY_NAME:latest" .
+
+  post_build:
+    commands:
+      - echo "Publicando imagen en ECR..."
+      - docker push "$IMAGE_URI"
+      - docker push "$ECR_REGISTRY/$REPOSITORY_NAME:latest"
+      - echo "Generando imagedefinitions.json..."
+      - printf '[{"name":"%s","imageUri":"%s"}]' "$CONTAINER_NAME_1" "$IMAGE_URI" > imagedefinitions.json
+      - cat imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
