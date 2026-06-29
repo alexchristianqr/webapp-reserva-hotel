@@ -5,3 +5,8 @@
 /.idea/
 *.iml
 /src/main/resources/META-INF/MANIFEST.MF
+
+# Variables locales de despliegue (contienen secretos como el token de GitHub)
+/scripts/deploy.env
+/scripts/*.env
+!/scripts/*.env.example
