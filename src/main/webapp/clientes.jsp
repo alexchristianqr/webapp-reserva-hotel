@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Gesti�n de Clientes</h2>
         <div class="d-flex gap-2">
-            <a href="/webapp-reserva-hotel/configuraciones.jsp" class="btn btn-outline-secondary">
+            <a href="${pageContext.request.contextPath}/configuraciones.jsp" class="btn btn-outline-secondary">
                 <i class="bi bi-caret-left"></i> Volver
             </a>
             <button class="btn btn-primary mr-5" @click="openCreateModal()">Nuevo Cliente</button>
@@ -209,7 +209,7 @@
 
 <script>
     const {createApp, reactive, onMounted, ref} = Vue;
-    const redirectLogin = '/webapp-reserva-hotel/login.jsp';
+    const redirectLogin = '${pageContext.request.contextPath}/login.jsp';
 
     createApp({
         setup() {
@@ -240,7 +240,7 @@
 
             const fetchClients = async () => {
                 try {
-                    const url = '/webapp-reserva-hotel/ClienteServlet?action=listar&buscar=' + encodeURIComponent(state.buscar);
+                    const url = '${pageContext.request.contextPath}/ClienteServlet?action=listar&buscar=' + encodeURIComponent(state.buscar);
                     const response = await fetch(url);
 
                     if (!response.ok) {
@@ -304,7 +304,7 @@
                 try {
                     // ### INICIO DEL CAMBIO ###
                     // 2. La URL ahora est� limpia, sin par�metros.
-                    const response = await fetch('/webapp-reserva-hotel/ClienteServlet', {
+                    const response = await fetch('${pageContext.request.contextPath}/ClienteServlet', {
                         method: 'POST',
                         body: formData
                     });
@@ -355,7 +355,7 @@
                 formData.append('idCliente', client.idCliente);
 
                 try {
-                    const response = await fetch('/webapp-reserva-hotel/ClienteServlet', {
+                    const response = await fetch('${pageContext.request.contextPath}/ClienteServlet', {
                         method: 'POST',
                         body: formData
                     });

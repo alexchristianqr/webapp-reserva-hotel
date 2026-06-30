@@ -106,7 +106,7 @@
 
 <script>
     const {createApp, ref, onMounted, reactive} = Vue;
-    const redirectLogin = '/webapp-reserva-hotel/login.jsp';
+    const redirectLogin = '${pageContext.request.contextPath}/login.jsp';
 
     createApp({
         setup() {

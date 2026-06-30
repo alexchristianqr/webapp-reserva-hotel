@@ -6,7 +6,7 @@
         <h2 class="mb-0">Panel de Configuración</h2>
 
         <div class="d-flex gap-2">
-            <a href="/webapp-reserva-hotel/home.jsp" class="btn btn-outline-secondary">
+            <a href="${pageContext.request.contextPath}/home.jsp" class="btn btn-outline-secondary">
                 <i class="bi bi-caret-left"></i> Volver
             </a>
         </div>

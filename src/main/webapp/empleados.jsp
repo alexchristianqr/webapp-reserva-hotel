@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Gestión de Empleados</h2>
         <div class="d-flex gap-2">
-            <a href="/webapp-reserva-hotel/configuraciones.jsp" class="btn btn-outline-secondary">
+            <a href="${pageContext.request.contextPath}/configuraciones.jsp" class="btn btn-outline-secondary">
                 <i class="bi bi-caret-left"></i> Volver
             </a>
             <button class="btn btn-primary mr-5" @click="openCreateModal()">Nuevo Empleado</button>
@@ -223,7 +223,7 @@
 
 <script>
     const {createApp, reactive, onMounted, ref} = Vue;
-    const redirectLogin = '/webapp-reserva-hotel/login.jsp';
+    const redirectLogin = '${pageContext.request.contextPath}/login.jsp';
 
     createApp({
         setup() {
@@ -265,7 +265,7 @@
 
             const listarEmpleados = async () => {
                 try {
-                    const url = '/webapp-reserva-hotel/EmpleadoServlet?action=listar&buscar=' + encodeURIComponent(state.buscar);
+                    const url = '${pageContext.request.contextPath}/EmpleadoServlet?action=listar&buscar=' + encodeURIComponent(state.buscar);
                     const response = await fetch(url);
 
                     if (!response.ok) {
@@ -315,7 +315,7 @@
                 }
 
                 try {
-                    const response = await fetch('/webapp-reserva-hotel/EmpleadoServlet', {
+                    const response = await fetch('${pageContext.request.contextPath}/EmpleadoServlet', {
                         method: 'POST',
                         body: formData
                     });
@@ -361,7 +361,7 @@
                 formData.append('idEmpleado', empleado.idEmpleado);
 
                 try {
-                    const response = await fetch('/webapp-reserva-hotel/EmpleadoServlet', {
+                    const response = await fetch('${pageContext.request.contextPath}/EmpleadoServlet', {
                         method: 'POST',
                         body: formData
                     });

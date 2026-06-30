@@ -6,7 +6,7 @@
         <h2 class="mb-0">Gestión de Reservas</h2>
 
         <div class="d-flex gap-2">
-            <a href="/webapp-reserva-hotel/home.jsp" class="btn btn-outline-secondary">
+            <a href="${pageContext.request.contextPath}/home.jsp" class="btn btn-outline-secondary">
                 <i class="bi bi-caret-left"></i> Volver
             </a>
             <button class="btn btn-primary mr-5" @click="openModal()">Nueva Reserva</button>
@@ -58,7 +58,7 @@
                         <i class="bi bi-receipt"></i>
                     </button>
                     <a class="btn btn-sm btn-outline-dark me-2" title="Reporte PDF" target="_blank"
-                       :href="'/webapp-reserva-hotel/ReporteServlet?action=reserva&id=' + reserva.idReserva">
+                       :href="'${pageContext.request.contextPath}/ReporteServlet?action=reserva&id=' + reserva.idReserva">
                         <i class="bi bi-file-earmark-pdf"></i>
                     </a>
                     <button class="btn btn-sm btn-danger me-2" title="Cancelar reserva"
@@ -358,7 +358,7 @@
 
                 <div class="modal-footer">
                     <a class="btn btn-outline-dark me-auto" target="_blank"
-                       :href="'/webapp-reserva-hotel/ReporteServlet?action=reserva&id=' + state.gestion.reserva.idReserva">
+                       :href="'${pageContext.request.contextPath}/ReporteServlet?action=reserva&id=' + state.gestion.reserva.idReserva">
                         <i class="bi bi-file-earmark-pdf"></i> Ver reporte PDF
                     </a>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -370,7 +370,7 @@
 
 <script>
     const {createApp, reactive, computed, watch, onMounted} = Vue;
-    const redirectLogin = '/webapp-reserva-hotel/login.jsp';
+    const redirectLogin = '${pageContext.request.contextPath}/login.jsp';
 
     const sumarDias = (fecha, dias) => {
         const nueva = new Date(fecha);
