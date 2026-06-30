@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Gestión de Habitaciones</h2>
         <div class="d-flex gap-2">
-            <a href="/webapp-reserva-hotel/configuraciones.jsp" class="btn btn-outline-secondary">
+            <a href="${pageContext.request.contextPath}/configuraciones.jsp" class="btn btn-outline-secondary">
                 <i class="bi bi-caret-left"></i> Volver
             </a>
             <button class="btn btn-primary mr-5" @click="openCreateModal()">Nueva Habitación</button>
@@ -202,7 +202,7 @@
 
 <script>
     const {createApp, reactive, onMounted, ref} = Vue;
-    const redirectLogin = '/webapp-reserva-hotel/login.jsp';
+    const redirectLogin = '${pageContext.request.contextPath}/login.jsp';
 
     createApp({
         setup() {
@@ -229,7 +229,7 @@
 
             const listarTipos = async () => {
                 try {
-                    const response = await fetch('/webapp-reserva-hotel/HabitacionServlet?action=tipos');
+                    const response = await fetch('${pageContext.request.contextPath}/HabitacionServlet?action=tipos');
                     if (!response.ok) {
                         if (response.status === 401) {
                             window.location.href = redirectLogin;
@@ -256,7 +256,7 @@
 
             const listarHabitaciones = async () => {
                 try {
-                    const url = '/webapp-reserva-hotel/HabitacionServlet?action=listar&buscar=' + encodeURIComponent(state.buscar);
+                    const url = '${pageContext.request.contextPath}/HabitacionServlet?action=listar&buscar=' + encodeURIComponent(state.buscar);
                     const response = await fetch(url);
 
                     if (!response.ok) {
@@ -308,7 +308,7 @@
                 formData.append('cantidadCamas', f.cantidadCamas);
 
                 try {
-                    const response = await fetch('/webapp-reserva-hotel/HabitacionServlet', {
+                    const response = await fetch('${pageContext.request.contextPath}/HabitacionServlet', {
                         method: 'POST',
                         body: formData
                     });
@@ -354,7 +354,7 @@
                 formData.append('idHabitacion', room.idHabitacion);
 
                 try {
-                    const response = await fetch('/webapp-reserva-hotel/HabitacionServlet', {
+                    const response = await fetch('${pageContext.request.contextPath}/HabitacionServlet', {
                         method: 'POST',
                         body: formData
                     });
