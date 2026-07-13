@@ -32,8 +32,8 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="(reserva, index) in state.reservas" :key="reserva.idReserva">
-                <td>{{ index + 1 }}</td>
+            <tr v-for="(reserva, index) in reservasPaginadas" :key="reserva.idReserva">
+                <td>{{ (state.pagina - 1) * state.porPagina + index + 1 }}</td>
                 <td>{{ reserva.cliente.nombre }}</td>
                 <td>{{ reserva.habitacion.descripcion }}</td>
                 <td>{{ soloFecha(reserva.fechaEntrada) }}</td>
@@ -73,6 +73,26 @@
             </tr>
         </tbody>
     </table>
+
+    <!-- Paginado -->
+    <nav v-if="state.reservas.length > 0" class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <small class="text-muted">{{ state.reservas.length }} reserva(s)</small>
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" :class="{ disabled: state.pagina === 1 }">
+                <button class="page-link" @click="irPagina(state.pagina - 1)">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">Página {{ state.pagina }} de {{ totalPaginas }}</span>
+            </li>
+            <li class="page-item" :class="{ disabled: state.pagina === totalPaginas }">
+                <button class="page-link" @click="irPagina(state.pagina + 1)">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </li>
+        </ul>
+    </nav>
 
     <!-- MODAL Bootstrap para crear/actualizar -->
     <div class="modal fade" id="reservaModal" tabindex="-1" aria-hidden="true">
@@ -395,6 +415,8 @@
             };
             const state = reactive({
                 reservas: [],
+                pagina: 1,
+                porPagina: 10,
                 clientes: [],
                 habitacionesDisponibles: [],
                 cargandoDisponibilidad: false,
@@ -435,6 +457,18 @@
                 'pagado': 'Pagado',
                 'cancelado': 'Cancelado'
             }[estado] || estado);
+
+            // ---- paginado de la tabla de reservas ----
+            const totalPaginas = computed(() => Math.max(1, Math.ceil(state.reservas.length / state.porPagina)));
+
+            const reservasPaginadas = computed(() => {
+                const inicio = (state.pagina - 1) * state.porPagina;
+                return state.reservas.slice(inicio, inicio + state.porPagina);
+            });
+
+            const irPagina = (p) => {
+                if (p >= 1 && p <= totalPaginas.value) state.pagina = p;
+            };
 
             // ---- cálculos del resumen (estimado; el servidor recalcula el monto real) ----
             const noches = computed(() => {
@@ -776,6 +810,7 @@
 
                     const {success, result} = await response.json();
                     state.reservas = success ? result : [];
+                    state.pagina = 1;
                 } catch (error) {
                     console.error(error);
                 }
@@ -811,6 +846,9 @@
             return {
                 state,
                 today,
+                totalPaginas,
+                reservasPaginadas,
+                irPagina,
                 noches,
                 habitacionSeleccionada,
                 camasSeleccionadas,

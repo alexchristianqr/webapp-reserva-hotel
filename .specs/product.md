@@ -40,7 +40,7 @@ Cada capacidad sigue el patrón CRUD por entidad, accesible desde su página JSP
 | Reservas      | `reservas.jsp`        | `ReservaServlet`         | `listar`, `disponibilidad`, `crear`, `actualizar`, `eliminar` |
 | Consumos      | `consumos.jsp`        | `ConsumoServlet`         | `listar`, `crear`, `eliminar`                 |
 | Comprobantes  | `comprobantes.jsp`    | `ComprobanteServlet`     | `listar`, `crear`                             |
-| Reportes      | —                     | `ReporteServlet`         | `reserva` (devuelve PDF, no JSON)             |
+| Reportes      | `reportes.jsp`        | `ReporteServlet`         | `reserva` (PDF por reserva), `dashboard` (JSON: KPIs + series de gráficos), `excel` (descarga .xlsx del negocio) |
 | Inicio        | `home.jsp`            | `HomeServlet`            | panel / navegación                            |
 
 ## Flujo principal: crear una reserva
@@ -57,8 +57,11 @@ Cada capacidad sigue el patrón CRUD por entidad, accesible desde su página JSP
 
 - Portal de auto-reserva para clientes finales.
 - Pasarela de pagos real (existen `comprobantes` y estados de pago, pero sin integración externa).
-- Reportería avanzada / dashboards analíticos.
 - Multi-hotel / multi-sucursal.
+
+> El módulo de **Reportes** (`reportes.jsp`) ya cubre un dashboard básico de negocio con
+> gráficos (Chart.js) y exportación a Excel; la analítica más avanzada sigue siendo
+> mejora futura.
 
 ## Oportunidades futuras
 

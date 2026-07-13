@@ -3,7 +3,7 @@
 
 <header class="py-3 border-bottom mb-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Gesti�n de Clientes</h2>
+        <h2 class="mb-0">Gestión de Clientes</h2>
         <div class="d-flex gap-2">
             <a href="${pageContext.request.contextPath}/configuraciones.jsp" class="btn btn-outline-secondary">
                 <i class="bi bi-caret-left"></i> Volver

@@ -13,6 +13,7 @@
 | JSON        | Gson                                                | 2.10.1           |
 | Contraseñas | bcrypt (`at.favre.lib:bcrypt`)                      | 0.10.2           |
 | PDF         | OpenPDF (`com.github.librepdf:openpdf`)             | 1.3.39           |
+| Excel       | Apache POI (`org.apache.poi:poi-ooxml`)             | 5.2.5            |
 | Frontend    | Vue 3 (build global CDN) + Bootstrap 5.3 (CDN)      | —                |
 | Tests       | JUnit Jupiter                                       | 5.10.2           |
 
@@ -87,7 +88,9 @@ scripts/                      despliegue (deploy.sh)
 ```
 
 La respuesta vuelve serializada como JSON (`ResponseService<T>` → Gson).
-**Excepción:** `ReporteServlet` escribe binario `application/pdf` directamente.
+**Excepción:** `ReporteServlet` mezcla ambos formatos según la `action`: `dashboard`
+devuelve JSON (KPIs + series para gráficos), mientras que `reserva` escribe binario
+`application/pdf` (OpenPDF) y `excel` escribe binario `.xlsx` (Apache POI) directamente.
 
 ## Configuración de conexión a la base de datos
 

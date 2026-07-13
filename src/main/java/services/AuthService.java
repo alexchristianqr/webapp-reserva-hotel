@@ -161,6 +161,13 @@ public class AuthService extends BaseService {
                 }
             }
 
+            // Si la cuenta no tiene un empleado activo vinculado, la segunda consulta
+            // (JOIN empleados) no devuelve filas y 'usuario' queda vacío. En ese caso
+            // el login es inválido: evitamos guardar una sesión en blanco.
+            if (usuario.getIdUsuario() == 0) {
+                return null;
+            }
+
             // No exponemos el hash de la contraseña hacia el cliente/sesión.
             usuario.setPassword(null);
 

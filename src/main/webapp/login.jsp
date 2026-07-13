@@ -44,13 +44,28 @@
 
                     <div class="mb-3">
                         <label for="password" class="form-label">Contraseña</label>
-                        <input 
-                            v-model="state.password"
-                            type="password"
-                            id="password"
-                            class="form-control"
-                            required
-                            />
+                        <div class="input-group">
+                            <input
+                                v-model="state.password"
+                                :type="state.showPassword ? 'text' : 'password'"
+                                id="password"
+                                class="form-control"
+                                required
+                                />
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                @click="state.showPassword = !state.showPassword"
+                                :title="state.showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+                                <i class="bi" :class="state.showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                            </button>
+                        </div>
+                        <!-- Ayuda para validar exactamente lo que se envía (útil para detectar espacios) -->
+                        <small class="text-muted d-block mt-1" v-if="state.showPassword">
+                            Se enviará → usuario: <code>{{ state.username }}</code>
+                            · contraseña: <code>{{ state.password }}</code>
+                            ({{ state.password.length }} caracteres)
+                        </small>
                     </div>
 
                     <div class="d-grid">
@@ -71,6 +86,7 @@
             const state = reactive({
                 username: '',
                 password: '',
+                showPassword: false,
                 user: {},
                 message: '',
                 messageError: null
