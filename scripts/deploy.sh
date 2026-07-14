@@ -92,6 +92,7 @@ load_env() {
   STACK_DB="${STACK_PREFIX}-db-${ENV}"
   STACK_APP="${STACK_PREFIX}-app-${ENV}"
   STACK_CICD="${STACK_PREFIX}-cicd-${ENV}"
+  STACK_CDN="${STACK_PREFIX}-cdn-${ENV}"
 
   # Repo ECR efectivo (la plantilla añade el sufijo de entorno)
   ECR_REPO="${REPO_NAME}-${ENV}"
@@ -328,7 +329,7 @@ deploy_seed() {
       mysql --ssl-mode=DISABLED -h "${endpoint}" -P 3306 -u "${db_user}" \
       < "${ROOT_DIR}/database/db_hotel.sql" || ok_load=0
     local mig
-    for mig in db_hotel_migracion_reservas.sql db_hotel_migracion_productos_precio.sql; do
+    for mig in db_hotel_migracion_reservas.sql db_hotel_migracion_productos_precio.sql db_hotel_seed_demo.sql db_hotel_fix_login.sql; do
       if [[ -f "${ROOT_DIR}/database/${mig}" ]]; then
         info "Aplicando migracion ${mig}..."
         docker run --rm -i -e MYSQL_PWD="${db_pwd}" mysql:8 \
@@ -437,6 +438,29 @@ deploy_cicd() {
     "ECSServiceNameImported=${svc}"
 }
 
+# Capa TEMPORAL de HTTPS: pone CloudFront delante del ALB para exponer la app por
+# https://<id>.cloudfront.net (certificado valido, sin dominio propio). Util para
+# que alguien acceda desde internet sin el problema de HTTP-only. Borrala con
+# 'deploy.sh cdn-down' cuando termines.
+deploy_cdn() {
+  local alb_dns
+  alb_dns="$(cfn_output "${STACK_NET}" ExportedLoadBalancerDnsName)"
+  [[ -n "${alb_dns}" && "${alb_dns}" != "None" ]] || die "No se obtuvo el DNS del ALB de ${STACK_NET}. Despliega 'net' primero."
+  cfn_deploy "${STACK_CDN}" "step_06/cdn-stack.yml" \
+    "Env=${ENV}" \
+    "AlbDomainName=${alb_dns}"
+  local url
+  url="$(cfn_output "${STACK_CDN}" ExportedCloudFrontUrl)"
+  ok "URL HTTPS lista para compartir: ${url}"
+  warn "CloudFront tarda ~10-15 min en propagar por primera vez. Recuerda borrarla con 'deploy.sh cdn-down' al terminar la demo."
+}
+
+cmd_cdn_down() {
+  preflight
+  delete_stack "${STACK_CDN}"
+  ok "CloudFront eliminado (la app sigue disponible por HTTP en el ALB)."
+}
+
 print_summary() {
   step "Resumen del despliegue"
   local dns
@@ -475,7 +499,8 @@ cmd_up() {
     seed)  deploy_seed ;;
     app)   ensure_ecs_cluster; deploy_app ;;
     cicd)  deploy_cicd ;;
-    *)     die "Paso desconocido: '${only}'. Usa: ecr|image|net|db|seed|app|cicd" ;;
+    cdn)   deploy_cdn ;;
+    *)     die "Paso desconocido: '${only}'. Usa: ecr|image|net|db|seed|app|cicd|cdn" ;;
   esac
   ok "Listo."
 }
@@ -502,6 +527,8 @@ delete_stack() {
 cmd_down() {
   preflight
   warn "Se eliminarán los stacks de '${ENV}' en orden inverso."
+  # CloudFront (capa temporal de HTTPS) es lo mas externo: se borra primero si existe.
+  delete_stack "${STACK_CDN}"
   # Orden inverso: cicd -> app -> db -> net -> ecr
   # El cicd tiene un bucket S3 de artefactos que CloudFormation no borra si no esta
   # vacio; lo vaciamos primero para que el delete del stack no falle.
@@ -568,7 +595,7 @@ cmd_resume() {
 cmd_outputs() {
   preflight
   local s k
-  for s in "${STACK_ECR}" "${STACK_NET}" "${STACK_DB}" "${STACK_APP}" "${STACK_CICD}"; do
+  for s in "${STACK_ECR}" "${STACK_NET}" "${STACK_DB}" "${STACK_APP}" "${STACK_CICD}" "${STACK_CDN}"; do
     step "Outputs de ${s}"
     if stack_exists "${s}"; then
       awsx cloudformation describe-stacks --stack-name "${s}" \
@@ -604,6 +631,14 @@ USO:
   scripts/deploy.sh db-open | db-close
         Abre (publicly-accessible + 3306 desde tu IP) o cierra el acceso temporal
         a la RDS para conectarte con un gestor de BD (MySQL Workbench, DBeaver...).
+
+  scripts/deploy.sh up cdn
+        Capa TEMPORAL de HTTPS: pone CloudFront delante del ALB y expone la app
+        por https://<id>.cloudfront.net (certificado valido, sin dominio propio).
+        Util para compartir la URL por internet sin el problema de HTTP-only.
+
+  scripts/deploy.sh cdn-down
+        Elimina solo el stack de CloudFront (la app sigue disponible por HTTP).
 
   scripts/deploy.sh pause
         PAUSA de costos: elimina SOLO lo que cobra 24/7 (app=Fargate, net=ALB,
@@ -647,6 +682,7 @@ main() {
     pause)    load_env; cmd_pause ;;
     resume)   load_env; cmd_resume ;;
     down)     load_env; cmd_down ;;
+    cdn-down) load_env; cmd_cdn_down ;;
     outputs)  load_env; cmd_outputs ;;
     help|-h|--help) usage ;;
     *)       usage; die "Comando desconocido: '${cmd}'" ;;
