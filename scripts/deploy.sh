@@ -2,8 +2,8 @@
 #
 # deploy.sh — Despliegue end-to-end de la infraestructura AWS de webapp-reserva-hotel.
 #
-# Orquesta los 5 stacks CloudFormation de .aws/iac/stacks/ (ECR, Networking, RDS,
-# ECS Fargate, CI/CD) desde un único comando, encadenando automáticamente los
+# Orquesta los 6 stacks CloudFormation de .aws/iac/stacks/ (ECR, Networking, RDS,
+# ECS Fargate, CI/CD, CDN) desde un único comando, encadenando automáticamente los
 # Outputs de un stack como parámetros del siguiente. Además crea el clúster ECS si
 # no existe y construye/publica la imagen Docker en ECR para que el primer
 # despliegue del servicio arranque con una imagen válida.
@@ -438,10 +438,9 @@ deploy_cicd() {
     "ECSServiceNameImported=${svc}"
 }
 
-# Capa TEMPORAL de HTTPS: pone CloudFront delante del ALB para exponer la app por
-# https://<id>.cloudfront.net (certificado valido, sin dominio propio). Util para
-# que alguien acceda desde internet sin el problema de HTTP-only. Borrala con
-# 'deploy.sh cdn-down' cuando termines.
+# Pone CloudFront delante del ALB para exponer la app por https://<id>.cloudfront.net
+# (certificado valido, sin dominio propio). Se despliega como parte de 'up'. Si
+# queres quitarla sin tocar el resto de la infra, usa 'deploy.sh cdn-down'.
 deploy_cdn() {
   local alb_dns
   alb_dns="$(cfn_output "${STACK_NET}" ExportedLoadBalancerDnsName)"
@@ -452,7 +451,7 @@ deploy_cdn() {
   local url
   url="$(cfn_output "${STACK_CDN}" ExportedCloudFrontUrl)"
   ok "URL HTTPS lista para compartir: ${url}"
-  warn "CloudFront tarda ~10-15 min en propagar por primera vez. Recuerda borrarla con 'deploy.sh cdn-down' al terminar la demo."
+  warn "CloudFront tarda ~10-15 min en propagar por primera vez."
 }
 
 cmd_cdn_down() {
@@ -463,7 +462,7 @@ cmd_cdn_down() {
 
 print_summary() {
   step "Resumen del despliegue"
-  local dns
+  local dns cdn_url
   dns="$(cfn_output "${STACK_NET}" ExportedLoadBalancerDnsName 2>/dev/null || echo "")"
   if [[ -n "${dns}" && "${dns}" != "None" ]]; then
     ok "ALB DNS:      http://${dns}"
@@ -471,6 +470,10 @@ print_summary() {
     ok "Login:        http://${dns}/login.jsp"
   else
     warn "No se pudo resolver el DNS del ALB (¿se desplegó 'net'?)."
+  fi
+  cdn_url="$(cfn_output "${STACK_CDN}" ExportedCloudFrontUrl 2>/dev/null || echo "")"
+  if [[ -n "${cdn_url}" && "${cdn_url}" != "None" ]]; then
+    ok "HTTPS (CDN):  ${cdn_url}"
   fi
 }
 
@@ -490,6 +493,7 @@ cmd_up() {
       ensure_ecs_cluster
       deploy_app
       deploy_cicd
+      deploy_cdn
       print_summary
       ;;
     ecr)   deploy_ecr ;;
@@ -611,12 +615,13 @@ usage() {
 deploy.sh — Despliegue end-to-end de la infraestructura AWS de webapp-reserva-hotel.
 
 USO:
-  scripts/deploy.sh up [ecr|image|net|db|seed|app|cicd]
+  scripts/deploy.sh up [ecr|image|net|db|seed|app|cicd|cdn]
         Despliega toda la infra (sin argumento extra) o solo el paso indicado.
         Orden completo: ECR -> imagen Docker -> Networking -> RDS -> seed BD
-        -> clúster ECS -> App (ECS Fargate) -> CI/CD. Encadena los Outputs
-        automáticamente. El paso 'seed' carga database/db_hotel.sql para que el
-        login funcione (abre acceso temporal a RDS y lo revierte solo).
+        -> clúster ECS -> App (ECS Fargate) -> CI/CD -> CDN (CloudFront/HTTPS).
+        Encadena los Outputs automáticamente. El paso 'seed' carga
+        database/db_hotel.sql para que el login funcione (abre acceso temporal
+        a RDS y lo revierte solo).
 
   scripts/deploy.sh image
         Solo construye y publica la imagen Docker en ECR.
@@ -633,12 +638,13 @@ USO:
         a la RDS para conectarte con un gestor de BD (MySQL Workbench, DBeaver...).
 
   scripts/deploy.sh up cdn
-        Capa TEMPORAL de HTTPS: pone CloudFront delante del ALB y expone la app
-        por https://<id>.cloudfront.net (certificado valido, sin dominio propio).
-        Util para compartir la URL por internet sin el problema de HTTP-only.
+        Solo el paso de CloudFront (ya incluido en 'up' sin argumento). Pone
+        CloudFront delante del ALB y expone la app por https://<id>.cloudfront.net
+        (certificado valido, sin dominio propio).
 
   scripts/deploy.sh cdn-down
         Elimina solo el stack de CloudFront (la app sigue disponible por HTTP).
+        Util si queres quitar el HTTPS sin tocar el resto de la infra.
 
   scripts/deploy.sh pause
         PAUSA de costos: elimina SOLO lo que cobra 24/7 (app=Fargate, net=ALB,
